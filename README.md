@@ -12,7 +12,7 @@
 
 5. If the image has been successfully created, run `docker run -p 8080:8080 isa3`, where isa3 is the name of the image selected in step 3.
 
-6. Verify that the api is running by navigating to `localhost:8080/api/files` in the browser.
+6. Verify that the api is running by navigating to `http://localhost:8080/api/contracts` in the browser.
 
 ## Getting started
 
