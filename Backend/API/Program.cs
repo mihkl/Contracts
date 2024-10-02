@@ -13,6 +13,15 @@ builder.Services
     .AddDbContext<DataContext>(options => options.UseSqlite("Data Source=localdatabase.db"))
     .AddScoped<ContractRepo>();
 
+builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+    {
+        builder
+        .SetIsOriginAllowed(_ => true)
+        .AllowCredentials()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+    }));
+
 var app = builder.Build();
 
 using (var scope = ((IApplicationBuilder)app).ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
@@ -25,6 +34,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("MyPolicy");
 }
 
 app.UseHttpsRedirection();
