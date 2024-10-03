@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using API.Data;
 using API.Data.Repos;
+using API.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,8 @@ builder.Services.AddMemoryCache();
 
 builder.Services
     .AddDbContext<DataContext>(options => options.UseSqlite("Data Source=localdatabase.db"))
-    .AddScoped<ContractRepo>();
+    .AddScoped<ContractRepo>()
+    .AddScoped<IHMACService, HMACService>();
 
 builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
     {
