@@ -115,7 +115,7 @@ public class ContractController(IMemoryCache cache, ContractRepo repo, IHMACServ
         return Ok("Contract deleted successfully.");
     }
 
-    [HttpGet("contracts/{id}/link")]
+    [HttpGet("contracts/{id}/url")]
     public async Task<IActionResult> GetContractLink(uint id)
     {
         /* var contract = await _repo.GetContractByIdFromDb(id);
@@ -123,6 +123,7 @@ public class ContractController(IMemoryCache cache, ContractRepo repo, IHMACServ
          {
              return NotFound("Contract not found.");
          }*/
+
         return Ok(_hmacService.GenerateSignature(DateTime.Now, DateTime.Now, "2"));
     }
 }

@@ -11,7 +11,6 @@ namespace API.Controllers
 
     public class HMACService : IHMACService
     {
-
         private byte[] _hmacSecretKey = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("HMACSecretKey") ?? "");
         public string GenerateSignature(DateTime startDate, DateTime endDate, string templateId)
         {
