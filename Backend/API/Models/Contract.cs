@@ -9,14 +9,14 @@ public record Contract
     public uint Id { get; init; }
     public string Name { get; set; } = string.Empty;
     public byte[] FileData { get; set; } = [];
-    public List<DynamicField> Fields { get; set; } = [];
+    public List<ContractDynamicField> Fields { get; set; } = [];
 }
 
 public record ContractDto
 {
     public uint Id { get; init; }
     public string Name { get; set; } = string.Empty;
-    public List<DynamicFieldDto> Fields { get; set; } = [];
+    public List<ContractDynamicFieldDto> Fields { get; set; } = [];
 }
 
 

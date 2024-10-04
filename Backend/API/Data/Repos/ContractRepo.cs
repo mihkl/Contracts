@@ -7,42 +7,42 @@ namespace API.Data.Repos;
 public class ContractRepo(DataContext context) : IContractRepo
 {
     private readonly DataContext _context = context;
-    public async Task<Contract> SaveContractToDb(Contract contract)
+    public async Task<Contract> Save(Contract contract)
     {
         _context.Add(contract);
         await SaveChangesAsync();
         return contract;
     }
 
-    public async Task<List<Contract>> GetContractsFromDb()
+    public async Task<List<Contract>> GetAll()
     {
         return await _context.Contracts
         .Include(c => c.Fields)
         .ToListAsync();
     }
 
-    public async Task<Contract?> GetContractByIdFromDb(uint id)
+    public async Task<Contract?> GetById(uint id)
     {
         return await _context.Contracts
         .Include(c => c.Fields)
         .FirstOrDefaultAsync(c => c.Id == id);
     }
 
-    public async Task DeleteContractFromDb(Contract contract)
+    public async Task Delete(Contract contract)
     {
         _context.Remove(contract);
         await SaveChangesAsync();
     }
 
-    public async Task ReplaceDynamicFields(List<DynamicFieldReplacement> replacements, Contract contract)
+    public async Task ReplaceDynamicFields(List<ContractDynamicFieldReplacement> replacements, Contract contract)
     {
-        contract.FileData = FileManipulator.ReplacePlaceholdersInDocument(contract, replacements);
+        contract.FileData = FileManipulator.ReplaceContractPlaceholders(contract, replacements);
         UpdateDynamicFields(contract, replacements);
 
         await SaveChangesAsync();
     }
 
-    private static void UpdateDynamicFields(Contract contract, List<DynamicFieldReplacement> replacements)
+    private static void UpdateDynamicFields(Contract contract, List<ContractDynamicFieldReplacement> replacements)
     {
         replacements.Where(r => contract.Fields.Any(f => f.Name == r.Name))
                             .ToList()

@@ -11,7 +11,8 @@ builder.Services.AddMemoryCache();
 
 builder.Services
     .AddDbContext<DataContext>(options => options.UseSqlite("Data Source=localdatabase.db"))
-    .AddScoped<ContractRepo>();
+    .AddScoped<ContractRepo>()
+    .AddScoped<TemplateRepo>();
 
 builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
     {

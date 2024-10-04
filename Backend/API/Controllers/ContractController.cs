@@ -1,63 +1,21 @@
-using API.Data;
 using API.Data.Repos;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using static API.FileManipulation.FileManipulator;
 using static API.Mappers.Mappers;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("api")]
-public class ContractController(IMemoryCache cache, ContractRepo repo) : ControllerBase
+public class ContractController(ContractRepo crepo, TemplateRepo trepo) : ControllerBase
 {
-    private readonly ContractRepo _repo = repo;
-    private readonly IMemoryCache _cache = cache;
-
-    [HttpPost("upload")]
-    public ActionResult<UploadFileResponse> UploadDocxFile(IFormFile file)
-    {
-        if (file is null || file.Length == 0)
-        {
-            return BadRequest("No file uploaded.");
-        }
-        var contract = ParseDocxFile(file);
-
-        var guid = Guid.NewGuid();
-        _cache.Set(guid, contract, TimeSpan.FromMinutes(5));
-
-        var response = new UploadFileResponse
-        {
-            Contract = ToContractDto(contract),
-            Guid = guid
-        };
-
-        return Ok(response);
-    }
-
-    [HttpPost("save")]
-    public async Task<IActionResult> SaveContract([FromBody] Guid guid)
-    {
-        if (guid == Guid.Empty)
-        {
-            return BadRequest("Invalid guid.");
-        }
-        if (!_cache.TryGetValue(guid, out Contract? contract))
-        {
-            return NotFound("File data not found or expired.");
-        }
-        var result = await _repo.SaveContractToDb(contract!);
-
-        _cache.Remove(guid);
-
-        return CreatedAtAction(nameof(GetContracts), new { id = result.Id }, ToContractDto(result));
-    }
+    private readonly ContractRepo _crepo = crepo;
+    private readonly TemplateRepo _trepo = trepo;
 
     [HttpGet("contracts")]
     public async Task<IActionResult> GetContracts()
     {
-        var contracts = await _repo.GetContractsFromDb();
+        var contracts = await _crepo.GetAll();
         var result = contracts.Select(ToContractDto).ToList();
         return Ok(result);
     }
@@ -65,7 +23,7 @@ public class ContractController(IMemoryCache cache, ContractRepo repo) : Control
     [HttpGet("contracts/{id}")]
     public async Task<IActionResult> GetContract(uint id)
     {
-        var contract = await _repo.GetContractByIdFromDb(id);
+        var contract = await _crepo.GetById(id);
         if (contract is null)
         {
             return NotFound("Contract not found.");
@@ -76,7 +34,7 @@ public class ContractController(IMemoryCache cache, ContractRepo repo) : Control
     [HttpGet("contracts/{id}/file")]
     public async Task<IActionResult> GetContractFile(uint id)
     {
-        var contract = await _repo.GetContractByIdFromDb(id);
+        var contract = await _crepo.GetById(id);
         if (contract is null)
         {
             return NotFound("Contract not found.");
@@ -92,12 +50,12 @@ public class ContractController(IMemoryCache cache, ContractRepo repo) : Control
         {
             return BadRequest("No replacement fields provided.");
         }
-        var contract = await _repo.GetContractByIdFromDb(request.ContractId);
+        var contract = await _crepo.GetById(request.ContractId);
         if (contract is null)
         {
             return NotFound("Contract not found.");
         }
-        await _repo.ReplaceDynamicFields(request.Replacements, contract);
+        await _crepo.ReplaceDynamicFields(request.Replacements, contract);
 
         return Ok("Dynamic fields updated successfully.");
     }
@@ -105,13 +63,32 @@ public class ContractController(IMemoryCache cache, ContractRepo repo) : Control
     [HttpDelete("contracts/{id}")]
     public async Task<IActionResult> DeleteContract(uint id)
     {
-        var contract = await _repo.GetContractByIdFromDb(id);
+        var contract = await _crepo.GetById(id);
         if (contract is null)
         {
             return NotFound("Contract not found.");
         }
-        await _repo.DeleteContractFromDb(contract);
+        await _crepo.Delete(contract);
         return Ok("Contract deleted successfully.");
+    }
+
+    [HttpPost("contracts/new-from-template")]
+    public async Task<IActionResult> CreateFromTemplate([FromBody] NewFromTemplateRequest request)
+    {
+        var template = await _trepo.GetById(request.TemplateId);
+        if (template is null)
+        {
+            return NotFound("Template not found.");
+        }
+        var contract = new Contract
+        {
+            Name = request.Name,
+            FileData = template.FileData,
+            Fields = template.Fields.Select(ToContractDynamicField).ToList()
+        };
+        
+        var result = await _crepo.Save(contract);
+        return CreatedAtAction(nameof(GetContracts), new { id = result.Id }, ToContractDto(result));
     }
 }
 
