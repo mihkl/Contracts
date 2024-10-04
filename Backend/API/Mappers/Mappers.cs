@@ -32,7 +32,6 @@ public static class Mappers
 
     public static ContractDynamicField ToContractDynamicField(TemplateDynamicField field) => new()
     {
-        Id = field.Id,
         Placeholder = field.Placeholder,
         Name = field.Name,
         Value = string.Empty,
