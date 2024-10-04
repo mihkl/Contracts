@@ -7,7 +7,7 @@ namespace API.FileManipulation;
 
 public static class FileManipulator
 {
-    public static Contract ParseDocxFile(IFormFile file)
+    public static Template ParseDocxFile(IFormFile file)
     {
         if (file is null || file.Length == 0)
         {
@@ -36,8 +36,8 @@ public static class FileManipulator
             docText = doc.MainDocumentPart.Document.Body.InnerText;
         }
 
-        var fields = FindDynamicFields(docText);
-        var response = new Contract
+        var fields = FindTemplateDynamicFields(docText);
+        var response = new Template
         {
             Name = file.FileName,
             FileData = fileData,
@@ -46,19 +46,18 @@ public static class FileManipulator
         return response;
     }
 
-    private static List<DynamicField> FindDynamicFields(string text)
+    private static List<TemplateDynamicField> FindTemplateDynamicFields(string text)
     {
-        var dynamicFields = new List<DynamicField>();
+        var dynamicFields = new List<TemplateDynamicField>();
         foreach (var field in PlaceHolderMappings.Fields)
         {
             var match = Regex.Match(text, field.Value);
             if (match.Success)
             {
-                dynamicFields.Add(new DynamicField
+                dynamicFields.Add(new TemplateDynamicField
                 {
                     Placeholder = field.Value,
                     Name = field.Key.Name,
-                    Value = string.Empty,
                     Type = field.Key.Type
                 });
             }
@@ -66,7 +65,7 @@ public static class FileManipulator
         return dynamicFields;
     }
 
-    public static byte[] ReplacePlaceholdersInDocument(Contract contract, List<DynamicFieldReplacement> replacements)
+    public static byte[] ReplaceContractPlaceholders(Contract contract, List<ContractDynamicFieldReplacement> replacements)
     {
     using MemoryStream memoryStream = new(contract.FileData);
     using (WordprocessingDocument wordDocument = WordprocessingDocument.Open(memoryStream, true))
