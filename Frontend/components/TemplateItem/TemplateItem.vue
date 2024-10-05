@@ -20,9 +20,10 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, defineEmits } from "vue";
 import { useApi } from "~/composables/useApi";
 
+const emits = defineEmits(["openModal"]);
 const api = useApi();
 const props = defineProps({
   template: {
@@ -32,6 +33,11 @@ const props = defineProps({
 });
 
 const generateLink = async (id) => {
+  openModal();
   /*const link = await api.customFetch(`/contracts/${id}/url`, {});*/
+};
+
+const openModal = () => {
+  emits("openModal", true);
 };
 </script>
