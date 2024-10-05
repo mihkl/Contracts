@@ -10,10 +10,11 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api")]
-public class ContractController(IMemoryCache cache, ContractRepo repo) : ControllerBase
+public class ContractController(IMemoryCache cache, ContractRepo repo, IHMACService hmacService) : ControllerBase
 {
     private readonly ContractRepo _repo = repo;
     private readonly IMemoryCache _cache = cache;
+    private readonly IHMACService _hmacService = hmacService;
 
     [HttpPost("upload")]
     public ActionResult<UploadFileResponse> UploadDocxFile(IFormFile file)
@@ -112,6 +113,18 @@ public class ContractController(IMemoryCache cache, ContractRepo repo) : Control
         }
         await _repo.DeleteContractFromDb(contract);
         return Ok("Contract deleted successfully.");
+    }
+
+    [HttpGet("contracts/{id}/url")]
+    public async Task<IActionResult> GetContractLink(uint id)
+    {
+        /* var contract = await _repo.GetContractByIdFromDb(id);
+         if (contract is null)
+         {
+             return NotFound("Contract not found.");
+         }*/
+
+        return Ok(_hmacService.GenerateSignature(DateTime.Now, DateTime.Now, "2"));
     }
 }
 
