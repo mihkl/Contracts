@@ -21,8 +21,9 @@
               <h3
                 class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
               >
-                Modal
+                Generate link
               </h3>
+
               <UButton
                 color="gray"
                 variant="ghost"
@@ -32,17 +33,30 @@
               />
             </div>
           </template>
-
-          <Placeholder class="h-32" />
+          <UForm
+            :validate="validate"
+            :state="state"
+            class="space-y-4"
+            @submit="onSubmit"
+          >
+            <UFormGroup label="Valid from (optional)" name="validFrom">
+              <UInput type="date" v-model="state.validFrom" />
+            </UFormGroup>
+            <UFormGroup label="Valid until (optional)" name="validUntil">
+              <UInput type="date" v-model="state.validUntil" />
+            </UFormGroup>
+            <UButton type="submit"> Submit </UButton>
+          </UForm>
         </UCard>
       </UModal>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import TemplateItem from "./TemplateItem/TemplateItem.vue";
+import type { FormError } from "#ui/types";
 
 const templates = ref([
   { name: "Template 1", id: 1 },
@@ -51,6 +65,39 @@ const templates = ref([
   { name: "Template 4", id: 4 },
 ]);
 const isOpen = ref(false);
+
+const state = reactive({
+  validFrom: undefined,
+  validUntil: undefined,
+});
+
+const validate = (state: {
+  validFrom: string;
+  validUntil: string;
+}): FormError[] => {
+  const errors: FormError[] = [];
+  if (
+    convertStringToDate(state.validUntil) <
+    convertStringToDate(new Date().toString())
+  )
+    errors.push({
+      path: "validUntil",
+      message: "Valid until cannot be in the past.",
+    });
+
+  console.log(errors);
+  return errors;
+};
+
+const convertStringToDate = (dateString: string): Date => {
+  const date = new Date(dateString);
+  date.setHours(0, 0, 0);
+  return date;
+};
+
+const onSubmit = () => {
+  console.log("SUbmit");
+};
 </script>
 
 <style scoped>
