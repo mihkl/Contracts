@@ -7,16 +7,7 @@ const { pdf } = usePDF('https://raw.githubusercontent.com/mozilla/pdf.js/ba2edea
 </script>
 
 <template>
-  <div>
-    <div>
-      <button @click="scale = scale > 0.25 ? scale - 0.25 : scale">
-        -
-      </button>
-      <span>{{ scale * 100 }}%</span>
-      <button @click="scale = scale < 2 ? scale + 0.25 : scale">
-        +
-      </button>
-    </div>
-    <VuePDF :pdf="pdf" :scale="scale" />
+  <div class="flex justify-end p-20">
+    <VuePDF :pdf="pdf" :scale="0.5"  />
   </div>
 </template>
