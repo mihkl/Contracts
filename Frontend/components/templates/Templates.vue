@@ -3,28 +3,35 @@
     <div class="space-y-4">
       <h1 class="text-3xl font-semibold my-6">My Templates</h1>
       <TemplateItem
-        v-for="(template, index) in templates"
+        v-for="(template, index) in templateStore.templates"
         :key="index"
         :template="template"
-        @open-modal="openModal"
+        @openModal="openModal"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted } from "vue";
 import TemplateItem from "./TemplateItem.vue";
 import GenerateLinkModal from "./GenerateLinkModal.vue";
+import { useTemplateUploadStore } from "@/stores/TemplateUploadStore";
 
-const templates = ref([
-  { name: "Template 1", id: 1 },
-  { name: "Template 2", id: 2 },
-  { name: "Template 3", id: 3 },
-  { name: "Template 4", id: 4 },
-]);
-
+const templateStore = useTemplateUploadStore();
 const modal = useModal();
+
+async function fetchTemplates() {
+  try {
+    await templateStore.fetchTemplates(); 
+  } catch (error) {
+    console.error("Error fetching templates:", error);
+  }
+}
+
+onMounted(() => {
+  fetchTemplates();
+});
 
 function openModal() {
   modal.open(GenerateLinkModal);
