@@ -103,6 +103,7 @@ const onSubmit = async () => {
 
   if (response?.url) {
     modal.close();
+    navigator.clipboard.writeText(window.location.origin + "/" + response.url);
     navigateTo("/contracts");
   }
 };

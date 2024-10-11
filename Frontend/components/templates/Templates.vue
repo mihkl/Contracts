@@ -6,7 +6,7 @@
         v-for="(template, index) in templateStore.templates"
         :key="index"
         :template="template"
-        @openModal="openModal(index)"
+        @openModal="openModal(template.id)"
       />
     </div>
   </div>
