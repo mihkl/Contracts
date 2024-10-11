@@ -74,26 +74,15 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok("Contract deleted successfully.");
     }
 
-    [HttpGet("contracts/{id}/url")]
-    public async Task<IActionResult> GetContractLink(uint id)
+    [HttpPost("contracts/{id}/url")]
+    public async Task<IActionResult> GetContractLink(uint id, [FromBody] GenerateContractLinkRequest request)
     {
-        /* var contract = await _repo.GetContractByIdFromDb(id);
-         if (contract is null)
-         {
-             return NotFound("Contract not found.");
-         }*/
-
-        return Ok(_hmacService.GenerateSignature(DateTime.Now, DateTime.Now, "2"));
-
-    }
-    [HttpPost("contracts/new-from-template")]
-    public async Task<IActionResult> CreateFromTemplate([FromBody] NewFromTemplateRequest request)
-    {
-        var template = await _trepo.GetById(request.TemplateId);
+        var template = await _trepo.GetById(id);
         if (template is null)
         {
             return NotFound("Template not found.");
         }
+
         var contract = new Contract
         {
             Name = request.Name,
@@ -102,7 +91,9 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         };
 
         var result = await _crepo.Save(contract);
-        return CreatedAtAction(nameof(GetContracts), new { id = result.Id }, ToContractDto(result));
+
+        return Ok(new { url = $"contracts/{id}?signature={_hmacService.GenerateSignature(DateTime.Now, DateTime.Now, "2")}" });
+
     }
 }
 
