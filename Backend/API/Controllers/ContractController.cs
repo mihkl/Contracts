@@ -1,3 +1,4 @@
+using System.Globalization;
 using API.Data.Repos;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok(result);
     }
 
-    [HttpGet("contracts/{id}")]
+    [HttpGet("contracts/{id:int}")]
     public async Task<IActionResult> GetContract(uint id)
     {
         var contract = await _crepo.GetById(id);
@@ -33,7 +34,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok(ToContractDto(contract));
     }
 
-    [HttpGet("contracts/{id}/file")]
+    [HttpGet("contracts/{id:int}/file")]
     public async Task<IActionResult> GetContractFile(uint id)
     {
         var contract = await _crepo.GetById(id);
@@ -62,7 +63,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok("Dynamic fields updated successfully.");
     }
 
-    [HttpDelete("contracts/{id}")]
+    [HttpDelete("contracts/{id:int}")]
     public async Task<IActionResult> DeleteContract(uint id)
     {
         var contract = await _crepo.GetById(id);
@@ -74,7 +75,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok("Contract deleted successfully.");
     }
 
-    [HttpPost("contracts/{id}/url")]
+    [HttpPost("contracts/{id:int}/url")]
     public async Task<IActionResult> GetContractLink(uint id, [FromBody] GenerateContractLinkRequest request)
     {
         var template = await _trepo.GetById(id);
@@ -92,8 +93,10 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
         var result = await _crepo.Save(contract);
 
-        return Ok(new { url = $"contracts/{id}?signature={_hmacService.GenerateSignature(DateTime.Now, DateTime.Now, "2")}" });
+        string formattedValidFrom = request.ValidFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        string formattedValidUntil = request.ValidUntil.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
+        return Ok(new { url = $"contracts/{id}?signature={_hmacService.GenerateSignature(DateTime.Now, DateTime.Now, "2")}&validFrom={Uri.EscapeDataString(formattedValidFrom)}&validUntil={Uri.EscapeDataString(formattedValidUntil)}" });
     }
 }
 
