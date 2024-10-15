@@ -1,20 +1,13 @@
-import type { Template } from "@/Types/Template";
+import type { Contract } from "~/Types/Contract";
 
 export const useContractsStore = defineStore("contract", () => {
   const api = useApi();
 
-  const contracts = ref<Template[]>([]);
-  const serverResponse = ref<UploadFileResponse | null>(null);
-
-  const selectedFile = ref<File | null>(null);
-
-  const setSelectedFile = (file: File | null) => {
-    selectedFile.value = file;
-  };
+  const contracts = ref<Contract[]>([]);
 
   const fetchContracts = async () => {
     try {
-      const response = await api.customFetch<Template[]>("/contracts", {
+      const response = await api.customFetch<Contract[]>("/contracts", {
         method: "GET",
       });
       contracts.value = response;
@@ -28,8 +21,5 @@ export const useContractsStore = defineStore("contract", () => {
   return {
     contracts,
     fetchContracts,
-    selectedFile,
-    serverResponse,
-    setSelectedFile,
   };
 });
