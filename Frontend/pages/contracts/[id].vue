@@ -1,5 +1,10 @@
 <template>
-  <UForm class="space-y-4">
+  <UForm
+    class="space-y-4"
+    v-if="Object.keys(formState)?.length > 0"
+    :state="formState"
+    @submit="onSubmit"
+  >
     <UFormGroup
       v-for="(field, index) in contractFields?.fields"
       :label="field.name"
@@ -7,8 +12,9 @@
       required
       :key="index"
     >
-      <UInput type="text" />
+      <UInput type="text" v-model="formState[field.name]" />
     </UFormGroup>
+    <UButton type="submit">Submit</UButton>
   </UForm>
 </template>
 
@@ -22,19 +28,29 @@ const contractFields = ref<{
   fields: { name: string; type: string }[];
 }>();
 
+const formState = reactive<Record<string, any>>({});
+
 const id = route.params?.id;
 const signature = route.query?.signature;
 const validFrom = route.query?.validFrom;
 const validUntil = route.query?.validUntil;
 
-const fields = await api.customFetch<{
-  fields: { name: string; type: string }[];
-}>(
-  `/contracts/${id}?signature=${signature}&validFrom=${validFrom}&validUntil=${validUntil}`,
-  {
-    method: "GET",
-  }
-);
+onMounted(async () => {
+  const fields = await api.customFetch<{
+    fields: { name: string; type: string }[];
+  }>(
+    `/contracts/${id}?signature=${signature}&validFrom=${validFrom}&validUntil=${validUntil}`,
+    { method: "GET" }
+  );
 
-contractFields.value = fields;
+  contractFields.value = fields;
+
+  fields.fields.forEach((field) => {
+    formState[field.name] = null;
+  });
+});
+
+async function onSubmit() {
+  console.log("state", formState);
+}
 </script>
