@@ -1,5 +1,6 @@
 using System.Globalization;
 using API.Data.Repos;
+using API.FileConversion;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using static API.Mappers.Mappers;
@@ -23,7 +24,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok(result);
     }
 
-    [HttpGet("contracts/{id:int}")]
+    [HttpGet("contracts/{id}")]
     public async Task<IActionResult> GetContract(uint id)
     {
         var contract = await _crepo.GetById(id);
@@ -34,7 +35,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok(ToContractDto(contract));
     }
 
-    [HttpGet("contracts/{id:int}/file")]
+    [HttpGet("contracts/{id}/file")]
     public async Task<IActionResult> GetContractFile(uint id)
     {
         var contract = await _crepo.GetById(id);
@@ -43,17 +44,17 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
             return NotFound("Contract not found.");
         }
         var contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-        return File(contract.FileData, contentType, $"{contract.Name}");
+        return File(contract.FileData, contentType, $"{contract.Name}.docx");
     }
 
-    [HttpPost("contracts/replace-fields")]
-    public async Task<IActionResult> ReplaceDynamicFields([FromBody] UpdateFileRequest request)
+    [HttpPost("contracts/{id}/replace-fields")]
+    public async Task<IActionResult> ReplaceDynamicFields([FromRoute] uint id, [FromBody] UpdateFileRequest request)
     {
         if (request.Replacements is null || request.Replacements.Count == 0)
         {
             return BadRequest("No replacement fields provided.");
         }
-        var contract = await _crepo.GetById(request.ContractId);
+        var contract = await _crepo.GetById(id);
         if (contract is null)
         {
             return NotFound("Contract not found.");
@@ -63,7 +64,59 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok("Dynamic fields updated successfully.");
     }
 
-    [HttpDelete("contracts/{id:int}")]
+    [HttpPost("contracts/{id}/generate-pdf")]
+    public async Task<IActionResult> GeneratePdf([FromRoute] uint id, [FromBody] UpdateFileRequest request)
+    {
+        if (request.Replacements is null || request.Replacements.Count == 0)
+        {
+            return BadRequest("No replacement fields provided.");
+        }
+        var contract = await _crepo.GetById(id);
+        if (contract is null)
+        {
+            return NotFound("Contract not found.");
+        }
+        await _crepo.ReplaceDynamicFields(request.Replacements, contract);
+
+        var populatedContract = await _crepo.GetById(id);
+
+        string baseDirectory = AppContext.BaseDirectory;
+
+        string temporaryDocxFilesFolder = Path.Combine(baseDirectory, "TemporaryDocxFiles");
+        string pdfFilesFolder = Path.Combine(baseDirectory, "PdfFiles");
+
+        string temporaryDocxFilePath = Path.Combine(temporaryDocxFilesFolder, populatedContract!.Name + ".docx");
+
+        await System.IO.File.WriteAllBytesAsync(temporaryDocxFilePath, populatedContract.FileData);
+
+        FileConverter.ConvertDocxToPdf(temporaryDocxFilePath, Path.Combine(pdfFilesFolder, populatedContract.Name + ".pdf"));
+
+        return Ok("Dynamic fields updated successfully.");
+    }
+
+    [HttpGet("contracts/{id}/pdf")]
+    public async Task<IActionResult> GetPopulatedContractPdf(uint id)
+    {
+        var contract = await _crepo.GetById(id);
+        if (contract is null)
+        {
+            return NotFound("Contract not found.");
+        }
+        var fileName = contract.Name;
+
+        string filePath = Path.Combine(AppContext.BaseDirectory, "PdfFiles", fileName + ".pdf");
+
+        if (!System.IO.File.Exists(filePath))
+        {
+            return NotFound();
+        }
+
+        byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+
+        return File(fileBytes, "application/pdf", $"{contract.Name}.pdf");
+    }
+
+    [HttpDelete("contracts/{id}")]
     public async Task<IActionResult> DeleteContract(uint id)
     {
         var contract = await _crepo.GetById(id);
@@ -75,7 +128,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok("Contract deleted successfully.");
     }
 
-    [HttpPost("contracts/{id:int}/url")]
+    [HttpPost("contracts/{id}/url")]
     public async Task<IActionResult> GetContractLink(uint id, [FromBody] GenerateContractLinkRequest request)
     {
         var template = await _trepo.GetById(id);

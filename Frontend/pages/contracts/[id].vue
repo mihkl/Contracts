@@ -51,6 +51,13 @@ onMounted(async () => {
 });
 
 async function onSubmit() {
-  console.log("state", formState);
+  const response = await api.customFetch(`/contracts/${id}/generate-pdf`, {
+    method: "POST",
+    body: JSON.stringify({
+      replacements: [formState],
+    }),
+  });
+
+  console.log("resp", response);
 }
 </script>
