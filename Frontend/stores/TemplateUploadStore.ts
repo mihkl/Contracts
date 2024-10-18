@@ -6,8 +6,6 @@ export const useTemplateUploadStore = defineStore('file', () => {
   const serverResponse = ref<UploadFileResponse | null>(null)
   const selectedFile = ref<File | null>(null)
 
-
-
   const setSelectedFile = (file: File | null) => {
     selectedFile.value = file
   }
@@ -48,6 +46,27 @@ export const useTemplateUploadStore = defineStore('file', () => {
     }
   };
 
-  return { templates, fetchTemplates, selectedFile, serverResponse, setSelectedFile, uploadFile };
+const deleteTemplate = async (id: number) => {
+  try {
+    await api.customFetch(`/templates/${id}`, {
+      method: "DELETE",
+    });
+
+    const index = templates.value.findIndex(template => template.id === id);
+
+    if (index !== -1) {
+      templates.value.splice(index, 1);
+
+      templates.value = [...templates.value]; // This forces Vue to detect the change
+
+      console.log(`Template with ID ${id} deleted successfully`);
+    }
+  } catch (error) {
+    console.error(`Error deleting template with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+
+  return { templates, fetchTemplates, selectedFile, serverResponse, setSelectedFile, uploadFile, deleteTemplate };
 });
- 

@@ -17,7 +17,7 @@ import { onMounted } from "vue";
 import TemplateItem from "./TemplateItem.vue";
 import GenerateLinkModal from "./GenerateLinkModal.vue";
 import { useTemplateUploadStore } from "@/stores/TemplateUploadStore";
-
+  
 const templateStore = useTemplateUploadStore();
 const modal = useModal();
 
