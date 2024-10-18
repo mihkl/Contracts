@@ -11,8 +11,7 @@ RUN dotnet build --configuration Release --output /app/build
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y libreoffice libgdiplus libxml2
-
+RUN apt-get update && apt-get install -y libreoffice
 
 COPY --from=build-env /app/build ./
 

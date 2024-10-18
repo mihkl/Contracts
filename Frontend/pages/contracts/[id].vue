@@ -54,10 +54,13 @@ async function onSubmit() {
   const response = await api.customFetch(`/contracts/${id}/generate-pdf`, {
     method: "POST",
     body: JSON.stringify({
-      replacements: [formState],
+      replacements: [
+        ...Object.keys(formState).map((key) => ({
+          name: key,
+          value: formState[key],
+        })),
+      ],
     }),
   });
-
-  console.log("resp", response);
 }
 </script>
