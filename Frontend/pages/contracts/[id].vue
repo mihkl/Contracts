@@ -39,7 +39,9 @@ onMounted(async () => {
   const fields = await api.customFetch<{
     fields: { name: string; type: string }[];
   }>(
-    `/contracts/${id}?signature=${signature}&validFrom=${validFrom}&validUntil=${validUntil}`,
+    `/contracts/${id}?signature=${encodeURIComponent(
+      typeof signature === "string" && signature
+    )}&validFrom=${validFrom}&validUntil=${validUntil}`,
     { method: "GET" }
   );
 

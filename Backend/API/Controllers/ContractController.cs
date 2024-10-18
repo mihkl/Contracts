@@ -1,4 +1,3 @@
-using System.Globalization;
 using API.Data.Repos;
 using API.FileConversion;
 using API.Models;
@@ -25,8 +24,10 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
     }
 
     [HttpGet("contracts/{id}")]
-    public async Task<IActionResult> GetContract(uint id)
+    public async Task<IActionResult> GetContract(uint id, [FromQuery] string signature, [FromQuery] DateTime validFrom, [FromQuery] DateTime validUntil)
     {
+        if (!_hmacService.IsValidSignature(validFrom, validUntil, id.ToString(), signature)) return BadRequest("Invalid signature");
+
         var contract = await _crepo.GetById(id);
         if (contract is null)
         {
@@ -146,10 +147,10 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
         var result = await _crepo.Save(contract);
 
-        string formattedValidFrom = request.ValidFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        string formattedValidUntil = request.ValidUntil.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        string formattedValidFrom = _hmacService.FormatDate(request.ValidFrom);
+        string formattedValidUntil = _hmacService.FormatDate(request.ValidUntil);
 
-        return Ok(new { url = $"contracts/{id}?signature={_hmacService.GenerateSignature(DateTime.Now, DateTime.Now, "2")}&validFrom={Uri.EscapeDataString(formattedValidFrom)}&validUntil={Uri.EscapeDataString(formattedValidUntil)}" });
+        return Ok(new { url = $"contracts/{id}?signature={Uri.EscapeDataString(_hmacService.GenerateSignature(request.ValidFrom, request.ValidUntil, id.ToString()))}&validFrom={Uri.EscapeDataString(formattedValidFrom)}&validUntil={Uri.EscapeDataString(formattedValidUntil)}" });
     }
 }
 
