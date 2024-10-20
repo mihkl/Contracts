@@ -40,6 +40,21 @@ if (app.Environment.IsDevelopment())
     app.UseCors("MyPolicy");
 }
 
+CreateRequiredDirectories();
+
+void CreateRequiredDirectories()
+{
+    string baseDirectory = AppContext.BaseDirectory;
+
+    string temporaryDocxFilesPath = Path.Combine(baseDirectory, "TemporaryDocxFiles");
+    string pdfFilesPath = Path.Combine(baseDirectory, "PdfFiles");
+
+    Directory.CreateDirectory(temporaryDocxFilesPath);
+    Directory.CreateDirectory(pdfFilesPath);
+
+    Console.WriteLine($"Created directories: {temporaryDocxFilesPath}, {pdfFilesPath}");
+}
+
 app.UseHttpsRedirection();
 app.UseRouting();
 app.MapControllers();
