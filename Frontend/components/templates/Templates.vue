@@ -6,7 +6,7 @@
         v-for="(template, index) in templateStore.templates"
         :key="index"
         :template="template"
-        @openModal="openModal"
+        @openModal="openModal(template.id)"
       />
     </div>
   </div>
@@ -23,7 +23,7 @@ const modal = useModal();
 
 async function fetchTemplates() {
   try {
-    await templateStore.fetchTemplates(); 
+    await templateStore.fetchTemplates();
   } catch (error) {
     console.error("Error fetching templates:", error);
   }
@@ -33,11 +33,11 @@ onMounted(() => {
   fetchTemplates();
 });
 
-function openModal() {
-  modal.open(GenerateLinkModal);
+function openModal(templateId: number) {
+  modal.open(GenerateLinkModal, {
+    templateId: templateId,
+  });
 }
 </script>
 
-<style scoped>
-/* You can add any custom styles if needed */
-</style>
+<style scoped></style>
