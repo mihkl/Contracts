@@ -13,7 +13,7 @@
 
       <button
         class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition"
-        @click="openDetailsModal"
+        @click="openDetails(template.id)"
       >
         Details
       </button>
@@ -26,33 +26,19 @@
       </button>
     </div>
   </div>
-
-  <DetailsModal
-    v-if="isDetailsModalOpen"
-    :template="template"
-    :isDetailsModalOpen="isDetailsModalOpen"
-    @close="closeDetailsModal"
-  />
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { useTemplateUploadStore } from "@/stores/TemplateUploadStore";
-import DetailsModal from './DetailsModal.vue';
 
 const emits = defineEmits(["openModal"]);
 const api = useApi();
 const store = useTemplateUploadStore();
-const isDetailsModalOpen = ref(false);
 
 const props = defineProps({
   template: {
     name: String,
     id: Number,
-    fields: {
-      type: Array,
-      default: () => []
-    }
   },
 });
 
@@ -77,26 +63,32 @@ const generateLink = async (id) => {
   }
 };
 
+const openDetails = async (id) => {
+  try {
+    // Open the modal before the request
+    openDetailsModal();
+
+
+  } catch (error) {
+    console.error("Error fetching the link:", error);
+    // Handle errors appropriately
+  }
+};
 
 const openModal = () => {
   emits("openModal", true);
 };
 
 const openDetailsModal = () => {
-  isDetailsModalOpen.value = true; // Open the modal
-};
-
-const closeDetailsModal = () => {
-  isDetailsModalOpen.value = false; // Close the modal
+  emits("openDetailsModal", true);
 };
 
 const deleteTemplate = async (id) => {
   try {
-    await store.deleteTemplate(id); // Use the store function directly
+    await store.deleteTemplate(id); 
     console.log(`Template with ID ${id} deleted successfully`);
   } catch (error) {
     console.error("Error deleting template:", error);
   }
-
 };
 </script>

@@ -7,6 +7,7 @@
         :key="index"
         :template="template"
         @openModal="openModal"
+        @openDetailsModal="openDetailsModal"
       />
     </div>
   </div>
@@ -17,6 +18,7 @@ import { onMounted } from "vue";
 import TemplateItem from "./TemplateItem.vue";
 import GenerateLinkModal from "./GenerateLinkModal.vue";
 import { useTemplateUploadStore } from "@/stores/TemplateUploadStore";
+import DetailsModal from "./DetailsModal.vue";
   
 const templateStore = useTemplateUploadStore();
 const modal = useModal();
@@ -35,6 +37,10 @@ onMounted(() => {
 
 function openModal() {
   modal.open(GenerateLinkModal);
+}
+
+function openDetailsModal() {
+  modal.open(DetailsModal);
 }
 </script>
 

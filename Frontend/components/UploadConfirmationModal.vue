@@ -5,7 +5,7 @@
         <p class="h-8">{{ template.name }}</p>
     </template>
 
-    <TemplateFieldList :fields="template.fields" class="h-auto"/>
+        <TemplateFieldList :fields="template.fields" class="h-auto"/>
 
     <template #footer>
         

@@ -1,53 +1,68 @@
 <template>
-  <!-- Small Pop-up Modal for Details -->
-  <div v-if="isDetailsModalOpen" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-    <div class="relative bg-white p-4 rounded-lg shadow-lg w-96">
-      <!-- Close icon (X) at the top-right corner -->
-      <button
-        class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition"
-        @click="closeDetailsModal"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-2 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+  <UModal prevent-close>
+    <UCard
+      :ui="{
+        ring: '',
+        divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+      }"
+    >
+      <template #header>
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+            Details
+          </h3>
+          <UButton
+            color="gray"
+            variant="ghost"
+            icon="i-heroicons-x-mark-20-solid"
+            class="-my-1"
+            @click="modal.close()"
+          />
+        </div>
+      </template>
 
-      <h2 class="text-xl font-semibold mb-4">Template Details</h2>
-      <p>Template: {{ template.name }}</p>
-      <p>Id: {{ template.id }}</p>
 
-      <!-- Structured display for fields -->
-      <div v-if="template.fields && template.fields.length > 0">
-        <h3>Fields:</h3>
-        <ul class="list-disc ml-5">
-          <li v-for="(field, index) in template.fields" :key="index">
-            {{ field.name }}: {{ field.type }}
-          </li>
-        </ul>
+      <div class="space-y-4 p-4">
+        <p><strong>Template Name:</strong> {{ template.name }}</p>
+        <p><strong>Template ID:</strong> {{ template.id }}</p>
+
+        <div v-if="template.fields && template.fields.length > 0">
+          <h3 class="font-semibold">Fields:</h3>
+          <ul class="list-disc ml-5">
+            <li v-for="(field, index) in template.fields" :key="index">
+              {{ field.name }}: {{ field.type }}
+            </li>
+          </ul>
+        </div>
+        <div v-else>
+          <p>No fields available.</p>
+        </div>
+
+
+        <UButton type="button" @click="downloadTemplate">Download file</UButton>
       </div>
-      <div v-else>
-        <p>No fields available.</p>
-      </div>
-    </div>
-  </div>
+    </UCard>
+  </UModal>
 </template>
 
-<script setup>
-const props = defineProps({
-  template: {
-    name: String,
-    id: Number,
-    fields: {
-      type: Array,
-      default: () => []
-    }
-  },
-  isDetailsModalOpen: Boolean,
-});
+<script setup lang="ts">
+import { useTemplateUploadStore } from '@/stores/TemplateUploadStore';
+import { ref } from 'vue';
 
-const emits = defineEmits(["close"]);
+// Using store to retrieve template data (like your working example)
+const { serverResponse } = useTemplateUploadStore();
+const template = ref(serverResponse?.template || { name: 'hi', id: 0, fields: [] });
+const modal = useModal()
 
-const closeDetailsModal = () => {
-  emits("close");
+
+
+// Download button logic
+const downloadTemplate = () => {
+  console.log(`Downloading template: ${template.value.name}`);
+  // Implement your actual download logic here
 };
 </script>
+
+<style scoped>
+/* Add any additional styling here */
+</style>
