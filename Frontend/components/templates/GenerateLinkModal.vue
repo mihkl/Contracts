@@ -29,6 +29,9 @@
         class="space-y-4"
         @submit="onSubmit"
       >
+        <UFormGroup label="Name" name="contractName" required>
+          <UInput type="text" v-model="state.contractName" />
+        </UFormGroup>
         <UFormGroup label="Valid from (optional)" name="validFrom">
           <UInput type="date" v-model="state.validFrom" />
         </UFormGroup>
@@ -44,16 +47,22 @@
 <script setup lang="ts">
 import type { FormError } from "#ui/types";
 
+const props = defineProps({
+  templateId: Number,
+});
+
 const modal = useModal();
 
 const state = reactive({
   validFrom: undefined,
   validUntil: undefined,
+  contractName: "",
 });
 
 const validate = (state: {
   validFrom: string;
   validUntil: string;
+  contractName: string;
 }): FormError[] => {
   const errors: FormError[] = [];
   if (
@@ -65,6 +74,9 @@ const validate = (state: {
       message: "Valid until cannot be in the past.",
     });
 
+  if (state.contractName.trim() === "")
+    errors.push({ path: "contractName", message: "Name is required." });
+
   return errors;
 };
 
@@ -74,7 +86,25 @@ const convertStringToDate = (dateString: string): Date => {
   return date;
 };
 
-const onSubmit = () => {
-  console.log("SUbmit");
+const onSubmit = async () => {
+  const api = useApi();
+
+  const response: { url?: string } = await api.customFetch(
+    `/contracts/${props.templateId}/url`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        Name: state.contractName,
+        validFrom: state.validFrom,
+        validUntil: state.validUntil,
+      }),
+    }
+  );
+
+  if (response?.url) {
+    modal.close();
+    navigator.clipboard.writeText(window.location.origin + "/" + response.url);
+    navigateTo("/contracts");
+  }
 };
 </script>

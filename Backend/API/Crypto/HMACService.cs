@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -7,6 +8,7 @@ namespace API.Controllers
     {
         string GenerateSignature(DateTime startDate, DateTime endDate, string templateId);
         bool IsValidSignature(DateTime startDate, DateTime endDate, string templateId, string signature);
+        string FormatDate(DateTime date);
     }
 
     public class HMACService : IHMACService
@@ -22,12 +24,25 @@ namespace API.Controllers
         {
             var message = generateMessage(startDate, endDate, templateId);
             var expectedSignature = GenerateHmac(message);
+
+            Console.WriteLine("EXpected is " + expectedSignature);
+            Console.WriteLine("Real is " + signature);
+
             return expectedSignature == signature;
+        }
+
+        public string FormatDate(DateTime date)
+        {
+            return date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         }
 
         private string generateMessage(DateTime startDate, DateTime endDate, string templateId)
         {
-            return $"{startDate}|{endDate}|{templateId}";
+            Console.WriteLine("validfrom is " + FormatDate(startDate));
+            Console.WriteLine("validuntil is " + FormatDate(endDate));
+            Console.WriteLine("id is " + templateId);
+
+            return $"{FormatDate(startDate)}|{FormatDate(endDate)}|{templateId}";
         }
 
         private string GenerateHmac(string message)
@@ -41,6 +56,7 @@ namespace API.Controllers
                 return Convert.ToBase64String(hashBytes);
             }
         }
+
     }
 
 }
