@@ -17,22 +17,24 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo) : Control
     [HttpPost("upload")]
     public ActionResult<UploadFileResponse> UploadDocxFile(IFormFile file)
     {
-        if (file is null || file.Length == 0)
+        var template = ParseDocxFile(file, out var exception);
+
+        if (template is not null)
         {
-            return BadRequest("No file uploaded.");
+            var guid = Guid.NewGuid();
+            _cache.Set(guid, template, TimeSpan.FromMinutes(5));
+
+            var response = new UploadFileResponse
+            {
+                Template = ToTemplateDto(template),
+                Guid = guid,
+            };
+            return Ok(response);
         }
-        var template = ParseDocxFile(file);
-
-        var guid = Guid.NewGuid();
-        _cache.Set(guid, template, TimeSpan.FromMinutes(5));
-
-        var response = new UploadFileResponse
+        else
         {
-            Template = ToTemplateDto(template),
-            Guid = guid
-        };
-
-        return Ok(response);
+            return BadRequest(exception);
+        }
     }
 
     [HttpPost("save")]

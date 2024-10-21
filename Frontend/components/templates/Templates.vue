@@ -16,17 +16,13 @@
 import { onMounted } from "vue";
 import TemplateItem from "./TemplateItem.vue";
 import GenerateLinkModal from "./GenerateLinkModal.vue";
-import { useTemplateUploadStore } from "@/stores/TemplateUploadStore";
+import { useTemplateStore } from "~/stores/TemplateStore";
 
-const templateStore = useTemplateUploadStore();
+const templateStore = useTemplateStore();
 const modal = useModal();
 
 async function fetchTemplates() {
-  try {
     await templateStore.fetchTemplates();
-  } catch (error) {
-    console.error("Error fetching templates:", error);
-  }
 }
 
 onMounted(() => {

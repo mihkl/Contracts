@@ -89,7 +89,7 @@ const convertStringToDate = (dateString: string): Date => {
 const onSubmit = async () => {
   const api = useApi();
 
-  const response: { url?: string } = await api.customFetch(
+  const response: { url?: string } = await api.fetchWithErrorHandling(
     `/contracts/${props.templateId}/url`,
     {
       method: "POST",

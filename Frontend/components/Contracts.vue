@@ -13,11 +13,7 @@ import { useContractsStore } from "@/stores/ContractsStore";
 const contractsStore = useContractsStore();
 
 async function fetchContracts() {
-  try {
     await contractsStore.fetchContracts();
-  } catch (error) {
-    console.error("Error fetching contracts:", error);
-  }
 }
 
 onMounted(() => {

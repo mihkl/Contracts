@@ -6,16 +6,13 @@ export const useContractsStore = defineStore("contract", () => {
   const contracts = ref<Contract[]>([]);
 
   const fetchContracts = async () => {
-    try {
-      const response = await api.customFetch<Contract[]>("/contracts", {
+      const response = await api.fetchWithErrorHandling<Contract[]>("/contracts", {
         method: "GET",
       });
-      contracts.value = response;
-      return contracts.value;
-    } catch (error) {
-      console.error("Error fetching contracts:", error);
-      throw error;
-    }
+      if (response){
+        contracts.value = response;
+        return contracts.value;
+      }
   };
 
   return {

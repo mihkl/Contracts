@@ -7,15 +7,18 @@ namespace API.FileManipulation;
 
 public static class FileManipulator
 {
-    public static Template ParseDocxFile(IFormFile file)
+    public static Template? ParseDocxFile(IFormFile file, out string exception)
     {
+        exception = string.Empty;
         if (file is null || file.Length == 0)
         {
-            throw new ArgumentException("File is null or empty");
+            exception = "File is null or empty";
+            return null;
         }
         if (file.ContentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
         {
-            throw new ArgumentException("File is not a valid docx file");
+            exception = "File is not a valid docx file";
+            return null;
         }
 
         byte[] fileData;
@@ -31,7 +34,8 @@ public static class FileManipulator
             using WordprocessingDocument doc = WordprocessingDocument.Open(stream, false);
             if (doc.MainDocumentPart?.Document?.Body is null)
             {
-                throw new InvalidOperationException("The document is not in the expected format.");
+                exception = "The document is not in the expected format.";
+                return null;
             }
             docText = doc.MainDocumentPart.Document.Body.InnerText;
         }
@@ -72,11 +76,6 @@ public static class FileManipulator
     {
         var mainPart = wordDocument.MainDocumentPart;
 
-        if (mainPart?.Document?.Body is null)
-        {
-            throw new InvalidOperationException("The document is not in the expected format.");
-        }
-
         foreach (var field in replacements)
         {
             var placeholder = contract.Fields.FirstOrDefault(f => f.Name == field.Name)?.Placeholder;
@@ -84,10 +83,10 @@ public static class FileManipulator
             {
                 continue;
             }
-            ReplaceText(mainPart, placeholder, field.Value);
+            ReplaceText(mainPart!, placeholder, field.Value);
         }
 
-        mainPart.Document.Save();
+        mainPart!.Document.Save();
     }
     memoryStream.Position = 0; 
 
