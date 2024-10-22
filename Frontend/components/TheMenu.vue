@@ -8,6 +8,7 @@
           class="h-12 w-auto ml-2"   
         />
       </nuxt-link>
+      <ColorMode/>
     </div>
     <UHorizontalNavigation
       :links="links"
@@ -22,14 +23,17 @@ const route = useRoute();
 const links = [
   {
     label: "Home",
+    icon: 'i-heroicons-home',
     to: "/",
   },
   {
     label: "My Templates",
+    icon: 'i-heroicons-queue-list',
     to: "/templates",
   },
   {
     label: "Contracts",
+    icon: 'i-heroicons-document-text',
     to: "/contracts",
   },
 ];
