@@ -13,6 +13,7 @@
       :links="links"
       class="flex-1 content-center"
     />
+    <ColorMode/>
   </div>
 </template>
 
@@ -22,14 +23,17 @@ const route = useRoute();
 const links = [
   {
     label: "Home",
+    icon: 'i-heroicons-home',
     to: "/",
   },
   {
     label: "My Templates",
+    icon: 'i-heroicons-queue-list',
     to: "/templates",
   },
   {
     label: "Contracts",
+    icon: 'i-heroicons-document-text',
     to: "/contracts",
   },
 ];
