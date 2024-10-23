@@ -31,7 +31,7 @@
 <script setup>
 import { useTemplateUploadStore } from "@/stores/TemplateUploadStore";
 
-const emits = defineEmits(["openModal"]);
+const emits = defineEmits(["openModal", "openDetailsModal"]);
 const api = useApi();
 const store = useTemplateUploadStore();
 
@@ -66,7 +66,7 @@ const generateLink = async (id) => {
 const openDetails = async (id) => {
   try {
     // Open the modal before the request
-    openDetailsModal();
+    openDetailsModal(id);
 
 
   } catch (error) {
@@ -79,8 +79,8 @@ const openModal = () => {
   emits("openModal", true);
 };
 
-const openDetailsModal = () => {
-  emits("openDetailsModal", true);
+const openDetailsModal = (id) => {
+  emits("openDetailsModal", id);
 };
 
 const deleteTemplate = async (id) => {
