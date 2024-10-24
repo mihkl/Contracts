@@ -22,7 +22,7 @@
             <TemplateFieldList :fields="selectedTemplate?.fields" class="h-auto mt-5"/>
     
             <template #footer>
-            <UButton class="mr-3" @click="">Download</UButton>
+                <UButton class="mr-3" @click="downloadTemplate">Download</UButton>
             </template>
         </UCard>
         </UModal>
@@ -32,7 +32,6 @@
   import { useTemplateUploadStore } from '@/stores/TemplateStore';
   import { computed, defineProps } from 'vue';
   import TemplateFieldList from './TemplateFieldList.vue';
-import Templates from '~/pages/templates.vue';
   
   
   const templateStore = useTemplateUploadStore();
@@ -44,5 +43,12 @@ import Templates from '~/pages/templates.vue';
   const selectedTemplate = computed(() => 
     templateStore.templates.find(template => template.id === props.templateId)
   );
-  </script>
-  
+
+  const downloadTemplate = () => {
+  if (selectedTemplate.value) {
+    templateStore.downloadFile(selectedTemplate.value.id);
+  } else {
+    console.error('No template selected');
+  }
+};
+</script>
