@@ -60,36 +60,33 @@ export const useTemplateUploadStore = defineStore("file", () => {
     }
   };
 
-  const downloadFile = async (id: number) => {
+  const downloadFile = async (id: number, fileName: string) => {
     try {
       // Request the file from the API
       const response = await api.customFetch(`/templates/${id}/file`, {
         method: "GET",
-        responseType: "blob", // Expecting the response to be a Blob
+        responseType: "blob",
       });
   
-      // Type assertion to let TypeScript know that this is a Blob
       const blob = response as Blob;
   
-      // Create a download link from the Blob
-      const url = window.URL.createObjectURL(blob); // Use the Blob directly
+      const url = window.URL.createObjectURL(blob);
   
-      // Create a link element for downloading the file
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `template_${id}.docx`); // Set a filename for the downloaded file
+      link.setAttribute("download", fileName);
   
-      // Append the link to the document body, trigger the download, then clean up
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
   
-      console.log("DOCX file downloaded successfully.");
+      console.log(`File '${fileName}' downloaded successfully.`);
     } catch (error) {
-      console.error(`Error downloading DOCX file with ID ${id}:`, error);
+      console.error(`Error downloading file with ID ${id}:`, error);
       throw error;
     }
   };
+  
 
   return {
     templates,
