@@ -45,6 +45,22 @@ export const useTemplateUploadStore = defineStore("file", () => {
     }
   };
 
+  const deleteTemplate = async (id: number) => {
+    try {
+      await api.customFetch(`/templates/${id}`, {
+        method: "DELETE",
+      });
+  
+      await fetchTemplates(); 
+  
+      console.log(`Template with ID ${id} deleted successfully and templates updated`);
+    } catch (error) {
+      console.error(`Error deleting template with ID ${id}:`, error);
+      throw error;
+    }
+  };
+
+
   return {
     templates,
     fetchTemplates,
@@ -52,5 +68,6 @@ export const useTemplateUploadStore = defineStore("file", () => {
     serverResponse,
     setSelectedFile,
     uploadFile,
+    deleteTemplate
   };
 });
