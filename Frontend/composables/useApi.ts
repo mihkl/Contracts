@@ -1,6 +1,9 @@
 import type { NitroFetchOptions, NitroFetchRequest } from "nitropack";
 
 export const useApi = () => {
+  const errorCodes: number[] = [
+    400, 401, 403, 404, 409, 500, 502, 503, 504, 599,
+  ];
   const runtimeConfig = useRuntimeConfig();
   const toast = useToast();
 
@@ -8,11 +11,13 @@ export const useApi = () => {
     url: string,
     options?: NitroFetchOptions<NitroFetchRequest>
   ) => {
-    return await $fetch<T>(url, {
-      baseURL: runtimeConfig.public.apiBaseUrl,
-      ...options,
-      ignoreResponseError: true,
-    }).catch((err) => err);
+    return await $fetch
+      .raw<T>(url, {
+        baseURL: runtimeConfig.public.apiBaseUrl,
+        ...options,
+        ignoreResponseError: true,
+      })
+      .catch((err) => err.data);
   };
 
   const fetchWithErrorHandling = async <T>(
@@ -21,16 +26,10 @@ export const useApi = () => {
   ) => {
     const response = await customFetch<T>(url, options);
 
-    if (!response) {
-      toast.add({
-        title: "ERROR",
-        description: "No response from server",
-      });
-    }
-    if (typeof response === "string") {
-      toast.add({ title: "ERROR", description: response });
+    if (errorCodes.includes(response.status)) {
+      toast.add({ title: response.statusText, description: response._data });
     } else {
-      return response;
+      return response._data;
     }
   };
 
