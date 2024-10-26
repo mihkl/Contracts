@@ -1,4 +1,3 @@
-
 import UploadConfirmationModal from "@/components/UploadConfirmationModal.vue";
 import type { Template } from "@/Types/Template";
 
@@ -16,7 +15,10 @@ export const useTemplateStore = defineStore("file", () => {
 
   const uploadFile = async () => {
     if (!selectedFile.value) {
-      toast.add({ title: "No file selected", description: "Please select a file to upload" });
+      toast.add({
+        title: "No file selected",
+        description: "Please select a file to upload",
+      });
       return;
     }
 
@@ -37,14 +39,16 @@ export const useTemplateStore = defineStore("file", () => {
   };
 
   const fetchTemplates = async () => {
-
-      const response = await api.fetchWithErrorHandling<Template[]>("/templates", {
+    const response = await api.fetchWithErrorHandling<Template[]>(
+      "/templates",
+      {
         method: "GET",
-      });
-      if (response){
-        templates.value = response;
-        return templates.value;
       }
+    );
+    if (response) {
+      templates.value = response;
+      return templates.value;
+    }
   };
 
   return {
