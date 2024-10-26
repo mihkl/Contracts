@@ -150,7 +150,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         string formattedValidFrom = _hmacService.FormatDate(request.ValidFrom);
         string formattedValidUntil = _hmacService.FormatDate(request.ValidUntil);
 
-        return Ok(new { url = $"contracts/{id}?signature={Uri.EscapeDataString(_hmacService.GenerateSignature(request.ValidFrom, request.ValidUntil, id.ToString()))}&validFrom={Uri.EscapeDataString(formattedValidFrom)}&validUntil={Uri.EscapeDataString(formattedValidUntil)}" });
+        return Ok(new { url = $"contracts/{result.Id}?signature={Uri.EscapeDataString(_hmacService.GenerateSignature(request.ValidFrom, request.ValidUntil, id.ToString()))}&validFrom={Uri.EscapeDataString(formattedValidFrom)}&validUntil={Uri.EscapeDataString(formattedValidUntil)}" });
     }
 }
 
