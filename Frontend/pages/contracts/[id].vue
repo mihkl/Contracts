@@ -47,7 +47,7 @@ onMounted(async () => {
 
   contractFields.value = fields;
 
-  fields.fields.forEach((field) => {
+  fields.fields.forEach((field: { name: string }) => {
     formState[field.name] = null;
   });
 });

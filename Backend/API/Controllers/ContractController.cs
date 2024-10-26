@@ -26,6 +26,10 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
     [HttpGet("contracts/{id}")]
     public async Task<IActionResult> GetContract(uint id, [FromQuery] string signature, [FromQuery] DateTime validFrom, [FromQuery] DateTime validUntil)
     {
+        DateTime utcTodayEnd = DateTime.UtcNow.Date.AddDays(1).AddTicks(-1);
+
+        if (validFrom > utcTodayEnd || validUntil < utcTodayEnd) return BadRequest("Invalid valid from or valid until date.");
+
         if (!_hmacService.IsValidSignature(validFrom, validUntil, id.ToString(), signature)) return BadRequest("Invalid signature");
 
         var contract = await _crepo.GetById(id);
@@ -148,9 +152,11 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         var result = await _crepo.Save(contract);
 
         string formattedValidFrom = _hmacService.FormatDate(request.ValidFrom);
-        string formattedValidUntil = _hmacService.FormatDate(request.ValidUntil);
 
-        return Ok(new { url = $"contracts/{result.Id}?signature={Uri.EscapeDataString(_hmacService.GenerateSignature(request.ValidFrom, request.ValidUntil, id.ToString()))}&validFrom={Uri.EscapeDataString(formattedValidFrom)}&validUntil={Uri.EscapeDataString(formattedValidUntil)}" });
+        DateTime validUntil = request.ValidUntil == DateTime.MinValue ? DateTime.MaxValue : request.ValidUntil;
+        string formattedValidUntil = _hmacService.FormatDate(validUntil);
+
+        return Ok(new { url = $"contracts/{result.Id}?signature={Uri.EscapeDataString(_hmacService.GenerateSignature(request.ValidFrom, validUntil, result.Id.ToString()))}&validFrom={Uri.EscapeDataString(formattedValidFrom)}&validUntil={Uri.EscapeDataString(formattedValidUntil)}" });
     }
 }
 
