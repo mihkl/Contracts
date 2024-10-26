@@ -1,5 +1,5 @@
 export type UploadFileResponse = {
-  template : Template,
+  template : Template;
   guid: string;
 }
 

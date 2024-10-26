@@ -22,9 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import UploadConfirmationModal from './UploadConfirmationModal.vue';
-
-const { serverResponse, setSelectedFile, uploadFile } = useTemplateUploadStore();
+const { setSelectedFile, uploadFile } = useTemplateStore();
 
 const onFileChange = (event: Event) => {
   const input = event.target as HTMLInputElement;
@@ -35,15 +33,8 @@ const onFileChange = (event: Event) => {
 
 const submitFile = async () => {
   await uploadFile();
-  console.log(serverResponse);
-  openModal();
 };
 
-const modal = useModal();
-
-function openModal() {
-  modal.open(UploadConfirmationModal);
-}
 </script>
 
 <style scoped>

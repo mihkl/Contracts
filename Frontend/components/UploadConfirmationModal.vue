@@ -1,23 +1,23 @@
 <template>
     <UModal>
-    <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-    <template #header>
-        <p class="h-8">{{ template.name }}</p>
-    </template>
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <p class="h-8">{{ template.name }}</p>
+            </template>
 
-    <TemplateFieldList :fields="template.fields" class="h-auto"/>
+            <TemplateFieldList :fields="template.fields" class="h-auto" />
 
-    <template #footer>
-        
-        <UForm :schema="schema" :state="state" @submit="onSubmit">
-            <UFormGroup label="Enter a name for your template">
-                <UInput class="mb-3" v-model="state.name" type="text"/>
-                <UButton class="mr-3" @click="modal.close">Back</UButton>
-                <UButton type="submit" @click="modal.close">Save to my templates</UButton>
-            </UFormGroup>
-        </UForm>
-    </template>
-    </UCard>
+            <template #footer>
+
+                <UForm :schema="schema" :state="state" @submit="onSubmit">
+                    <UFormGroup label="Enter a name for your template">
+                        <UInput class="mb-3" v-model="state.name" type="text" />
+                        <UButton class="mr-3" @click="modal.close">Back</UButton>
+                        <UButton type="submit" @click="modal.close">Save to my templates</UButton>
+                    </UFormGroup>
+                </UForm>
+            </template>
+        </UCard>
     </UModal>
 </template>
 
@@ -28,23 +28,23 @@ import type { FormSubmitEvent } from '#ui/types'
 
 const api = useApi()
 const modal = useModal()
-const { serverResponse } = useTemplateUploadStore();
+const { serverResponse } = useTemplateStore();
 const template = serverResponse!.template
 
 const schema = object({
-  name: string().required('Required'),
+    name: string().required('Required'),
 })
 
 const state = reactive({
-  name: undefined
+    name: undefined
 })
 
 type Schema = InferType<typeof schema>
 
-async function onSubmit (event: FormSubmitEvent<Schema>) {
-    const response = await api.customFetch("/save", {
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+    await api.fetchWithErrorHandling("/save", {
         method: "POST",
-        body: JSON.stringify({guid: serverResponse!.guid, name: state.name})
+        body: JSON.stringify({ guid: serverResponse!.guid, name: state.name })
     })
 }
 

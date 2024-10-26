@@ -1,6 +1,10 @@
+
+import UploadConfirmationModal from "@/components/UploadConfirmationModal.vue";
 import type { Template } from "@/Types/Template";
 
-export const useTemplateUploadStore = defineStore("file", () => {
+export const useTemplateStore = defineStore("file", () => {
+  const modal = useModal();
+  const toast = useToast();
   const api = useApi();
   const templates = ref<Template[]>([]);
   const serverResponse = ref<UploadFileResponse | null>(null);
@@ -12,37 +16,35 @@ export const useTemplateUploadStore = defineStore("file", () => {
 
   const uploadFile = async () => {
     if (!selectedFile.value) {
-      alert("Please select a file.");
+      toast.add({ title: "No file selected", description: "Please select a file to upload" });
       return;
     }
 
     const formData = new FormData();
     formData.append("file", selectedFile.value);
 
-    try {
-      const response = await api.customFetch<UploadFileResponse>("/upload", {
+    const response = await api.fetchWithErrorHandling<UploadFileResponse>(
+      "/upload",
+      {
         method: "POST",
         body: formData,
-      });
-      console.log("File uploaded successfully:", response);
+      }
+    );
+    if (response) {
       serverResponse.value = response;
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      throw error;
+      modal.open(UploadConfirmationModal);
     }
   };
 
   const fetchTemplates = async () => {
-    try {
-      const response = await api.customFetch<Template[]>("/templates", {
+
+      const response = await api.fetchWithErrorHandling<Template[]>("/templates", {
         method: "GET",
       });
-      templates.value = response;
-      return templates.value;
-    } catch (error) {
-      console.error("Error fetching templates:", error);
-      throw error;
-    }
+      if (response){
+        templates.value = response;
+        return templates.value;
+      }
   };
 
   return {
