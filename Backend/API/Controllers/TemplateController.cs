@@ -84,7 +84,7 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo) : Control
             return NotFound("Template not found.");
         }
         var contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-        return File(template.FileData, contentType, $"{template.Name}");
+        return File(template.FileData, contentType, $"{template.Name}.docx");
     }
 
     [HttpDelete("templates/{id}")]

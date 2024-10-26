@@ -36,7 +36,7 @@ const validFrom = route.query?.validFrom;
 const validUntil = route.query?.validUntil;
 
 onMounted(async () => {
-  const fields = await api.customFetch<{
+  const fields = await api.fetchWithErrorHandling<{
     fields: { name: string; type: string }[];
   }>(
     `/contracts/${id}?signature=${encodeURIComponent(
@@ -53,16 +53,19 @@ onMounted(async () => {
 });
 
 async function onSubmit() {
-  const response = await api.customFetch(`/contracts/${id}/generate-pdf`, {
-    method: "POST",
-    body: JSON.stringify({
-      replacements: [
-        ...Object.keys(formState).map((key) => ({
-          name: key,
-          value: formState[key],
-        })),
-      ],
-    }),
-  });
+  const response = await api.fetchWithErrorHandling(
+    `/contracts/${id}/generate-pdf`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        replacements: [
+          ...Object.keys(formState).map((key) => ({
+            name: key,
+            value: formState[key],
+          })),
+        ],
+      }),
+    }
+  );
 }
 </script>
