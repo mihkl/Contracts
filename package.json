@@ -1,5 +1,12 @@
 {
-	"dependencies": {
-		"@nuxtjs/color-mode": "^3.5.1"
-	}
+  "name": "itb2203_2024_lepingud-6",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
