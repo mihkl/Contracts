@@ -28,6 +28,9 @@ export const useApi = () => {
 
     if (errorCodes.includes(response.status)) {
       toast.add({ title: response.statusText, description: response._data });
+      return {
+        error: response._data,
+      };
     } else {
       return response._data;
     }
