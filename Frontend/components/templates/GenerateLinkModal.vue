@@ -52,6 +52,7 @@ const props = defineProps({
 });
 
 const modal = useModal();
+const toast = useToast();
 
 const state = reactive({
   validFrom: undefined,
@@ -105,6 +106,10 @@ const onSubmit = async () => {
     modal.close();
     navigator.clipboard.writeText(window.location.origin + "/" + response.url);
     navigateTo("/contracts");
+    toast.add({
+      title: "Success!",
+      description: "The link has been copied to your clipboard.",
+    });
   }
 };
 </script>

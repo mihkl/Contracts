@@ -13,7 +13,7 @@
         required
         :key="index"
       >
-        <UInput type="text" v-model="formState[field.name]" />
+        <UInput :type="field.type" v-model="formState[field.name]" />
       </UFormGroup>
       <UButton type="submit">Submit</UButton>
     </UForm>
@@ -31,6 +31,7 @@ import { useRoute } from "nuxt/app";
 
 const route = useRoute();
 const api = useApi();
+const toast = useToast();
 
 definePageMeta({
   layout: false,
@@ -70,19 +71,25 @@ onMounted(async () => {
 });
 
 async function onSubmit() {
-  const response = await api.fetchWithErrorHandling(
-    `/contracts/${id}/generate-pdf`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        replacements: [
-          ...Object.keys(formState).map((key) => ({
-            name: key,
-            value: formState[key],
-          })),
-        ],
-      }),
-    }
-  );
+  const toastId = "loading";
+  toast.add({
+    id: toastId,
+    title: "Loading...",
+    timeout: 0,
+  });
+
+  await api.fetchWithErrorHandling(`/contracts/${id}/generate-pdf`, {
+    method: "POST",
+    body: JSON.stringify({
+      replacements: [
+        ...Object.keys(formState).map((key) => ({
+          name: key,
+          value: formState[key],
+        })),
+      ],
+    }),
+  });
+
+  toast.remove(toastId);
 }
 </script>
