@@ -141,7 +141,6 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         {
             return NotFound("Template not found.");
         }
-
         var contract = new Contract
         {
             Name = request.Name,
@@ -156,7 +155,14 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         DateTime validUntil = request.ValidUntil == DateTime.MinValue ? DateTime.MaxValue : request.ValidUntil;
         string formattedValidUntil = _hmacService.FormatDate(validUntil);
 
-        return Ok(new { url = $"contracts/{result.Id}?signature={Uri.EscapeDataString(_hmacService.GenerateSignature(request.ValidFrom, validUntil, result.Id.ToString()))}&validFrom={Uri.EscapeDataString(formattedValidFrom)}&validUntil={Uri.EscapeDataString(formattedValidUntil)}" });
+        var url = $"contracts/{result.Id}?signature={Uri.EscapeDataString(_hmacService.GenerateSignature(request.ValidFrom, validUntil, result.Id.ToString()))}&validFrom={Uri.EscapeDataString(formattedValidFrom)}&validUntil={Uri.EscapeDataString(formattedValidUntil)}";
+
+        await _crepo.Update(result.Id, new UpdateContract
+        {
+            Url = url
+        });
+
+        return Ok(new { url });
     }
 }
 
