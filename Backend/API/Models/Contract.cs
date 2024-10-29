@@ -10,6 +10,8 @@ public record Contract
     public string Name { get; set; } = string.Empty;
     public byte[] FileData { get; set; } = [];
     public List<ContractDynamicField> Fields { get; set; } = [];
+    public string Url { get; set; } = string.Empty;
+
 }
 
 public record ContractDto
@@ -17,6 +19,8 @@ public record ContractDto
     public uint Id { get; init; }
     public string Name { get; set; } = string.Empty;
     public List<ContractDynamicFieldDto> Fields { get; set; } = [];
+    public string Url { get; set; } = string.Empty;
+
 }
 
 

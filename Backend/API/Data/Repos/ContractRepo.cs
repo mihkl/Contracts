@@ -53,4 +53,26 @@ public class ContractRepo(DataContext context) : IContractRepo
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task Update(uint id, UpdateContract updateContract)
+    {
+        var contract = await GetById(id);
+        var properties = typeof(UpdateContract).GetProperties();
+        var contractProperties = typeof(Contract).GetProperties();
+
+        foreach (var property in properties)
+        {
+            var dtoValue = property.GetValue(updateContract);
+            if (dtoValue != null)
+            {
+                var entityProp = Array.Find(contractProperties, p => p.Name == property.Name);
+                if (entityProp != null && entityProp.CanWrite)
+                {
+                    entityProp.SetValue(contract, dtoValue);
+                }
+            }
+        }
+
+        await SaveChangesAsync();
+    }
 }

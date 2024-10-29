@@ -7,7 +7,8 @@ public static class Mappers
     {
         Id = contract.Id,
         Name = contract.Name,
-        Fields = contract.Fields.Select(ToContractDynamicFieldDto).ToList()
+        Fields = contract.Fields.Select(ToContractDynamicFieldDto).ToList(),
+        Url = contract.Url
     };
 
     public static ContractDynamicFieldDto ToContractDynamicFieldDto(ContractDynamicField field) => new()

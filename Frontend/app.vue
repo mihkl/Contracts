@@ -1,8 +1,14 @@
 <template>
-  <TheMenu />
   <div class="p-2">
+    <NuxtLayout />
     <NuxtPage />
     <UModals />
-    <UNotifications/>
+    <UNotifications />
   </div>
 </template>
+
+<script setup>
+definePageMeta({
+  layout: "default",
+});
+</script>
