@@ -2,7 +2,7 @@
   <section class="p-10">
     <UForm
       class="space-y-4"
-      v-if="Object.keys(formState)?.length > 0 && !error"
+      v-if="Object.keys(formState)?.length > 0 && !error && !showPdf"
       :state="formState"
       @submit="onSubmit"
     >
@@ -17,17 +17,24 @@
       </UFormGroup>
       <UButton type="submit">Submit</UButton>
     </UForm>
+    
     <main v-if="error">
       <h1 class="text-center text-4xl mt-10 font-medium">
         Whoops! Seems like the link is not correct.
       </h1>
       <p class="text-center mt-6 text-2xl">{{ error }}</p>
     </main>
+
+    <!-- Display PdfViewer component after submission -->
+    <client-only v-if="showPdf">
+      <PdfViewer />
+    </client-only>
   </section>
 </template>
 
 <script setup lang="ts">
 import { useRoute } from "nuxt/app";
+import { ref, reactive, onMounted } from 'vue';
 
 const route = useRoute();
 const api = useApi();
@@ -41,8 +48,8 @@ const contractFields = ref<{
   fields: { name: string; type: string }[];
 }>();
 const error = ref<string>();
-
 const formState = reactive<Record<string, any>>({});
+const showPdf = ref(false); // New flag for displaying PdfViewer
 
 const id = route.params?.id;
 const signature = route.query?.signature;
@@ -91,5 +98,6 @@ async function onSubmit() {
   });
 
   toast.remove(toastId);
+  showPdf.value = true; // Show PdfViewer component after submission
 }
 </script>
