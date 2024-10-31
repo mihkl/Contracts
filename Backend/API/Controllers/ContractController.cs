@@ -145,7 +145,8 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         {
             Name = request.Name,
             FileData = template.FileData,
-            Fields = template.Fields.Select(ToContractDynamicField).ToList()
+            Fields = template.Fields.Select(ToContractDynamicField).ToList(),
+            ContractStatus = ContractStatus.LinkGenerated
         };
 
         var result = await _crepo.Save(contract);

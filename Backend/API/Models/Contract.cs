@@ -11,7 +11,7 @@ public record Contract
     public byte[] FileData { get; set; } = [];
     public List<ContractDynamicField> Fields { get; set; } = [];
     public string Url { get; set; } = string.Empty;
-
+    public ContractStatus ContractStatus { get; set; }
 }
 
 public record ContractDto
@@ -20,7 +20,14 @@ public record ContractDto
     public string Name { get; set; } = string.Empty;
     public List<ContractDynamicFieldDto> Fields { get; set; } = [];
     public string Url { get; set; } = string.Empty;
+}
 
+public enum ContractStatus
+{
+    LinkGenerated,
+    ContractSigned,
+    ContractCounterSigned,
+    FinalContractSentToApplicant
 }
 
 
