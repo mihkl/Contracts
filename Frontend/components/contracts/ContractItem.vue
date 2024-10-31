@@ -28,10 +28,13 @@
 import ContractProgressIcon from "~/public/contract_progress.svg";
 const emits = defineEmits(["openModal", "openDetailsModal"]);
 
+const contractStatuses = ["LinkGenerated", "ContractSigned", "ContractCounterSigned", "FinalContractSentToApplicant"]
+
 const props = defineProps({
   contract: {
     name: String,
     id: Number,
+    contractStatus: "LinkGenerated",
   },
 });
 
