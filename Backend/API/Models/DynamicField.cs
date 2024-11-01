@@ -35,7 +35,9 @@ public record ContractDynamicFieldDto
 }
 
 public record ContractDynamicFieldReplacement
-{
+{   
+    [Key]
+    public uint Id { get; init; }
     public string Name { get; init; } = string.Empty;
     public string Value { get; init; } = string.Empty;
 }

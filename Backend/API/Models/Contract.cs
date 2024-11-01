@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace API.Models;
 
@@ -11,8 +12,21 @@ public record Contract
     public byte[] FileData { get; set; } = [];
     public List<ContractDynamicField> Fields { get; set; } = [];
     public string Url { get; set; } = string.Empty;
+    public SigningStatus SigningStatus { get; set; } = SigningStatus.SignedByNone;
+    public bool HasBeenSubmitted => SubmittedFields.Count > 0;
+    public List<ContractDynamicFieldReplacement> SubmittedFields { get; set; } = [];
 
 }
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum SigningStatus
+{
+    SignedByNone = 0,
+    SignedByFirstParty = 1,
+    SignedBySecondParty = 2,
+    SignedByAll = 3,
+}
+
 
 public record ContractDto
 {
@@ -20,7 +34,9 @@ public record ContractDto
     public string Name { get; set; } = string.Empty;
     public List<ContractDynamicFieldDto> Fields { get; set; } = [];
     public string Url { get; set; } = string.Empty;
-
+    public SigningStatus SigningStatus { get; set; } = SigningStatus.SignedByNone;
+    public bool HasBeenSubmitted => SubmittedFields.Count > 0;
+    public List<ContractDynamicFieldReplacement> SubmittedFields { get; set; } = [];
 }
 
 

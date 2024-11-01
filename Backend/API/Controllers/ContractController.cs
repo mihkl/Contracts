@@ -64,6 +64,14 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         {
             return NotFound("Contract not found.");
         }
+        if (contract.SigningStatus != SigningStatus.SignedByNone)
+        {
+            return BadRequest("Contract has already been by atleast one of the parties signed.");
+        }
+        if (contract.HasBeenSubmitted)
+        {
+            return BadRequest("Contract has already been submitted.");
+        }
         await _crepo.ReplaceDynamicFields(request.Replacements, contract);
 
         return Ok("Dynamic fields updated successfully.");
@@ -147,6 +155,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
             FileData = template.FileData,
             Fields = template.Fields.Select(ToContractDynamicField).ToList()
         };
+
 
         var result = await _crepo.Save(contract);
 
