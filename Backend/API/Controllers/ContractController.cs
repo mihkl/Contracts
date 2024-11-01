@@ -68,9 +68,13 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         {
             return BadRequest("Contract has already been signed by atleast one of the parties.");
         }
-        if (contract.HasBeenSubmitted)
+        if (request.Replacements.Count != contract.Fields.Count)
         {
-            return BadRequest("Contract has already been submitted.");
+            return BadRequest("Invalid number of replacement fields provided.");
+        }
+        if (contract.Fields.Any(f => request.Replacements.All(r => r.Name != f.Name)))
+        {
+            return BadRequest("Invalid replacement fields provided.");
         }
         await _crepo.ReplaceDynamicFields(request.Replacements, contract);
 
@@ -88,6 +92,18 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         if (contract is null)
         {
             return NotFound("Contract not found.");
+        }
+        if (contract.SigningStatus != SigningStatus.SignedByNone)
+        {
+            return BadRequest("Contract has already been signed by atleast one of the parties.");
+        }
+        if (request.Replacements.Count != contract.Fields.Count)
+        {
+            return BadRequest("Invalid number of replacement fields provided.");
+        }
+        if (contract.Fields.Any(f => request.Replacements.All(r => r.Name != f.Name)))
+        {
+            return BadRequest("Invalid replacement fields provided.");
         }
         await _crepo.ReplaceDynamicFields(request.Replacements, contract);
 

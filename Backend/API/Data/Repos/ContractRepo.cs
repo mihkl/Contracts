@@ -18,6 +18,7 @@ public class ContractRepo(DataContext context) : IContractRepo
     {
         return await _context.Contracts
         .Include(c => c.Fields)
+        .Include(c => c.SubmittedFields)
         .ToListAsync();
     }
 
@@ -43,18 +44,15 @@ public class ContractRepo(DataContext context) : IContractRepo
         await SaveChangesAsync();
     }
 
-    private static void UpdateDynamicFields(Contract contract, List<ContractDynamicFieldReplacement> replacements)
+    private void UpdateDynamicFields(Contract contract, List<ContractDynamicFieldReplacement> replacements)
     {
         replacements.Where(r => contract.Fields.Any(f => f.Name == r.Name))
                             .ToList()
                             .ForEach(r => contract.Fields.First(f => f.Name == r.Name).Value = r.Value);
 
-
-        replacements.ForEach(r => contract.SubmittedFields.Add(new ContractDynamicFieldReplacement
-        {
-            Name = r.Name,
-            Value = r.Value
-        }));
+        _context.RemoveRange(contract.SubmittedFields);
+        contract.SubmittedFields.Clear();
+        contract.SubmittedFields.AddRange(replacements);
     }
 
     public async Task SaveChangesAsync()

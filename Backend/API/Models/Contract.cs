@@ -13,7 +13,6 @@ public record Contract
     public List<ContractDynamicField> Fields { get; set; } = [];
     public string Url { get; set; } = string.Empty;
     public SigningStatus SigningStatus { get; set; } = SigningStatus.SignedByNone;
-    public bool HasBeenSubmitted => SubmittedFields.Count > 0;
     public List<ContractDynamicFieldReplacement> SubmittedFields { get; set; } = [];
 
 }
@@ -35,7 +34,6 @@ public record ContractDto
     public List<ContractDynamicFieldDto> Fields { get; set; } = [];
     public string Url { get; set; } = string.Empty;
     public SigningStatus SigningStatus { get; set; } = SigningStatus.SignedByNone;
-    public bool HasBeenSubmitted => SubmittedFields.Count > 0;
     public List<ContractDynamicFieldReplacement> SubmittedFields { get; set; } = [];
 }
 
