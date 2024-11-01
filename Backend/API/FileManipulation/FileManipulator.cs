@@ -71,7 +71,10 @@ public static class FileManipulator
 
     public static byte[] ReplaceContractPlaceholders(Contract contract, List<ContractDynamicFieldReplacement> replacements)
     {
-    using MemoryStream memoryStream = new(contract.FileData);
+    using MemoryStream memoryStream = new();
+    memoryStream.Write(contract.FileData, 0, contract.FileData.Length);
+    memoryStream.Position = 0;
+
     using (WordprocessingDocument wordDocument = WordprocessingDocument.Open(memoryStream, true))
     {
         var mainPart = wordDocument.MainDocumentPart;
@@ -88,8 +91,6 @@ public static class FileManipulator
 
         mainPart!.Document.Save();
     }
-    memoryStream.Position = 0; 
-
     return memoryStream.ToArray();
     }
 
