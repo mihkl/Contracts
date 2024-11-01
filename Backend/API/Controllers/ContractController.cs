@@ -66,7 +66,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         }
         if (contract.SigningStatus != SigningStatus.SignedByNone)
         {
-            return BadRequest("Contract has already been by atleast one of the parties signed.");
+            return BadRequest("Contract has already been signed by atleast one of the parties.");
         }
         if (contract.HasBeenSubmitted)
         {
