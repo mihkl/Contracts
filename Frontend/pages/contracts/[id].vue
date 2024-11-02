@@ -13,7 +13,7 @@
         required
         :key="index"
       >
-        <UInput :type="field.type" v-model="formState[field.name]" />
+        <UInput type="string" v-model="formState[field.name]" />
       </UFormGroup>
       <UButton type="submit">Submit</UButton>
     </UForm>
@@ -27,8 +27,6 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from "nuxt/app";
-
 const route = useRoute();
 const api = useApi();
 const toast = useToast();

@@ -4,9 +4,9 @@ export type Contract = {
   signingStatus: SigningStatus;
 };
 
-enum SigningStatus {
-  SignedByNone,
-  SignedByFirstParty,
-  SignedBySecondParty,
-  SignedByAll,
+export enum SigningStatus {
+  SignedByNone = "SignedByNone",
+  SignedByFirstParty = "v",
+  SignedBySecondParty = "SignedBySecondParty",
+  SignedByAll = "SignedByAll",
 }

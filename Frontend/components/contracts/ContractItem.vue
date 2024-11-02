@@ -1,15 +1,7 @@
 <template>
   <div :class="['p-4 border rounded-lg transition bg-white border-gray-300']">
     <div class="flex flex-row justify-between items-center">
-      <span>{{ contract?.name }}</span>
-      <div class="flex space-x-2 mb-2">
-        <button
-          class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition"
-          @click="openDetails()"
-        >
-          Details
-        </button>
-      </div>
+      <span class="mb-4">{{ contract?.name }}</span>
     </div>
     <div class="flex flex-row justify-start items-center gap-3">
       <UTooltip
@@ -18,7 +10,16 @@
         :popper="{ placement: 'top' }"
       >
         <SvgoContractProgress
-          class="!w-20 text-[#C9C9C9] !h-auto cursor-pointer"
+          :class="[
+            '!w-20',
+            'text-[#C9C9C9]',
+            '!h-auto',
+            'cursor-pointer',
+            index == signingStatuses.indexOf(contract.signingStatus)
+              ? 'highlighted'
+              : '',
+            'contract-progress-svg',
+          ]"
         />
       </UTooltip>
     </div>
@@ -26,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Contract } from "../../Types/Contract.ts";
+import { SigningStatus, type Contract } from "../../Types/Contract.js";
 const emits = defineEmits(["openModal", "openDetailsModal"]);
 
 const contractStatuses = [
@@ -36,7 +37,14 @@ const contractStatuses = [
   "Final Contract Sent To Applicant",
 ];
 
-const props = defineProps<{
+const signingStatuses: SigningStatus[] = [
+  SigningStatus.SignedByNone,
+  SigningStatus.SignedByFirstParty,
+  SigningStatus.SignedBySecondParty,
+  SigningStatus.SignedByAll,
+];
+
+defineProps<{
   contract: Contract;
 }>();
 
@@ -52,3 +60,9 @@ const openDetailsModal = () => {
   emits("openDetailsModal", true);
 };
 </script>
+
+<style>
+.highlighted {
+  color: rgb(79 70 229 / var(--tw-bg-opacity));
+}
+</style>
