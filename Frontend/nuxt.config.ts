@@ -8,6 +8,9 @@ export default defineNuxtConfig({
     "@nuxtjs/color-mode",
     "nuxt-svgo",
   ],
+  svgo: {
+    autoImportPath: "./public/",
+  },
   imports: {
     dirs: [
       "Types/*.ts",

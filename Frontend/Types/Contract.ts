@@ -1,12 +1,12 @@
 export type Contract = {
   id: number;
   name: string;
-  contractStatus: ContractStatus
+  signingStatus: SigningStatus;
 };
 
-enum ContractStatus {
-  LinkGenerated,
-  ContractSigned,
-  ContractCounterSigned,
-  FinalContractSentToApplicant,
+enum SigningStatus {
+  SignedByNone,
+  SignedByFirstParty,
+  SignedBySecondParty,
+  SignedByAll,
 }

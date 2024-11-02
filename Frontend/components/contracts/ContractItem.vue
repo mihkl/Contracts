@@ -5,7 +5,7 @@
       <div class="flex space-x-2 mb-2">
         <button
           class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition"
-          @click="openDetails(template.id)"
+          @click="openDetails()"
         >
           Details
         </button>
@@ -17,14 +17,16 @@
         v-for="index in [0, 1, 2, 3]"
         :popper="{ placement: 'top' }"
       >
-        <ContractProgressIcon class="!w-20 text-[#C9C9C9] !h-auto" />
+        <SvgoContractProgress
+          class="!w-20 text-[#C9C9C9] !h-auto cursor-pointer"
+        />
       </UTooltip>
     </div>
   </div>
 </template>
 
-<script setup>
-import ContractProgressIcon from "~/public/contract_progress.svg";
+<script setup lang="ts">
+import type { Contract } from "../../Types/Contract.ts";
 const emits = defineEmits(["openModal", "openDetailsModal"]);
 
 const contractStatuses = [
@@ -34,15 +36,11 @@ const contractStatuses = [
   "Final Contract Sent To Applicant",
 ];
 
-const props = defineProps({
-  contract: {
-    name: String,
-    id: Number,
-    contractStatus: "LinkGenerated",
-  },
-});
+const props = defineProps<{
+  contract: Contract;
+}>();
 
-const openDetails = async (id) => {
+const openDetails = async () => {
   openDetailsModal();
 };
 
