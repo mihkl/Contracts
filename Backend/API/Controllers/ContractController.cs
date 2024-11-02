@@ -64,6 +64,18 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         {
             return NotFound("Contract not found.");
         }
+        if (contract.SigningStatus != SigningStatus.SignedByNone)
+        {
+            return BadRequest("Contract has already been signed by atleast one of the parties.");
+        }
+        if (request.Replacements.Count != contract.Fields.Count)
+        {
+            return BadRequest("Invalid number of replacement fields provided.");
+        }
+        if (contract.Fields.Any(f => request.Replacements.All(r => r.Name != f.Name)))
+        {
+            return BadRequest("Invalid replacement fields provided.");
+        }
         await _crepo.ReplaceDynamicFields(request.Replacements, contract);
 
         return Ok("Dynamic fields updated successfully.");
@@ -80,6 +92,18 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         if (contract is null)
         {
             return NotFound("Contract not found.");
+        }
+        if (contract.SigningStatus != SigningStatus.SignedByNone)
+        {
+            return BadRequest("Contract has already been signed by atleast one of the parties.");
+        }
+        if (request.Replacements.Count != contract.Fields.Count)
+        {
+            return BadRequest("Invalid number of replacement fields provided.");
+        }
+        if (contract.Fields.Any(f => request.Replacements.All(r => r.Name != f.Name)))
+        {
+            return BadRequest("Invalid replacement fields provided.");
         }
         await _crepo.ReplaceDynamicFields(request.Replacements, contract);
 
@@ -148,6 +172,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
             Fields = template.Fields.Select(ToContractDynamicField).ToList(),
             ContractStatus = ContractStatus.LinkGenerated
         };
+
 
         var result = await _crepo.Save(contract);
 
