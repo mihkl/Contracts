@@ -14,7 +14,8 @@ public record Contract
     public string Url { get; set; } = string.Empty;
     public SigningStatus SigningStatus { get; set; } = SigningStatus.SignedByNone;
     public List<ContractDynamicFieldReplacement> SubmittedFields { get; set; } = [];
-
+    public DateTime? LinkValidFrom { get; set; }
+    public DateTime? LinkValidUntil { get; set; }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -35,6 +36,9 @@ public record ContractDto
     public string Url { get; set; } = string.Empty;
     public SigningStatus SigningStatus { get; set; } = SigningStatus.SignedByNone;
     public List<ContractDynamicFieldReplacement> SubmittedFields { get; set; } = [];
+    public DateTime? LinkValidFrom { get; set; }
+    public DateTime? LinkValidUntil { get; set; }
+
 }
 
 
