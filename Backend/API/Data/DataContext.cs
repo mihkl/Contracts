@@ -19,5 +19,10 @@ public class DataContext(DbContextOptions options): DbContext(options)
             .HasMany(t => t.Fields)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Contract>()
+            .HasMany(c => c.SubmittedFields)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 } 
