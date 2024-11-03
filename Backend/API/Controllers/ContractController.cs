@@ -170,7 +170,9 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
             Name = request.Name,
             FileData = template.FileData,
             Fields = template.Fields.Select(ToContractDynamicField).ToList(),
-            SigningStatus = SigningStatus.SignedByNone
+            SigningStatus = SigningStatus.SignedByNone,
+            LinkValidFrom = request.ValidFrom,
+            LinkValidUntil = request.ValidUntil
         };
 
         var result = await _crepo.Save(contract);
@@ -184,7 +186,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
         await _crepo.Update(result.Id, new UpdateContract
         {
-            Url = url
+            Url = url,
         });
 
         return Ok(new { url });

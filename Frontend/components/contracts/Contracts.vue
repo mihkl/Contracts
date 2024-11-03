@@ -6,6 +6,7 @@
         v-for="(contract, index) in contractsStore.contracts"
         :key="index"
         :contract="contract"
+        @openDetailsModal="openDetailsModal(contract.id)"
       />
     </div>
   </div>
@@ -15,11 +16,19 @@
 import { onMounted } from "vue";
 import { useContractsStore } from "@/stores/ContractsStore";
 import ContractItem from "./ContractItem.vue";
+import DetailsModal from "./DetailsModal.vue";
 
 const contractsStore = useContractsStore();
+const modal = useModal();
 
 async function fetchContracts() {
   await contractsStore.fetchContracts();
+}
+
+function openDetailsModal(contractId: number) {
+  modal.open(DetailsModal, {
+    contractId: contractId,
+  });
 }
 
 onMounted(() => {

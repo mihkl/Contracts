@@ -22,6 +22,12 @@
           ]"
         />
       </UTooltip>
+      <button
+        class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+        @click="openDetails(contract.id)"
+      >
+        Details
+      </button>
     </div>
   </div>
 </template>
@@ -48,12 +54,8 @@ defineProps<{
   contract: Contract;
 }>();
 
-const openDetails = async () => {
+const openDetails = async (id: number) => {
   openDetailsModal();
-};
-
-const openModal = () => {
-  emits("openModal", true);
 };
 
 const openDetailsModal = () => {
