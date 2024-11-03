@@ -28,10 +28,12 @@
       </h4>
       <div>
         <p class="truncate mb-3">
-          <b>Valid from:</b> {{ new Date(selectedContract!.linkValidFrom) }}
+          <b>Valid from:</b>
+          {{ formatDateToString(new Date(selectedContract!.linkValidFrom)) }}
         </p>
         <p class="truncate mb-3">
-          <b>Valid until:</b> {{ new Date(selectedContract!.linkValidFrom) }}
+          <b>Valid until:</b>
+          {{ formatDateToString(new Date(selectedContract!.linkValidUntil)) }}
         </p>
         <UButton class="mr-3" @click="copyLink">Copy link</UButton>
       </div>
@@ -45,6 +47,7 @@ import { computed, defineProps } from "vue";
 
 const contractStore = useContractsStore();
 const modal = useModal();
+const toast = useToast();
 
 const props = defineProps<{ contractId: number }>();
 
@@ -58,5 +61,18 @@ const copyLink = () => {
   navigator.clipboard.writeText(
     window.location.origin + "/" + selectedContract.value?.url
   );
+  toast.add({
+    title: "Success!",
+    description: "The link has been copied to your clipboard.",
+  });
 };
+
+function formatDateToString(date: Date) {
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  const yyyy = date.getFullYear();
+
+  if (yyyy === 1) return "Not set";
+  return `${mm}.${dd}.${yyyy}`;
+}
 </script>
