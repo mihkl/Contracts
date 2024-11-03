@@ -15,8 +15,23 @@ export const useContractsStore = defineStore("contract", () => {
       }
   };
 
+  const fetchPDF = async (contractId: number) => {
+    try {
+      const response = await api.fetchWithErrorHandling<Blob>(`/contracts/${contractId}/pdf`, {
+        method: "GET",
+      });
+
+      if (response) {
+        const pdfBlobUrl = URL.createObjectURL(response);
+        window.open(pdfBlobUrl, "_blank"); 
+      }
+    } catch (error) {
+      console.error("Error fetching PDF:", error);
+    }
+  };
   return {
     contracts,
     fetchContracts,
+    fetchPDF,
   };
 });
