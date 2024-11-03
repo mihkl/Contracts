@@ -22,12 +22,17 @@
       <PdfViewer 
         v-if="pdfUrl" 
         :pdfUrl="pdfUrl"
-        class="mt-4"
       />  
     </ClientOnly>
 
     <div v-if="pdfUrl" class="mt-4 flex justify-center">
-      <UButton @click="resetForm" class="mr-2">Back to Form</UButton>
+      <UButton 
+        v-if="hasFields"
+        @click="resetForm" 
+        class="mr-2"
+      >
+        Back to Form
+      </UButton>
       <UButton @click="downloadPdf" variant="outline">Download PDF</UButton>
     </div>
 
@@ -56,12 +61,47 @@ const contractFields = ref<{
 }>();
 const error = ref<string>();
 const formState = reactive<Record<string, any>>({});
-const pdfUrl = ref<string>(); // Add this to track PDF URL
+const pdfUrl = ref<string>();
 
 const id = route.params?.id;
 const signature = route.query?.signature;
 const validFrom = route.query?.validFrom;
 const validUntil = route.query?.validUntil;
+
+const hasFields = computed(() => (contractFields.value?.fields ?? []).length > 0);
+
+async function generatePdf() {
+  const toastId = "loading";
+  toast.add({
+    id: toastId,
+    title: "Loading...",
+    timeout: 0,
+  });
+
+  try {
+    await api.fetchWithErrorHandling(`/contracts/${id}/generate-pdf`, {
+      method: "POST",
+      body: JSON.stringify({
+        replacements: hasFields.value 
+          ? Object.keys(formState).map((key) => ({
+              name: key,
+              value: formState[key],
+            }))
+          : [{ name: "string", value: "string" }]
+      }),
+    });
+
+    pdfUrl.value = `http://localhost:5143/api/contracts/${id}/pdf`;
+  } catch (err) {
+    toast.add({
+      title: "Error",
+      description: "Failed to generate PDF",
+      color: "red",
+    });
+  } finally {
+    toast.remove(toastId);
+  }
+}
 
 onMounted(async () => {
   const response = await api.fetchWithErrorHandling<{
@@ -79,43 +119,19 @@ onMounted(async () => {
   }
   
   contractFields.value = response;
-  response.fields.forEach((field: { name: string }) => {
-    formState[field.name] = null;
-  });
+  
+  if (response.fields?.length > 0) {
+    response.fields.forEach((field: { name: string }) => {
+      formState[field.name] = null;
+    });
+  } else {
+    // If there are no fields, generate the PDF immediately
+    await generatePdf();
+  }
 });
 
 async function onSubmit() {
-  const toastId = "loading";
-  toast.add({
-    id: toastId,
-    title: "Loading...",
-    timeout: 0,
-  });
-
-  try {
-    await api.fetchWithErrorHandling(`/contracts/${id}/generate-pdf`, {
-      method: "POST",
-      body: JSON.stringify({
-        replacements: [
-          ...Object.keys(formState).map((key) => ({
-            name: key,
-            value: formState[key],
-          })),
-        ],
-      }),
-    });
-
-    // Set the PDF URL after successful generation
-    pdfUrl.value = `http://localhost:5143/api/contracts/${id}/pdf`;
-  } catch (err) {
-    toast.add({
-      title: "Error",
-      description: "Failed to generate PDF",
-      color: "red",
-    });
-  } finally {
-    toast.remove(toastId);
-  }
+  await generatePdf();
 }
 
 function resetForm() {
