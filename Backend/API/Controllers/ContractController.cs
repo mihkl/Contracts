@@ -76,7 +76,12 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         {
             return BadRequest("Invalid replacement fields provided.");
         }
-        await _crepo.ReplaceDynamicFields(request.Replacements, contract);
+        var template = await _trepo.GetById(contract.TemplateId);
+        if (template is null)
+        {
+            return NotFound("Template not found.");
+        }
+        await _crepo.ReplaceDynamicFields(request.Replacements, contract, template);
 
         return Ok("Dynamic fields updated successfully.");
     }
@@ -105,7 +110,12 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         {
             return BadRequest("Invalid replacement fields provided.");
         }
-        await _crepo.ReplaceDynamicFields(request.Replacements, contract);
+        var template = await _trepo.GetById(contract.TemplateId);
+        if (template is null)
+        {
+            return NotFound("Template not found.");
+        }
+        await _crepo.ReplaceDynamicFields(request.Replacements, contract, template);
 
         var populatedContract = await _crepo.GetById(id);
 
@@ -172,7 +182,8 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
             Fields = template.Fields.Select(ToContractDynamicField).ToList(),
             SigningStatus = SigningStatus.SignedByNone,
             LinkValidFrom = request.ValidFrom,
-            LinkValidUntil = request.ValidUntil
+            LinkValidUntil = request.ValidUntil,
+            TemplateId = template.Id
         };
 
         var result = await _crepo.Save(contract);
