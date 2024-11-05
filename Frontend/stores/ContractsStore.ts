@@ -9,7 +9,7 @@ export const useContractsStore = defineStore("contract", () => {
       const response = await api.fetchWithErrorHandling<Contract[]>("/contracts", {
         method: "GET",
       });
-      if (response){
+      if (!response.error){
         contracts.value = response;
         return contracts.value;
       }
@@ -21,7 +21,7 @@ export const useContractsStore = defineStore("contract", () => {
         method: "GET",
       });
 
-      if (response) {
+      if (!response.error) {
         const pdfBlobUrl = URL.createObjectURL(response);
         window.open(pdfBlobUrl, "_blank"); 
       }

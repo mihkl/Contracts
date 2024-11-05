@@ -32,7 +32,7 @@ export const useTemplateStore = defineStore("file", () => {
         body: formData,
       }
     );
-    if (response) {
+    if (!response.error) {
       serverResponse.value = response;
       modal.open(UploadConfirmationModal);
     }
@@ -45,7 +45,7 @@ export const useTemplateStore = defineStore("file", () => {
         method: "GET",
       }
     );
-    if (response) {
+    if (!response.error) {
       templates.value = response;
       return templates.value;
     }
