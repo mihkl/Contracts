@@ -25,12 +25,19 @@ export const useApi = () => {
     options?: NitroFetchOptions<NitroFetchRequest>
   ) => {
     const response = await customFetch<T>(url, options);
-
+    if (!response) {
+      toast.add({ title: "No response from server", description: "Please try again later" });
+      return {
+        error : "No response from server",
+        status: 500
+      }
+    }
     if (errorCodes.includes(response.status)) {
       toast.add({ title: response.statusText, description: response._data });
       return {
-        error: response._data,
-      };
+        error : response._data,
+        status: response.status
+      }
     } else {
       return response._data;
     }
