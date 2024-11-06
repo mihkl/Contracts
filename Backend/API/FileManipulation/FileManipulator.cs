@@ -69,29 +69,29 @@ public static class FileManipulator
         return dynamicFields;
     }
 
-    public static byte[] ReplaceContractPlaceholders(Contract contract, List<ContractDynamicFieldReplacement> replacements)
+    public static byte[] ReplaceContractPlaceholders(List<ContractDynamicFieldReplacement> replacements, Template template)
     {
-    using MemoryStream memoryStream = new();
-    memoryStream.Write(contract.FileData, 0, contract.FileData.Length);
-    memoryStream.Position = 0;
+        using MemoryStream memoryStream = new();
+        memoryStream.Write(template.FileData, 0, template.FileData.Length);
+        memoryStream.Position = 0;
 
-    using (WordprocessingDocument wordDocument = WordprocessingDocument.Open(memoryStream, true))
-    {
-        var mainPart = wordDocument.MainDocumentPart;
-
-        foreach (var field in replacements)
+        using (WordprocessingDocument wordDocument = WordprocessingDocument.Open(memoryStream, true))
         {
-            var placeholder = contract.Fields.FirstOrDefault(f => f.Name == field.Name)?.Placeholder;
-            if (placeholder is null)
-            {
-                continue;
-            }
-            ReplaceText(mainPart!, placeholder, field.Value);
-        }
+            var mainPart = wordDocument.MainDocumentPart;
 
-        mainPart!.Document.Save();
-    }
-    return memoryStream.ToArray();
+            foreach (var field in replacements)
+            {
+                var placeholder = template.Fields.FirstOrDefault(f => f.Name == field.Name)?.Placeholder;
+                if (placeholder is null)
+                {
+                    continue;
+                }
+                ReplaceText(mainPart!, placeholder, field.Value);
+            }
+
+            mainPart!.Document.Save();
+        }
+        return memoryStream.ToArray();
     }
 
     private static void ReplaceText(MainDocumentPart mainPart, string placeholder, string newValue)

@@ -16,6 +16,7 @@ public record Contract
     public List<ContractDynamicFieldReplacement> SubmittedFields { get; set; } = [];
     public DateTime? LinkValidFrom { get; set; }
     public DateTime? LinkValidUntil { get; set; }
+    public uint TemplateId { get; set; }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -38,6 +39,7 @@ public record ContractDto
     public List<ContractDynamicFieldReplacement> SubmittedFields { get; set; } = [];
     public DateTime? LinkValidFrom { get; set; }
     public DateTime? LinkValidUntil { get; set; }
+    public uint TemplateId { get; set; }
 
 }
 

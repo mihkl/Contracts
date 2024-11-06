@@ -36,9 +36,9 @@ public class ContractRepo(DataContext context) : IContractRepo
         await SaveChangesAsync();
     }
 
-    public async Task ReplaceDynamicFields(List<ContractDynamicFieldReplacement> replacements, Contract contract)
+    public async Task ReplaceDynamicFields(List<ContractDynamicFieldReplacement> replacements, Contract contract, Template template)
     {
-        contract.FileData = FileManipulator.ReplaceContractPlaceholders(contract, replacements);
+        contract.FileData = FileManipulator.ReplaceContractPlaceholders(replacements, template);
         UpdateDynamicFields(contract, replacements);
 
         await SaveChangesAsync();
