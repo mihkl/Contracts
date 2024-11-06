@@ -40,11 +40,12 @@ public static class FileManipulator
             docText = doc.MainDocumentPart.Document.Body.InnerText;
         }
 
+        var formattedFileData = Formatter.FormatTextBody(fileData);
         var fields = FindTemplateDynamicFields(docText);
         var response = new Template
         {
             Name = file.FileName,
-            FileData = fileData,
+            FileData = formattedFileData,
             Fields = fields
         };
         return response;
