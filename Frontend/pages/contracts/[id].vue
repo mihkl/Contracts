@@ -18,22 +18,24 @@
       <UButton type="submit">Submit</UButton>
     </UForm>
 
+    <header v-if="pdfUrl">
+      <h1 class="text-center text-xl font-bold">
+        Please download the contract and sign it or go back to modify.
+      </h1>
+    </header>
+
     <ClientOnly>
-      <PdfViewer 
-        v-if="pdfUrl" 
-        :pdfUrl="pdfUrl"
-      />  
+      <PdfViewer v-if="pdfUrl" :pdfUrl="pdfUrl" class="border-1" />
     </ClientOnly>
+    <header></header>
 
     <div v-if="pdfUrl" class="mt-4 flex justify-center">
-      <UButton 
-        v-if="hasFields"
-        @click="resetForm" 
-        class="mr-2"
-      >
+      <UButton v-if="hasFields" @click="resetForm" class="mr-2">
         Back to Form
       </UButton>
-      <UButton @click="downloadPdf" variant="outline">Download PDF</UButton>
+      <UButton @click="downloadPdf" variant="outline"
+        >Download and sign
+      </UButton>
     </div>
 
     <main v-if="error">
@@ -60,13 +62,16 @@ const contractFields = ref<{
 const error = ref<string>();
 const formState = reactive<Record<string, any>>({});
 const pdfUrl = ref<string>();
+const pdfDownloaded = ref<boolean>(false);
 
 const id = route.params?.id;
 const signature = route.query?.signature;
 const validFrom = route.query?.validFrom;
 const validUntil = route.query?.validUntil;
 
-const hasFields = computed(() => (contractFields.value?.fields ?? []).length > 0);
+const hasFields = computed(
+  () => (contractFields.value?.fields ?? []).length > 0
+);
 
 async function generatePdf() {
   const toastId = "loading";
@@ -80,12 +85,12 @@ async function generatePdf() {
     await api.fetchWithErrorHandling(`/contracts/${id}/generate-pdf`, {
       method: "POST",
       body: JSON.stringify({
-        replacements: hasFields.value 
+        replacements: hasFields.value
           ? Object.keys(formState).map((key) => ({
               name: key,
               value: formState[key],
             }))
-          : [{ name: "string", value: "string" }]
+          : [{ name: "string", value: "string" }],
       }),
     });
 
@@ -110,14 +115,14 @@ onMounted(async () => {
     )}&validFrom=${validFrom}&validUntil=${validUntil}`,
     { method: "GET" }
   );
-  
+
   if (response?.error) {
     error.value = response.error;
     return;
   }
-  
+
   contractFields.value = response;
-  
+
   if (response.fields?.length > 0) {
     response.fields.forEach((field: { name: string }) => {
       formState[field.name] = null;
@@ -130,6 +135,7 @@ onMounted(async () => {
 
 async function onSubmit() {
   await generatePdf();
+  pdfDownloaded.value = false;
 }
 
 function resetForm() {
@@ -138,7 +144,14 @@ function resetForm() {
 
 function downloadPdf() {
   if (pdfUrl.value) {
-    window.open(pdfUrl.value, '_blank');
+    window.open(pdfUrl.value, "_blank");
   }
+  pdfDownloaded.value = true;
 }
 </script>
+
+<style>
+canvas {
+  border: 1px solid black;
+}
+</style>
