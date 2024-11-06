@@ -7,14 +7,14 @@
     <span>{{ template.name }}</span>
     <div class="flex space-x-2">
       <button
-        class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition"
+        class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
         @click="generateLink(template.id)"
       >
         Generate link
       </button>
 
       <button
-        class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition"
+        class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
         @click="openDetails(template.id)"
       >
         Details

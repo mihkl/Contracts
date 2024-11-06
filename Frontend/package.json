@@ -16,6 +16,7 @@
     "@primevue/themes": "^4.0.7",
     "@tato30/vue-pdf": "^1.11.1",
     "nuxt": "^3.13.0",
+    "nuxt-svgo": "^4.0.6",
     "vue": "latest",
     "vue-router": "latest",
     "yup": "^1.4.0"

@@ -11,6 +11,9 @@ public static class Mappers
         Url = contract.Url,
         SigningStatus = contract.SigningStatus,
         SubmittedFields = contract.SubmittedFields,
+        LinkValidFrom = contract.LinkValidFrom,
+        LinkValidUntil = contract.LinkValidUntil,
+        TemplateId = contract.TemplateId
     };
 
     public static ContractDynamicFieldDto ToContractDynamicFieldDto(ContractDynamicField field) => new()

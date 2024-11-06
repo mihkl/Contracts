@@ -46,8 +46,6 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from "nuxt/app";
-
 const route = useRoute();
 const api = useApi();
 const toast = useToast();
