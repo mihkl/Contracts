@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
-public class DataContext(DbContextOptions options): DbContext(options)
+public class DataContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Contract> Contracts { get; set; }
     public DbSet<Template> Templates { get; set; }
@@ -24,5 +24,10 @@ public class DataContext(DbContextOptions options): DbContext(options)
             .HasMany(c => c.SubmittedFields)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Contract>()
+        .HasMany(c => c.Signatures)
+        .WithOne()
+        .OnDelete(DeleteBehavior.Cascade);
     }
-} 
+}
