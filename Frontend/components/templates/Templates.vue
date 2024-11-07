@@ -2,8 +2,18 @@
   <div class="mt-10 px-4 w-full max-w-5xl">
     <div class="space-y-4">
       <h1 class="text-3xl font-semibold my-6">My Templates</h1>
+
+      <div class="flex justify-between mb-4">
+        <input
+          type="text"
+          v-model="filterQuery"
+          placeholder="Filter by name"
+          class="border px-3 py-2 rounded"
+        />
+      </div>
+
       <TemplateItem
-        v-for="(template, index) in templateStore.templates"
+        v-for="(template, index) in filteredTemplates"
         :key="index"
         :template="template"
         @openModal="openModal(template.id)"
@@ -22,6 +32,8 @@ import DetailsModal from "./DetailsModal.vue";
 
 const templateStore = useTemplateStore();
 const modal = useModal();
+const filterQuery = ref("");
+
 
 async function fetchTemplates() {
   await templateStore.fetchTemplates();
@@ -42,6 +54,18 @@ function openDetailsModal(templateId: number) {
     templateId: templateId,
   });
 }
+
+const filteredTemplates = computed(() => {
+  // Filter templates by name
+  let filtered = templateStore.templates.filter((template) =>
+    template.name.toLowerCase().includes(filterQuery.value.toLowerCase())
+  );
+
+  // Sort templates alphabetically by name
+  filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
+
+  return filtered;
+});
 </script>
 
 <style scoped></style>
