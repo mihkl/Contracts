@@ -19,8 +19,8 @@
     </UForm>
 
     <header v-if="pdfUrl">
-      <h1 class="text-center text-xl font-bold">
-        Please download the contract and sign it or go back to modify.
+      <h1 class="text-center text-2xl font-bold">
+        Please download the contract to proceed or go back to modify.
       </h1>
     </header>
 
@@ -33,8 +33,11 @@
       <UButton v-if="hasFields" @click="resetForm" class="mr-2">
         Back to Form
       </UButton>
-      <UButton @click="downloadPdf" variant="outline"
-        >Download and sign
+      <UButton @click="downloadPdf" class="mr-2">Download PDF </UButton>
+      <UButton
+        @click="openSignedContractUploadModal"
+        v-if="pdfDownloaded === true"
+        >Upload signed contract
       </UButton>
     </div>
 
@@ -48,9 +51,12 @@
 </template>
 
 <script setup lang="ts">
+import UploadSignedContractModal from "~/components/contracts/UploadSignedContractModal.vue";
+
 const route = useRoute();
 const api = useApi();
 const toast = useToast();
+const modal = useModal();
 
 definePageMeta({
   layout: false,
@@ -147,6 +153,10 @@ function downloadPdf() {
     window.open(pdfUrl.value, "_blank");
   }
   pdfDownloaded.value = true;
+}
+
+function openSignedContractUploadModal() {
+  modal.open(UploadSignedContractModal);
 }
 </script>
 
