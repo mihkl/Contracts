@@ -7,9 +7,17 @@
         <input
           type="text"
           v-model="filterQuery"
-          placeholder="Filter by name"
+          placeholder="Search by name"
           class="border px-3 py-2 rounded"
         />
+
+        <button @click="toggleSort" class="border px-3 py-2 rounded flex items-center">
+          Sort Alphabetically
+          <span v-if="sortAlphabetically" class="ml-2">
+            <span v-if="sortDirection === 'asc'">⬆️</span>
+            <span v-else>⬇️</span>
+          </span>
+        </button>
       </div>
 
       <TemplateItem
@@ -33,6 +41,8 @@ import DetailsModal from "./DetailsModal.vue";
 const templateStore = useTemplateStore();
 const modal = useModal();
 const filterQuery = ref("");
+const sortAlphabetically = ref(false);
+const sortDirection = ref("asc");
 
 
 async function fetchTemplates() {
@@ -55,14 +65,29 @@ function openDetailsModal(templateId: number) {
   });
 }
 
+function toggleSort() {
+  if (!sortAlphabetically.value) {
+    sortAlphabetically.value = true;
+    sortDirection.value = "asc";
+  } else {
+    sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+  }
+}
+
 const filteredTemplates = computed(() => {
-  // Filter templates by name
   let filtered = templateStore.templates.filter((template) =>
     template.name.toLowerCase().includes(filterQuery.value.toLowerCase())
   );
 
-  // Sort templates alphabetically by name
-  filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
+  if (sortAlphabetically.value) {
+    filtered = filtered.sort((a, b) => {
+      if (sortDirection.value === "asc") {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
+  }
 
   return filtered;
 });
