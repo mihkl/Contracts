@@ -7,6 +7,7 @@ export type Template = {
   id : number;
   name : string;
   fields : TemplateField[];
+  creationTime : Date;
 }
 
 export type TemplateField = {

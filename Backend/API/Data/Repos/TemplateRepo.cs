@@ -9,6 +9,9 @@ public class TemplateRepo(DataContext context) : ITemplateRepo
     private readonly DataContext _context = context;
     public async Task<Template> Save(Template template)
     {
+        
+        template.CreationTime = DateTime.UtcNow;
+        
         _context.Add(template);
         await SaveChangesAsync();
         return template;
