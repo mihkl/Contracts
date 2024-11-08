@@ -11,25 +11,9 @@
           class="border px-3 py-2 rounded"
         />
 
-        <div class="flex space-x-2">
-          <!-- Button for Alphabetical Sort -->
-          <button @click="toggleAlphabeticalSort" class="border px-3 py-2 rounded flex items-center">
-            Sort Alphabetically
-            <span v-if="sortAlphabetically" class="ml-2">
-              <span v-if="sortDirectionAlphabetical === 'asc'">⬆️</span>
-              <span v-else>⬇️</span>
-            </span>
-          </button>
-
-          <!-- Button for Creation Time Sort -->
-          <button @click="toggleCreationTimeSort" class="border px-3 py-2 rounded flex items-center">
-            Sort by Creation Time
-            <span v-if="sortByCreationTime" class="ml-2">
-              <span v-if="sortDirectionCreation === 'asc'">⬆️</span>
-              <span v-else>⬇️</span>
-            </span>
-          </button>
-        </div>
+        <button @click="openSortOptionsModal" class="border px-3 py-2 rounded flex items-center">
+          Sort Options
+        </button>
       </div>
 
       <TemplateItem
@@ -39,6 +23,7 @@
         @openModal="openModal(template.id)"
         @openDetailsModal="openDetailsModal(template.id)"
       />
+
     </div>
   </div>
 </template>
@@ -49,14 +34,14 @@ import TemplateItem from "./TemplateItem.vue";
 import GenerateLinkModal from "./GenerateLinkModal.vue";
 import { useTemplateStore } from "~/stores/TemplateStore";
 import DetailsModal from "./DetailsModal.vue";
+import SortOptionsModal from "./SortOptionsModal.vue";
 
 const templateStore = useTemplateStore();
 const modal = useModal();
 const filterQuery = ref("");
-const sortAlphabetically = ref(false);
-const sortDirectionAlphabetical = ref("asc");
-const sortByCreationTime = ref(false);
-const sortDirectionCreation = ref("asc");
+const showSortOptionsModal = ref(false);
+const sortType = ref("alphabetical");
+const sortOrder = ref("asc");
 
 async function fetchTemplates() {
   await templateStore.fetchTemplates();
@@ -78,16 +63,15 @@ function openDetailsModal(templateId: number) {
   });
 }
 
-function toggleAlphabeticalSort() {
-  sortAlphabetically.value = !sortAlphabetically.value;
-  sortByCreationTime.value = false; // Disable creation time sort when alphabetical sort is active
-  sortDirectionAlphabetical.value = sortDirectionAlphabetical.value === "asc" ? "desc" : "asc";
+function openSortOptionsModal() {
+  modal.open(SortOptionsModal, {
+    'onApply-sort': applySortOptions, // Listen for 'apply-sort' event
+  });
 }
 
-function toggleCreationTimeSort() {
-  sortByCreationTime.value = !sortByCreationTime.value;
-  sortAlphabetically.value = false; // Disable alphabetical sort when creation time sort is active
-  sortDirectionCreation.value = sortDirectionCreation.value === "asc" ? "desc" : "asc";
+function applySortOptions({ type, order }: { type: string; order: string }) {
+  sortType.value = type;
+  sortOrder.value = order;
 }
 
 const filteredTemplates = computed(() => {
@@ -95,19 +79,18 @@ const filteredTemplates = computed(() => {
     template.name.toLowerCase().includes(filterQuery.value.toLowerCase())
   );
 
-  if (sortAlphabetically.value) {
-    filtered = filtered.sort((a, b) => {
-      return sortDirectionAlphabetical.value === "asc"
+  filtered = filtered.sort((a, b) => {
+    if (sortType.value === "alphabetical") {
+      return sortOrder.value === "asc"
         ? a.name.localeCompare(b.name)
         : b.name.localeCompare(a.name);
-    });
-  } else if (sortByCreationTime.value) {
-    filtered = filtered.sort((a, b) => {
-      return sortDirectionCreation.value === "asc"
+    } else if (sortType.value === "creationTime") {
+      return sortOrder.value === "asc"
         ? new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
         : new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime();
-    });
-  }
+    }
+    return 0;
+  });
 
   return filtered;
 });
