@@ -81,4 +81,22 @@ public class ContractRepo(DataContext context) : IContractRepo
 
         await SaveChangesAsync();
     }
+
+    public async Task<ContractSignature> SaveSignatureAndUpdateContractStatus(ContractSignature signature)
+    {
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        await _context.AddAsync(signature);
+        await SaveChangesAsync();
+
+        // siin loogika muutub. Signingstatuse uuendamiseks peab enne ilmselt chekima, mis type´i üles laetav signatuur on ja mis on praegune contracti staatus.
+        await Update(signature.Id, new UpdateContract
+        {
+            SigningStatus = SigningStatus.SignedByFirstParty
+        });
+
+        await transaction.CommitAsync();
+
+        return signature;
+    }
 }

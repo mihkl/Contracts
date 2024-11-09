@@ -26,8 +26,15 @@ public class DataContext(DbContextOptions options) : DbContext(options)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Contract>()
-        .HasMany(c => c.Signatures)
-        .WithOne()
-        .OnDelete(DeleteBehavior.Cascade);
+            .HasMany(c => c.Signatures)
+            .WithOne(cs => cs.Contract)
+            .HasForeignKey(cs => cs.ContractId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ContractSignature>()
+            .HasOne(cs => cs.Contract)
+            .WithMany(c => c.Signatures)
+            .HasForeignKey(cs => cs.ContractId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -3,6 +3,8 @@ using API.FileConversion;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using static API.Mappers.Mappers;
+using static API.FileManipulation.FileManipulator;
+using OpenXmlPowerTools;
 
 namespace API.Controllers;
 
@@ -201,6 +203,31 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         });
 
         return Ok(new { url });
+    }
+
+    [HttpPost("contracts/{id}/sign")]
+    public async Task<IActionResult> SignContract(uint id, [FromForm] IFormFile file)
+    {
+        var parsedFile = ParseAsiceFile(file, out var exception);
+
+        if (exception != "") return BadRequest(exception);
+
+        var contract = await _crepo.GetById(id);
+
+        if (contract == null) return NotFound($"Contract with id {id} does not exist");
+
+        // siia tulevad type checkid sisseloginud kasutaja rolli põhjal, praegu lihtsalt hard-coded type= candidate.
+        //if authenticated user (see kes üles laeb signatuuriga contracti) is admin then type = ContractSignatureType.CompanyRepresentative
+        var contractSignature = new ContractSignature
+        {
+            FileData = parsedFile,
+            ContractId = id,
+            Type = ContractSignatureType.Candidate
+        };
+
+        await _crepo.SaveSignatureAndUpdateContractStatus(contractSignature);
+
+        return Ok("Hey");
     }
 }
 

@@ -47,13 +47,13 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
-
 const selectedFile = ref();
 const modal = useModal();
 const toast = useToast();
 const api = useApi();
-const props = defineProps<{ contractId: number }>();
+const route = useRoute();
+
+const id = route.params?.id;
 
 const onFileChange = (event: Event) => {
   const input = event.target as HTMLInputElement;
@@ -75,7 +75,7 @@ const submitFile = async () => {
   formData.append("file", selectedFile.value);
 
   const response = await api.fetchWithErrorHandling<UploadFileResponse>(
-    "/upload",
+    `contracts/${id}/sign`,
     {
       method: "POST",
       body: formData,
