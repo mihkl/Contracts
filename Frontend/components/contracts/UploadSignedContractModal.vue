@@ -52,16 +52,39 @@ import { defineProps } from "vue";
 const selectedFile = ref();
 const modal = useModal();
 const toast = useToast();
-
+const api = useApi();
 const props = defineProps<{ contractId: number }>();
 
 const onFileChange = (event: Event) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files.length > 0) {
-    console.log(input.files[0]);
     selectedFile.value = input.files[0];
   }
 };
 
-const submitFile = async () => {};
+const submitFile = async () => {
+  if (!selectedFile.value) {
+    toast.add({
+      title: "No file selected",
+      description: "Please select a file to upload",
+    });
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", selectedFile.value);
+
+  const response = await api.fetchWithErrorHandling<UploadFileResponse>(
+    "/upload",
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+  if (response.error) {
+    toast.add({
+      title: "There has been an error.",
+    });
+  }
+};
 </script>
