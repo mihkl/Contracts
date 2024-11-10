@@ -35,10 +35,11 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         if (!_hmacService.IsValidSignature(validFrom, validUntil, id.ToString(), signature)) return BadRequest("Invalid signature");
 
         var contract = await _crepo.GetById(id);
-        if (contract is null)
-        {
-            return NotFound("Contract not found.");
-        }
+
+        if (contract is null) return NotFound("Contract not found.");
+
+        if (contract.SigningStatus != SigningStatus.SignedByNone) return BadRequest("This contract has already been signed.");
+
         return Ok(ToContractDto(contract));
     }
 

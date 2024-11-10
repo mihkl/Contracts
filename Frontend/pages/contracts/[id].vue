@@ -49,7 +49,7 @@
 
     <main v-if="error">
       <h1 class="text-center text-4xl mt-10 font-medium">
-        Whoops! Seems like the link is not correct.
+        Whoops! Seems like there is a problem.
       </h1>
       <p class="text-center mt-6 text-2xl">{{ error }}</p>
     </main>

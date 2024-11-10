@@ -91,6 +91,9 @@ const submitFile = async () => {
       title: "There has been an error.",
       description: response?.error,
     });
-  } else props.onSuccessfulContractUpload();
+  } else {
+    props.onSuccessfulContractUpload();
+    modal.close();
+  }
 };
 </script>
