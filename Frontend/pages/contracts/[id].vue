@@ -2,7 +2,12 @@
   <section class="p-10">
     <UForm
       class="space-y-4"
-      v-if="Object.keys(formState)?.length > 0 && !error && !pdfUrl"
+      v-if="
+        Object.keys(formState)?.length > 0 &&
+        !error &&
+        !pdfUrl &&
+        !contractSuccessfullyUploaded
+      "
       :state="formState"
       @submit="onSubmit"
     >
@@ -18,27 +23,28 @@
       <UButton type="submit">Submit</UButton>
     </UForm>
 
-    <header v-if="pdfUrl">
-      <h1 class="text-center text-2xl font-bold">
-        Please download the contract to proceed or go back to modify.
-      </h1>
-    </header>
+    <div v-if="pdfUrl && !contractSuccessfullyUploaded">
+      <header>
+        <h1 class="text-center text-2xl font-bold">
+          Please download the contract to proceed or go back to modify.
+        </h1>
+      </header>
 
-    <ClientOnly>
-      <PdfViewer v-if="pdfUrl" :pdfUrl="pdfUrl" class="border-1" />
-    </ClientOnly>
-    <header></header>
+      <ClientOnly>
+        <PdfViewer :pdfUrl="pdfUrl" class="border-1" />
+      </ClientOnly>
 
-    <div v-if="pdfUrl" class="mt-4 flex justify-center">
-      <UButton v-if="hasFields" @click="resetForm" class="mr-2">
-        Back to Form
-      </UButton>
-      <UButton @click="downloadPdf" class="mr-2">Download PDF </UButton>
-      <UButton
-        @click="openSignedContractUploadModal"
-        v-if="pdfDownloaded === true"
-        >Upload signed contract
-      </UButton>
+      <div class="mt-4 flex justify-center">
+        <UButton v-if="hasFields" @click="resetForm" class="mr-2">
+          Back to Form
+        </UButton>
+        <UButton @click="downloadPdf" class="mr-2">Download PDF </UButton>
+        <UButton
+          @click="openSignedContractUploadModal"
+          v-if="pdfDownloaded === true"
+          >Upload signed contract
+        </UButton>
+      </div>
     </div>
 
     <main v-if="error">
@@ -47,6 +53,17 @@
       </h1>
       <p class="text-center mt-6 text-2xl">{{ error }}</p>
     </main>
+    <div v-if="contractSuccessfullyUploaded">
+      <header>
+        <h1 class="text-center text-2xl font-bold mb-4">
+          Thank you! The contract has been successfully signed.
+        </h1>
+        <p class="text-center text-lg">
+          You may now close the page. The company representative will notify you
+          of any further steps.
+        </p>
+      </header>
+    </div>
   </section>
 </template>
 
@@ -69,6 +86,7 @@ const error = ref<string>();
 const formState = reactive<Record<string, any>>({});
 const pdfUrl = ref<string>();
 const pdfDownloaded = ref<boolean>(false);
+const contractSuccessfullyUploaded = ref<boolean>(false);
 
 const id = route.params?.id;
 const signature = route.query?.signature;
@@ -155,8 +173,14 @@ function downloadPdf() {
   pdfDownloaded.value = true;
 }
 
+function onSuccessfulContractUpload() {
+  contractSuccessfullyUploaded.value = true;
+}
+
 function openSignedContractUploadModal() {
-  modal.open(UploadSignedContractModal);
+  modal.open(UploadSignedContractModal, {
+    onSuccessfulContractUpload,
+  });
 }
 </script>
 

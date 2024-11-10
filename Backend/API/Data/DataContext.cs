@@ -7,6 +7,8 @@ public class DataContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Contract> Contracts { get; set; }
     public DbSet<Template> Templates { get; set; }
+    public DbSet<ContractSignature> Signatures { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,13 +29,7 @@ public class DataContext(DbContextOptions options) : DbContext(options)
 
         modelBuilder.Entity<Contract>()
             .HasMany(c => c.Signatures)
-            .WithOne(cs => cs.Contract)
-            .HasForeignKey(cs => cs.ContractId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<ContractSignature>()
-            .HasOne(cs => cs.Contract)
-            .WithMany(c => c.Signatures)
+            .WithOne()
             .HasForeignKey(cs => cs.ContractId)
             .OnDelete(DeleteBehavior.Cascade);
     }

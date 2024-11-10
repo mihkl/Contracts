@@ -53,6 +53,10 @@ const toast = useToast();
 const api = useApi();
 const route = useRoute();
 
+const props = defineProps<{
+  onSuccessfulContractUpload: () => void;
+}>();
+
 const id = route.params?.id;
 
 const onFileChange = (event: Event) => {
@@ -81,10 +85,12 @@ const submitFile = async () => {
       body: formData,
     }
   );
-  if (response.error) {
+
+  if (response?.error) {
     toast.add({
       title: "There has been an error.",
+      description: response?.error,
     });
-  }
+  } else props.onSuccessfulContractUpload();
 };
 </script>

@@ -9,8 +9,6 @@ public record ContractSignature
     public uint ContractId { get; set; }
     public DateTime UploadedAt { get; set; }
     public ContractSignatureType Type { get; set; }
-
-    public Contract? Contract { get; set; }
 }
 
 public enum ContractSignatureType

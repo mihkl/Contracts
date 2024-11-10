@@ -19,6 +19,7 @@ public class ContractRepo(DataContext context) : IContractRepo
         return await _context.Contracts
         .Include(c => c.Fields)
         .Include(c => c.SubmittedFields)
+        .Include(c => c.Signatures)
         .ToListAsync();
     }
 
