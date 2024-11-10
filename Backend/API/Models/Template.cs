@@ -12,6 +12,7 @@ public record Template
     public byte[] FileData { get; init; } = [];
 
     public List<TemplateDynamicField> Fields { get; init; } = [];
+    public DateTime CreationTime { get; set; }
 }
 
 public record TemplateDto
@@ -21,4 +22,5 @@ public record TemplateDto
     public string Name { get; init; } = string.Empty;
 
     public List<TemplateDynamicFieldDto> Fields { get; init; } = [];
+    public DateTime CreationTime { get; set; }
 }
