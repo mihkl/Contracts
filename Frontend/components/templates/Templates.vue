@@ -65,7 +65,9 @@ function openDetailsModal(templateId: number) {
 
 function openSortOptionsModal() {
   modal.open(SortOptionsModal, {
-    'onApply-sort': applySortOptions, // Listen for 'apply-sort' event
+    'onApply-sort': applySortOptions,
+    sortType: sortType.value,
+    sortOrder: sortOrder.value,
   });
 }
 

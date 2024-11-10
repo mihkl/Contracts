@@ -79,13 +79,32 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, defineEmits } from 'vue';
+  import { ref, defineEmits, defineProps, watch } from 'vue';
   
   const modal = useModal();
   const emit = defineEmits(["apply-sort"]);
   
-  const selectedSortType = ref("alphabetical");
-  const selectedSortOrder = ref("asc");
+  const props = defineProps<{
+    sortType: string;
+    sortOrder: string;
+  }>();
+  
+  const selectedSortType = ref(props.sortType);
+  const selectedSortOrder = ref(props.sortOrder);
+  
+  watch(
+    () => props.sortType,
+    (newVal) => {
+      selectedSortType.value = newVal;
+    }
+  );
+  
+  watch(
+    () => props.sortOrder,
+    (newVal) => {
+      selectedSortOrder.value = newVal;
+    }
+  );
   
   function applySort() {
     emit("apply-sort", { type: selectedSortType.value, order: selectedSortOrder.value });
