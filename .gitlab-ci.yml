@@ -21,7 +21,7 @@ build:back-end:
     - pip install --break-system-packages awscli
     - aws ecr get-login-password | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
   script:
-    - docker build -t ${DOCKER_REGISTRY}/back:${CI_COMMIT_SHA} ./BackEnd/
+    - docker build -t ${DOCKER_REGISTRY}/back:${CI_COMMIT_SHA} ./Backend/
     - docker push ${DOCKER_REGISTRY}/back:${CI_COMMIT_SHA}
   after_script:
     - docker logout ${DOCKER_REGISTRY}
@@ -44,7 +44,7 @@ build:front-end:
     - pip install --break-system-packages awscli
     - aws ecr get-login-password | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
   script:
-    - docker build -t ${DOCKER_REGISTRY}/front:${CI_COMMIT_SHA} ./FrontEnd/
+    - docker build -t ${DOCKER_REGISTRY}/front:${CI_COMMIT_SHA} ./Frontend/
     - docker push ${DOCKER_REGISTRY}/front:${CI_COMMIT_SHA}
   after_script:
     - docker logout ${DOCKER_REGISTRY}
