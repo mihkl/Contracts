@@ -28,7 +28,8 @@ public static class Mappers
     {
         Id = template.Id,
         Name = template.Name,
-        Fields = template.Fields.Select(ToTemplateDynamicFieldDto).ToList()
+        Fields = template.Fields.Select(ToTemplateDynamicFieldDto).ToList(),
+        CreationTime = template.CreationTime
     };
 
     public static TemplateDynamicFieldDto ToTemplateDynamicFieldDto(TemplateDynamicField field) => new()
