@@ -15,6 +15,6 @@ RUN apt-get update && apt-get install -y libreoffice
 
 COPY --from=build-env /app/build ./
 
-EXPOSE 8080
+EXPOSE 80
 
 CMD ["dotnet", "API.dll"]
