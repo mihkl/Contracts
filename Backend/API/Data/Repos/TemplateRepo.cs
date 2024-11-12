@@ -9,7 +9,6 @@ public class TemplateRepo(DataContext context) : ITemplateRepo
     private readonly DataContext _context = context;
     public async Task<Template> Save(Template template)
     {
-        
         template.CreationTime = DateTime.UtcNow;
         
         _context.Add(template);
@@ -17,11 +16,28 @@ public class TemplateRepo(DataContext context) : ITemplateRepo
         return template;
     }
 
-    public async Task<List<Template>> GetAll()
+    public async Task<List<Template>> GetAll(string? userId)
     {
-        return await _context.Templates
+        var templates = _context.Templates.AsQueryable();
+        if (!string.IsNullOrEmpty(userId))
+        {
+            templates = templates.Where(c => c.UserId == userId);
+        }
+        return await templates
         .Include(t => t.Fields)
         .ToListAsync();
+    }
+
+    public async Task<Template?> GetById(uint id, string? userId)
+    {
+        var templates = _context.Templates.AsQueryable();
+        if (!string.IsNullOrEmpty(userId))
+        {
+            templates = templates.Where(c => c.UserId == userId);
+        }
+        return await templates
+        .Include(t => t.Fields)
+        .FirstOrDefaultAsync(t => t.Id == id);
     }
 
     public async Task<Template?> GetById(uint id)

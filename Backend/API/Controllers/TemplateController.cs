@@ -1,5 +1,8 @@
+using API.Data;
 using API.Data.Repos;
 using API.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using static API.FileManipulation.FileManipulator;
@@ -9,18 +12,22 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api")]
-public class TemplateController(IMemoryCache cache, TemplateRepo repo) : ControllerBase
+[Authorize]
+public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManager<User> userManager) : ControllerBase
 {
     private readonly TemplateRepo _repo = repo;
     private readonly IMemoryCache _cache = cache;
+    private readonly UserManager<User> _userManager = userManager;
 
     [HttpPost("upload")]
     public ActionResult<UploadFileResponse> UploadDocxFile(IFormFile file)
     {
+        var userId = _userManager.GetUserId(User);
         var template = ParseDocxFile(file, out var exception);
 
-        if (template is not null)
+        if (template is not null && userId is not null)
         {
+            template.UserId = userId;
             var guid = Guid.NewGuid();
             _cache.Set(guid, template, TimeSpan.FromMinutes(5));
 
@@ -33,6 +40,10 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo) : Control
         }
         else
         {
+            if (userId is null)
+            {
+                return Unauthorized();
+            }
             return BadRequest(exception);
         }
     }
@@ -59,7 +70,8 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo) : Control
     [HttpGet("templates")]
     public async Task<IActionResult> GetTemplates()
     {
-        var templates = await _repo.GetAll();
+        var userId = _userManager.GetUserId(User);
+        var templates = await _repo.GetAll(userId);
         var result = templates.Select(ToTemplateDto).ToList();
         return Ok(result);
     }
@@ -67,7 +79,8 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo) : Control
     [HttpGet("templates/{id}")]
     public async Task<IActionResult> GetTemplate(uint id)
     {
-        var template = await _repo.GetById(id);
+        var userId = _userManager.GetUserId(User);
+        var template = await _repo.GetById(id, userId);
         if (template is null)
         {
             return NotFound("Template not found.");
@@ -78,7 +91,8 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo) : Control
     [HttpGet("templates/{id}/file")]
     public async Task<IActionResult> GetTemplateFile(uint id)
     {
-        var template = await _repo.GetById(id);
+        var userId = _userManager.GetUserId(User);
+        var template = await _repo.GetById(id, userId);
         if (template is null)
         {
             return NotFound("Template not found.");
@@ -90,7 +104,8 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo) : Control
     [HttpDelete("templates/{id}")]
     public async Task<IActionResult> DeleteTemplate(uint id)
     {
-        var template = await _repo.GetById(id);
+        var userId = _userManager.GetUserId(User);
+        var template = await _repo.GetById(id, userId);
         if (template is null)
         {
             return NotFound("Template not found.");

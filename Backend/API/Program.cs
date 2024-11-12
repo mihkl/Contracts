@@ -2,11 +2,25 @@ using Microsoft.EntityFrameworkCore;
 using API.Data;
 using API.Data.Repos;
 using API.Controllers;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
+});
+
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
 
@@ -24,6 +38,16 @@ builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
         .AllowAnyMethod()
         .AllowAnyHeader();
     }));
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<User>()
+    .AddEntityFrameworkStores<DataContext>();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+});
 
 var app = builder.Build();
 
@@ -55,9 +79,11 @@ void CreateRequiredDirectories()
 
     Console.WriteLine($"Created directories: {temporaryDocxFilesPath}, {pdfFilesPath}");
 }
+app.MapIdentityApi<User>();
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

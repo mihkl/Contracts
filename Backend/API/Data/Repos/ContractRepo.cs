@@ -14,12 +14,30 @@ public class ContractRepo(DataContext context) : IContractRepo
         return contract;
     }
 
-    public async Task<List<Contract>> GetAll()
+    public async Task<List<Contract>> GetAll(string? userId)
     {
-        return await _context.Contracts
+        var contracts = _context.Contracts.AsQueryable();
+        if (!string.IsNullOrEmpty(userId))
+        {
+            contracts = contracts.Where(c => c.UserId == userId);
+        }
+        return await contracts
         .Include(c => c.Fields)
         .Include(c => c.SubmittedFields)
         .ToListAsync();
+    }
+
+    public async Task<Contract?> GetById(uint id, string? userId)
+    {
+        var contracts = _context.Contracts.AsQueryable();
+        if (!string.IsNullOrEmpty(userId))
+        {
+            contracts = contracts.Where(c => c.UserId == userId);
+        }
+        return await contracts
+        .Include(c => c.Fields)
+        .Include(c => c.SubmittedFields)
+        .FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<Contract?> GetById(uint id)

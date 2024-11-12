@@ -1,15 +1,26 @@
 using API.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
-public class DataContext(DbContextOptions options): DbContext(options)
+public class User : IdentityUser
+{
+    public List<Contract> Contracts { get; set; } = [];
+    public List<Template> Templates { get; set; } = [];
+}
+
+public class DataContext(DbContextOptions options): IdentityDbContext(options)
 {
     public DbSet<Contract> Contracts { get; set; }
     public DbSet<Template> Templates { get; set; }
+    public new DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Contract>()
             .HasMany(c => c.Fields)
             .WithOne()
