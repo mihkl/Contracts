@@ -98,6 +98,17 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo) : Control
         await _repo.Delete(template);
         return Ok("Template deleted successfully.");
     }
+
+    [HttpGet("templates/testfile")]
+    public async Task<IActionResult> GetTestFile()
+    {
+        string fileRelativePath = @"./testfiles/uploadtemplatetestfile.docx";
+        string absolutePath = Path.GetFullPath(fileRelativePath);
+
+        byte[] fileBytes = System.IO.File.ReadAllBytes(absolutePath);
+
+        return File(fileBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "uploadtemplatetestfile.docx");
+    }
 }
 
 

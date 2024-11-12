@@ -14,6 +14,7 @@ WORKDIR /app
 RUN apk update && apk add --no-cache libreoffice
 
 COPY --from=build-env /app/build ./
+COPY ./testfiles ./testfiles
 
 EXPOSE 8080
 
