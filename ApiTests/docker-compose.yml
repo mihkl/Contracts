@@ -28,7 +28,7 @@ services:
         "db:5432",
         "--",
         "dotnet",
-        "/app/WorkoutApplication.dll",
+        "/app/API.dll",
       ]
   newman:
     image: postman/newman:alpine
