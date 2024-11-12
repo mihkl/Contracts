@@ -7,37 +7,41 @@ namespace API.Data.Repos;
 public class ContractRepo(DataContext context) : IContractRepo
 {
     private readonly DataContext _context = context;
-    public async Task<Contract> Save(Contract contract)
+    public async Task<Contract> Save(Contract contract, string? userId)
     {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null)
+        {
+            return null;
+        }
         _context.Add(contract);
+        user.Contracts.Add(contract);
         await SaveChangesAsync();
         return contract;
     }
 
     public async Task<List<Contract>> GetAll(string? userId)
     {
-        var contracts = _context.Contracts.AsQueryable();
-        if (!string.IsNullOrEmpty(userId))
-        {
-            contracts = contracts.Where(c => c.UserId == userId);
-        }
-        return await contracts
-        .Include(c => c.Fields)
-        .Include(c => c.SubmittedFields)
-        .ToListAsync();
+        var user = await _context.Users
+            .Include(u => u.Contracts)
+                .ThenInclude(c => c.Fields) 
+            .Include(u => u.Contracts)
+                .ThenInclude(c => c.SubmittedFields)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        return user?.Contracts.ToList() ?? [];
     }
 
     public async Task<Contract?> GetById(uint id, string? userId)
     {
-        var contracts = _context.Contracts.AsQueryable();
-        if (!string.IsNullOrEmpty(userId))
-        {
-            contracts = contracts.Where(c => c.UserId == userId);
-        }
-        return await contracts
-        .Include(c => c.Fields)
-        .Include(c => c.SubmittedFields)
-        .FirstOrDefaultAsync(c => c.Id == id);
+        var user = await _context.Users
+            .Include(u => u.Contracts)
+                .ThenInclude(c => c.Fields)
+            .Include(u => u.Contracts)
+                .ThenInclude(c => c.SubmittedFields)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        return user?.Contracts.FirstOrDefault(c => c.Id == id);
     }
 
     public async Task<Contract?> GetById(uint id)

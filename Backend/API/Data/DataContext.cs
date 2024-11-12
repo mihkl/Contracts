@@ -20,7 +20,16 @@ public class DataContext(DbContextOptions options): IdentityDbContext(options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Contracts)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Templates)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+            
         modelBuilder.Entity<Contract>()
             .HasMany(c => c.Fields)
             .WithOne()

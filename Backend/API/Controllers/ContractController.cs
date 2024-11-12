@@ -10,7 +10,6 @@ using static API.Mappers.Mappers;
 namespace API.Controllers;
 
 [ApiController]
-[Route("api")]
 public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACService hmacService, UserManager<User> userManager) : ControllerBase
 {
     private readonly ContractRepo _crepo = crepo;
@@ -199,10 +198,9 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
             LinkValidFrom = request.ValidFrom,
             LinkValidUntil = request.ValidUntil,
             TemplateId = template.Id,
-            UserId = userId
         };
 
-        var result = await _crepo.Save(contract);
+        var result = await _crepo.Save(contract, userId);
 
         string formattedValidFrom = _hmacService.FormatDate(request.ValidFrom);
 

@@ -11,7 +11,6 @@ using static API.Mappers.Mappers;
 namespace API.Controllers;
 
 [ApiController]
-[Route("api")]
 [Authorize]
 public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManager<User> userManager) : ControllerBase
 {
@@ -19,15 +18,14 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManag
     private readonly IMemoryCache _cache = cache;
     private readonly UserManager<User> _userManager = userManager;
 
+    [Authorize]
     [HttpPost("upload")]
     public ActionResult<UploadFileResponse> UploadDocxFile(IFormFile file)
     {
-        var userId = _userManager.GetUserId(User);
         var template = ParseDocxFile(file, out var exception);
 
-        if (template is not null && userId is not null)
+        if (template is not null)
         {
-            template.UserId = userId;
             var guid = Guid.NewGuid();
             _cache.Set(guid, template, TimeSpan.FromMinutes(5));
 
@@ -38,19 +36,18 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManag
             };
             return Ok(response);
         }
-        else
-        {
-            if (userId is null)
-            {
-                return Unauthorized();
-            }
-            return BadRequest(exception);
-        }
+        return BadRequest(exception);
     }
 
+    [Authorize]
     [HttpPost("save")]
     public async Task<IActionResult> SaveTemplate([FromBody] SaveTemplateRequest request)
     {
+        var userId = _userManager.GetUserId(User);
+        if (userId is null)
+        {
+            return BadRequest("Invalid user.");
+        }
         if (request.Guid == Guid.Empty)
         {
             return BadRequest("Invalid guid.");
@@ -60,13 +57,14 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManag
             return NotFound("File data not found or expired.");
         }
         template!.Name = request.Name;
-        var result = await _repo.Save(template!);
+        var result = await _repo.Save(template!, userId);
 
         _cache.Remove(request.Guid);
 
         return CreatedAtAction(nameof(GetTemplates), new { id = result.Id }, ToTemplateDto(result));
     }
 
+    [Authorize]
     [HttpGet("templates")]
     public async Task<IActionResult> GetTemplates()
     {
@@ -76,6 +74,7 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManag
         return Ok(result);
     }
 
+    [Authorize]
     [HttpGet("templates/{id}")]
     public async Task<IActionResult> GetTemplate(uint id)
     {
@@ -88,6 +87,7 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManag
         return Ok(ToTemplateDto(template));
     }
 
+    [Authorize]
     [HttpGet("templates/{id}/file")]
     public async Task<IActionResult> GetTemplateFile(uint id)
     {
@@ -101,6 +101,7 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManag
         return File(template.FileData, contentType, $"{template.Name}.docx");
     }
 
+    [Authorize]
     [HttpDelete("templates/{id}")]
     public async Task<IActionResult> DeleteTemplate(uint id)
     {

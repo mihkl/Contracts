@@ -13,7 +13,6 @@ public record Template
 
     public List<TemplateDynamicField> Fields { get; init; } = [];
     public DateTime CreationTime { get; set; }
-    public string UserId { get; set; } = string.Empty; 
 }
 
 public record TemplateDto

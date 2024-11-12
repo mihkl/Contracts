@@ -17,7 +17,6 @@ public record Contract
     public DateTime? LinkValidFrom { get; set; }
     public DateTime? LinkValidUntil { get; set; }
     public uint TemplateId { get; set; }
-    public string UserId { get; set; } = string.Empty;
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

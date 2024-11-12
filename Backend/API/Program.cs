@@ -47,6 +47,12 @@ builder.Services.AddIdentityApiEndpoints<User>()
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.User.RequireUniqueEmail = true;
+    options.SignIn.RequireConfirmedEmail = false;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 1;
 });
 
 var app = builder.Build();
