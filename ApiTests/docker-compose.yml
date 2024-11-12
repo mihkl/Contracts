@@ -42,7 +42,7 @@ services:
     volumes:
       - ./startup:/etc/startup
       - ./newman/:/etc/newman/
-    command: run /etc/newman/workout.postman_collection.json -e workout.postman_environment.json
+    command: run /etc/newman/Contracts.postman_collection.json -e Contracts.postman_environment.json
 networks:
   pg_net:
   api_net:
