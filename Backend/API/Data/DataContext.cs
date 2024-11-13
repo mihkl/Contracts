@@ -11,11 +11,13 @@ public class User : IdentityUser
     public List<Template> Templates { get; set; } = [];
 }
 
-public class DataContext(DbContextOptions options): IdentityDbContext(options)
+public class DataContext(DbContextOptions options) : IdentityDbContext(options)
 {
     public DbSet<Contract> Contracts { get; set; }
     public DbSet<Template> Templates { get; set; }
     public new DbSet<User> Users { get; set; }
+    public DbSet<ContractSignature> Signatures { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -24,12 +26,12 @@ public class DataContext(DbContextOptions options): IdentityDbContext(options)
             .HasMany(u => u.Contracts)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         modelBuilder.Entity<User>()
             .HasMany(u => u.Templates)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
-            
+
         modelBuilder.Entity<Contract>()
             .HasMany(c => c.Fields)
             .WithOne()
@@ -44,5 +46,11 @@ public class DataContext(DbContextOptions options): IdentityDbContext(options)
             .HasMany(c => c.SubmittedFields)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Contract>()
+            .HasMany(c => c.Signatures)
+            .WithOne()
+            .HasForeignKey(cs => cs.ContractId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
-} 
+}

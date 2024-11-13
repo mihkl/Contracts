@@ -9,7 +9,7 @@ export type Contract = {
 
 export enum SigningStatus {
   SignedByNone = "SignedByNone",
-  SignedByFirstParty = "v",
+  SignedByFirstParty = "SignedByFirstParty",
   SignedBySecondParty = "SignedBySecondParty",
   SignedByAll = "SignedByAll",
 }

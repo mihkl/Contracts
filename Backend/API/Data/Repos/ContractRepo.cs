@@ -24,9 +24,10 @@ public class ContractRepo(DataContext context) : IContractRepo
     {
         var user = await _context.Users
             .Include(u => u.Contracts)
-                .ThenInclude(c => c.Fields) 
+                .ThenInclude(c => c.Fields)
             .Include(u => u.Contracts)
                 .ThenInclude(c => c.SubmittedFields)
+        .Include(c => c.Signatures)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
         return user?.Contracts.ToList() ?? [];
@@ -102,5 +103,23 @@ public class ContractRepo(DataContext context) : IContractRepo
         }
 
         await SaveChangesAsync();
+    }
+
+    public async Task<ContractSignature> SaveSignatureAndUpdateContractStatus(ContractSignature signature)
+    {
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        await _context.AddAsync(signature);
+        await SaveChangesAsync();
+
+        // siin loogika muutub. Signingstatuse uuendamiseks peab enne ilmselt chekima, mis type´i üles laetav signatuur on ja mis on praegune contracti staatus.
+        await Update(signature.Id, new UpdateContract
+        {
+            SigningStatus = SigningStatus.SignedByFirstParty
+        });
+
+        await transaction.CommitAsync();
+
+        return signature;
     }
 }

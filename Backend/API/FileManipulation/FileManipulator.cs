@@ -106,4 +106,28 @@ public static class FileManipulator
         }
         document.Save();
     }
+
+    public static byte[]? ParseAsiceFile(IFormFile file, out string exception)
+    {
+        exception = string.Empty;
+        if (file is null || file.Length == 0)
+        {
+            exception = "File is null or empty";
+            return null;
+        }
+        if (file.ContentType != "application/vnd.etsi.asic-e+zip")
+        {
+            exception = "File is not a valid asice file";
+            return null;
+        }
+
+        byte[] fileData;
+        using (var memoryStream = new MemoryStream())
+        {
+            file.CopyTo(memoryStream);
+            fileData = memoryStream.ToArray();
+        }
+
+        return fileData;
+    }
 }

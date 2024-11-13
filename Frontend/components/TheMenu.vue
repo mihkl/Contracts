@@ -7,8 +7,12 @@
     </div>
     <UHorizontalNavigation :links="links" class="flex-1 content-center" />
     <ColorMode />
-    <UButton v-if="auth.isAuthenticated.value" @click="auth.logOut" icon="i-heroicons-arrow-right-start-on-rectangle"
-      class="mr-6 mb-2.5" />
+    <UButton
+      v-if="auth.isAuthenticated.value"
+      @click="auth.logOut"
+      icon="i-heroicons-arrow-right-start-on-rectangle"
+      class="mr-6 mb-2.5"
+    />
   </div>
 </template>
 
@@ -25,28 +29,33 @@ const handleLogOut = async () => {
 const links = [
   {
     label: "Home",
-    icon: 'i-heroicons-home',
+    icon: "i-heroicons-home",
     to: "/",
   },
   {
     label: "My Templates",
-    icon: 'i-heroicons-queue-list',
+    icon: "i-heroicons-queue-list",
     to: "/templates",
   },
   {
     label: "Contracts",
-    icon: 'i-heroicons-document-text',
+    icon: "i-heroicons-document-text",
     to: "/contracts",
   },
   {
     label: "Login",
-    icon: 'i-heroicons-arrow-right-end-on-rectangle',
+    icon: "i-heroicons-arrow-right-end-on-rectangle",
     to: "/login",
   },
   {
     label: "Register",
-    icon: 'i-heroicons-user',
+    icon: "i-heroicons-user",
     to: "/register",
+  },
+  {
+    label: "Submissions",
+    icon: "i-heroicons-paper-airplane",
+    to: "/submissions",
   },
 ];
 </script>

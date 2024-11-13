@@ -15,7 +15,7 @@
             'text-[#C9C9C9]',
             '!h-auto',
             'cursor-pointer',
-            index == signingStatuses.indexOf(contract.signingStatus)
+            index <= signingStatuses.indexOf(contract.signingStatus)
               ? 'highlighted'
               : '',
             'contract-progress-svg',

@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace API.Models;
@@ -14,6 +13,7 @@ public record Contract
     public string Url { get; set; } = string.Empty;
     public SigningStatus SigningStatus { get; set; } = SigningStatus.SignedByNone;
     public List<ContractDynamicFieldReplacement> SubmittedFields { get; set; } = [];
+    public List<ContractSignature> Signatures { get; set; } = [];
     public DateTime? LinkValidFrom { get; set; }
     public DateTime? LinkValidUntil { get; set; }
     public uint TemplateId { get; set; }
@@ -37,6 +37,7 @@ public record ContractDto
     public string Url { get; set; } = string.Empty;
     public SigningStatus SigningStatus { get; set; } = SigningStatus.SignedByNone;
     public List<ContractDynamicFieldReplacement> SubmittedFields { get; set; } = [];
+    public List<ContractSignature> Signatures { get; set; } = [];
     public DateTime? LinkValidFrom { get; set; }
     public DateTime? LinkValidUntil { get; set; }
     public uint TemplateId { get; set; }
