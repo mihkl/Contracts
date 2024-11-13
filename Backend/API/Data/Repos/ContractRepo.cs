@@ -27,7 +27,8 @@ public class ContractRepo(DataContext context) : IContractRepo
                 .ThenInclude(c => c.Fields)
             .Include(u => u.Contracts)
                 .ThenInclude(c => c.SubmittedFields)
-        .Include(c => c.Signatures)
+            .Include(c => c.Contracts)
+                    .ThenInclude(c => c.Signatures)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
         return user?.Contracts.ToList() ?? [];
