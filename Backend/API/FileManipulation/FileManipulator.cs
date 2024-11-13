@@ -116,7 +116,7 @@ public static class FileManipulator
         }
         if (file.ContentType != "application/vnd.etsi.asic-e+zip")
         {
-            exception = "File is not a valid docx file";
+            exception = "File is not a valid asice file";
             return null;
         }
 
