@@ -36,6 +36,7 @@
           {{ formatDateToString(new Date(selectedContract!.linkValidUntil)) }}
         </p>
         <UButton class="mr-3" @click="copyLink">Copy link</UButton>
+        <UButton @click="openContract">Open PDF</UButton>
       </div>
     </UCard>
   </UModal>
@@ -66,6 +67,19 @@ const copyLink = () => {
     description: "The link has been copied to your clipboard.",
   });
 };
+
+const openContract = () => {
+  if (selectedContract.value) {
+    contractStore.fetchPDF(
+      selectedContract.value.id);
+  } else {
+      toast.add({
+        title: "Error",
+        description: "No PDF found"
+      });
+  } 
+};
+
 
 function formatDateToString(date: Date) {
   const mm = String(date.getMonth() + 1).padStart(2, "0");
