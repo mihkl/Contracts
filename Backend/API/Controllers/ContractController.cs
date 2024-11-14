@@ -153,7 +153,6 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         var fileName = contract.Name;
 
         string filePath = Path.Combine(AppContext.BaseDirectory, "PdfFiles", fileName + ".pdf");
-
         if (!System.IO.File.Exists(filePath))
         {
             return NotFound();
