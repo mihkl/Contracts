@@ -3,8 +3,16 @@ import { useAuth } from "~/composables/useAuth";
 export default defineNuxtRouteMiddleware((to) => {
   const auth = useAuth();
 
-  const excludedToPaths = ["/register", "/login", "/contracts"];
-  if (!auth.isAuthenticated.value && !excludedToPaths.includes(to.path)) {
+  const excludedPathsRegexes = [
+    /^\/register$/,
+    /^\/login$/,
+    /^\/contracts\/\d+$/,
+  ];
+
+  if (
+    !auth.isAuthenticated.value &&
+    !excludedPathsRegexes.some((path) => path.test(to.path))
+  ) {
     return navigateTo("/login");
   }
 });
