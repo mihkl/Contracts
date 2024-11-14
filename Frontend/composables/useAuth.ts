@@ -45,8 +45,8 @@ export const useAuth = () => {
 
   const logOut = async () => {
     activeToken.value = undefined;
-    await nextTick();
     location.replace("/login");
+    await nextTick();
   };
 
   const fetchWithToken = async <T>(

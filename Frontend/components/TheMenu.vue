@@ -11,20 +11,13 @@
       v-if="auth.isAuthenticated.value"
       @click="auth.logOut"
       icon="i-heroicons-arrow-right-start-on-rectangle"
-      class="mr-6 mb-2.5"
+      class="mr-6 my-0 mx-2 bg-indigo-500 hover:bg-indigo-600"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-const route = useRoute();
 const auth = useAuth();
-const forceUpdate = ref(0);
-
-const handleLogOut = async () => {
-  await auth.logOut();
-  forceUpdate.value++;
-};
 
 const links = [
   {
@@ -41,16 +34,6 @@ const links = [
     label: "Contracts",
     icon: "i-heroicons-document-text",
     to: "/contracts",
-  },
-  {
-    label: "Login",
-    icon: "i-heroicons-arrow-right-end-on-rectangle",
-    to: "/login",
-  },
-  {
-    label: "Register",
-    icon: "i-heroicons-user",
-    to: "/register",
   },
   {
     label: "Submissions",
