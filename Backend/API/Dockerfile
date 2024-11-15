@@ -11,8 +11,13 @@ RUN dotnet build --configuration Release --output /app/build
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine3.20 AS runtime
 WORKDIR /app
 
-RUN apk update && \
-    apk add --no-cache libreoffice openjdk17
+RUN apk update && apk add --no-cache \
+    libreoffice \
+    openjdk17 \
+    libx11 \
+    fontconfig \
+    freetype \
+    ttf-dejavu
 
 COPY --from=build-env /app/build ./
 
