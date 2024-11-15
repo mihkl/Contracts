@@ -27,25 +27,22 @@ export const useApi = () => {
     const response = await customFetch<T>(url, options);
     if (!response) {
       toast.add({ title: "No response from server", description: "Please try again later" });
-      return { error: "No response from server", status: 500 };
+      return {
+        error : "No response from server",
+        status: 500
+      }
     }
     if (errorCodes.includes(response.status)) {
-      if (response.status === 404) {
-        toast.add({
-          title: "Error",
-          description: "PDF doesn't exist",
-        });
-      } else {
-        toast.add({
-          title: response.statusText,
-          description: response._data,
-        });
+      toast.add({ title: response.statusText, description: response._data });
+      return {
+        error : response._data,
+        status: response.status
       }
-      return { error: response._data, status: response.status };
     } else {
       return response._data;
     }
   };
+
 
   return { customFetch, fetchWithErrorHandling };
 };

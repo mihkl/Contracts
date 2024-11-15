@@ -35,8 +35,8 @@
           <b>Valid until:</b>
           {{ formatDateToString(new Date(selectedContract!.linkValidUntil)) }}
         </p>
+        <UButton v-if="canOpenDetails" @click="openContract">Open PDF</UButton>
         <UButton class="mr-3" @click="copyLink">Copy link</UButton>
-        <UButton @click="openContract">Open PDF</UButton>
       </div>
     </UCard>
   </UModal>
@@ -45,6 +45,7 @@
 <script setup lang="ts">
 import { useContractsStore } from "@/stores/ContractsStore";
 import { computed, defineProps } from "vue";
+import { SigningStatus } from "~/Types/Contract";
 
 const contractStore = useContractsStore();
 const modal = useModal();
@@ -54,9 +55,13 @@ const props = defineProps<{ contractId: number }>();
 
 const selectedContract = computed(() =>
   contractStore.contracts.find(
-    (contract: Contract) => contract.id === props.contractId
+    (contract) => contract.id === props.contractId
   )
 );
+
+const canOpenDetails = computed(() => {
+  return selectedContract.value?.signingStatus !== SigningStatus.SignedByNone;
+});
 
 const copyLink = () => {
   navigator.clipboard.writeText(
@@ -70,16 +75,11 @@ const copyLink = () => {
 
 const openContract = () => {
   if (selectedContract.value) {
-    contractStore.fetchPDF(
-      selectedContract.value.id);
+    contractStore.fetchPDF(selectedContract.value.id);
   } else {
-      toast.add({
-        title: "Error",
-        description: "No PDF found"
-      });
-  } 
+    console.error("No contract selected");
+  }
 };
-
 
 function formatDateToString(date: Date) {
   const mm = String(date.getMonth() + 1).padStart(2, "0");
