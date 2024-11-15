@@ -74,6 +74,7 @@ const route = useRoute();
 const api = useApi();
 const toast = useToast();
 const modal = useModal();
+const runtimeConfig = useRuntimeConfig();
 
 definePageMeta({
   layout: false,
@@ -118,7 +119,7 @@ async function generatePdf() {
       }),
     });
 
-    pdfUrl.value = `http://localhost:5143/api/contracts/${id}/pdf`;
+    pdfUrl.value = `${runtimeConfig.public.apiBaseUrl}contracts/${id}/pdf`;
   } catch (err) {
     toast.add({
       title: "Error",

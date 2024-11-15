@@ -33,7 +33,6 @@ import TemplateFieldList from "./templates/TemplateFieldList.vue";
 import type { FormSubmitEvent } from "#ui/types";
 
 const auth = useAuth();
-const api = useApi();
 const modal = useModal();
 const { serverResponse } = useTemplateStore();
 const template = serverResponse!.template;

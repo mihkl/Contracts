@@ -146,6 +146,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
     public async Task<IActionResult> GetPopulatedContractPdf(uint id)
     {
         var contract = await _crepo.GetById(id);
+
         if (contract is null)
         {
             return NotFound("Contract not found.");
