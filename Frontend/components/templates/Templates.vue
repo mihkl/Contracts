@@ -23,7 +23,6 @@
         @openModal="openModal(template.id)"
         @openDetailsModal="openDetailsModal(template.id)"
       />
-
     </div>
   </div>
 </template>

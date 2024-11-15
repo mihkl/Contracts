@@ -35,8 +35,8 @@
           <b>Valid until:</b>
           {{ formatDateToString(new Date(selectedContract!.linkValidUntil)) }}
         </p>
-        <UButton v-if="canOpenDetails" @click="openContract">Open PDF</UButton>
         <UButton class="mr-3" @click="copyLink">Copy link</UButton>
+        <UButton v-if="canOpenDetails" @click="openContract">Open PDF</UButton>
       </div>
     </UCard>
   </UModal>
@@ -57,7 +57,7 @@ const selectedContract = computed(() =>
   contractStore.contracts.find(
     (contract) => contract.id === props.contractId
   )
-);
+);  
 
 const canOpenDetails = computed(() => {
   return selectedContract.value?.signingStatus !== SigningStatus.SignedByNone;
