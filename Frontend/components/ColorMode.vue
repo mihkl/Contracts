@@ -1,9 +1,9 @@
 <script setup>
 function iconName(theme) {
-  if (theme === 'system') return 'i-ph-laptop'
-  if (theme === 'light') return 'i-ph-sun'
-  if (theme === 'dark') return 'i-ph-moon'
-  return 'i-ph-coffee'
+  if (theme === "system") return "i-ph-laptop";
+  if (theme === "light") return "i-ph-sun";
+  if (theme === "dark") return "i-ph-moon";
+  return "i-ph-coffee";
 }
 </script>
 
@@ -11,7 +11,7 @@ function iconName(theme) {
   <div>
     <ul>
       <li
-        v-for="theme of [ 'light', 'dark','system', 'sepia']"
+        v-for="theme of ['light', 'dark', 'system', 'sepia']"
         :key="theme"
         :class="{
           preferred: !$colorMode.unknown && theme === $colorMode.preference,
@@ -25,11 +25,10 @@ function iconName(theme) {
         />
       </li>
     </ul>
-   </div>
+  </div>
 </template>
 
-
-<style scoped>  
+<style scoped>
 ul {
   list-style: none;
   padding: 0;
@@ -48,7 +47,6 @@ p {
 }
 li {
   position: relative;
-  top: -7px;
   cursor: pointer;
   padding: 7px;
   background-color: var(--bg-secondary);
@@ -63,7 +61,6 @@ li:hover {
 
 li.preferred {
   border-color: var(--color-primary);
-  top: -3px;
 }
 li.selected {
   color: var(--color-primary);

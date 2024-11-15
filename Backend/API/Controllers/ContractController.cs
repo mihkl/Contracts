@@ -1,6 +1,9 @@
+using API.Data;
 using API.Data.Repos;
 using API.FileConversion;
 using API.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using static API.Mappers.Mappers;
 using static API.FileManipulation.FileManipulator;
@@ -9,18 +12,19 @@ using OpenXmlPowerTools;
 namespace API.Controllers;
 
 [ApiController]
-[Route("api")]
-public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACService hmacService) : ControllerBase
+public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACService hmacService, UserManager<User> userManager) : ControllerBase
 {
     private readonly ContractRepo _crepo = crepo;
     private readonly TemplateRepo _trepo = trepo;
     private readonly IHMACService _hmacService = hmacService;
+    private readonly UserManager<User> _userManager = userManager;
 
-
+    [Authorize]
     [HttpGet("contracts")]
     public async Task<IActionResult> GetContracts()
     {
-        var contracts = await _crepo.GetAll();
+        var userId = _userManager.GetUserId(User);
+        var contracts = await _crepo.GetAll(userId);
         var result = contracts.Select(ToContractDto).ToList();
         return Ok(result);
     }
@@ -43,10 +47,12 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok(ToContractDto(contract));
     }
 
+    [Authorize]
     [HttpGet("contracts/{id}/file")]
     public async Task<IActionResult> GetContractFile(uint id)
     {
-        var contract = await _crepo.GetById(id);
+        var userId = _userManager.GetUserId(User);
+        var contract = await _crepo.GetById(id, userId);
         if (contract is null)
         {
             return NotFound("Contract not found.");
@@ -140,6 +146,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
     public async Task<IActionResult> GetPopulatedContractPdf(uint id)
     {
         var contract = await _crepo.GetById(id);
+
         if (contract is null)
         {
             return NotFound("Contract not found.");
@@ -147,7 +154,6 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         var fileName = contract.Name;
 
         string filePath = Path.Combine(AppContext.BaseDirectory, "PdfFiles", fileName + ".pdf");
-
         if (!System.IO.File.Exists(filePath))
         {
             return NotFound();
@@ -158,10 +164,12 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return File(fileBytes, "application/pdf", $"{contract.Name}.pdf");
     }
 
+    [Authorize]
     [HttpDelete("contracts/{id}")]
     public async Task<IActionResult> DeleteContract(uint id)
     {
-        var contract = await _crepo.GetById(id);
+        var userId = _userManager.GetUserId(User);
+        var contract = await _crepo.GetById(id, userId);
         if (contract is null)
         {
             return NotFound("Contract not found.");
@@ -170,10 +178,16 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok("Contract deleted successfully.");
     }
 
+    [Authorize]
     [HttpPost("contracts/{id}/url")]
     public async Task<IActionResult> GetContractLink(uint id, [FromBody] GenerateContractLinkRequest request)
     {
-        var template = await _trepo.GetById(id);
+        var userId = _userManager.GetUserId(User);
+        if (userId is null)
+        {
+            return BadRequest("User not found.");
+        }
+        var template = await _trepo.GetById(id, userId);
         if (template is null)
         {
             return NotFound("Template not found.");
@@ -186,10 +200,10 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
             SigningStatus = SigningStatus.SignedByNone,
             LinkValidFrom = request.ValidFrom,
             LinkValidUntil = request.ValidUntil,
-            TemplateId = template.Id
+            TemplateId = template.Id,
         };
 
-        var result = await _crepo.Save(contract);
+        var result = await _crepo.Save(contract, userId);
 
         string formattedValidFrom = _hmacService.FormatDate(request.ValidFrom);
 

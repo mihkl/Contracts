@@ -7,20 +7,43 @@ namespace API.Data.Repos;
 public class ContractRepo(DataContext context) : IContractRepo
 {
     private readonly DataContext _context = context;
-    public async Task<Contract> Save(Contract contract)
+    public async Task<Contract> Save(Contract contract, string? userId)
     {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null)
+        {
+            return null;
+        }
         _context.Add(contract);
+        user.Contracts.Add(contract);
         await SaveChangesAsync();
         return contract;
     }
 
-    public async Task<List<Contract>> GetAll()
+    public async Task<List<Contract>> GetAll(string? userId)
     {
-        return await _context.Contracts
-        .Include(c => c.Fields)
-        .Include(c => c.SubmittedFields)
-        .Include(c => c.Signatures)
-        .ToListAsync();
+        var user = await _context.Users
+            .Include(u => u.Contracts)
+                .ThenInclude(c => c.Fields)
+            .Include(u => u.Contracts)
+                .ThenInclude(c => c.SubmittedFields)
+            .Include(c => c.Contracts)
+                    .ThenInclude(c => c.Signatures)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        return user?.Contracts.ToList() ?? [];
+    }
+
+    public async Task<Contract?> GetById(uint id, string? userId)
+    {
+        var user = await _context.Users
+            .Include(u => u.Contracts)
+                .ThenInclude(c => c.Fields)
+            .Include(u => u.Contracts)
+                .ThenInclude(c => c.SubmittedFields)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        return user?.Contracts.FirstOrDefault(c => c.Id == id);
     }
 
     public async Task<Contract?> GetById(uint id)
