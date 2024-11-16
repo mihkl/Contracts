@@ -124,7 +124,12 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         {
             return NotFound("Template not found.");
         }
-        await _crepo.ReplaceDynamicFields(request.Replacements, contract, template);
+
+        var validationResult = await _crepo.ReplaceDynamicFields(request.Replacements, contract, template);
+        if (!validationResult)
+        {
+            return BadRequest("Invalid replacement fields provided.");
+        }
 
         var populatedContract = await _crepo.GetById(id);
 

@@ -18,7 +18,7 @@
         required
         :key="index"
       >
-        <UInput type="string" v-model="formState[field.name]" />
+        <UInput :type="field.type" v-model="formState[field.name]" />
       </UFormGroup>
       <UButton type="submit">Submit</UButton>
     </UForm>
@@ -107,17 +107,20 @@ async function generatePdf() {
   });
 
   try {
-    await api.fetchWithErrorHandling(`/contracts/${id}/generate-pdf`, {
+    const response = await api.fetchWithErrorHandling(`/contracts/${id}/generate-pdf`, {
       method: "POST",
       body: JSON.stringify({
         replacements: hasFields.value
           ? Object.keys(formState).map((key) => ({
               name: key,
-              value: formState[key],
+              value: String(formState[key]),
             }))
           : [{ name: "string", value: "string" }],
       }),
     });
+    if (response?.error) {
+      return;
+    }
 
     pdfUrl.value = `${runtimeConfig.public.apiBaseUrl}contracts/${id}/pdf`;
   } catch (err) {
