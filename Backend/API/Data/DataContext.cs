@@ -13,11 +13,10 @@ public class User : IdentityUser
 
 public class DataContext(DbContextOptions options) : IdentityDbContext(options)
 {
-    public DbSet<Contract> Contracts { get; set; }
-    public DbSet<Template> Templates { get; set; }
-    public new DbSet<User> Users { get; set; }
-    public DbSet<ContractSignature> Signatures { get; set; }
-
+    public required DbSet<Contract> Contracts { get; set; }
+    public required DbSet<Template> Templates { get; set; }
+    public new required DbSet<User> Users { get; set; }
+    public required DbSet<ContractSignature> Signatures { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

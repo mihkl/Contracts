@@ -4,5 +4,5 @@ namespace API.Data.Repos;
 
 public interface IContractRepo : IRepo<Contract>
 {
-    Task ReplaceDynamicFields(List<ContractDynamicFieldReplacement> replacements, Contract contract, Template template);
+    Task<bool> ReplaceDynamicFields(List<ContractDynamicFieldReplacement> replacements, Contract contract, Template template);
 }

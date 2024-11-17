@@ -1,6 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using API.FileManipulation;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
+using OpenXmlPowerTools;
 
 namespace API.Data.Repos;
 
@@ -60,12 +63,41 @@ public class ContractRepo(DataContext context) : IContractRepo
         await SaveChangesAsync();
     }
 
-    public async Task ReplaceDynamicFields(List<ContractDynamicFieldReplacement> replacements, Contract contract, Template template)
+    public async Task<bool> ReplaceDynamicFields(List<ContractDynamicFieldReplacement> replacements, Contract contract, Template template)
     {
+        if (!ValidateReplacements(replacements, template))
+        {
+            return false;
+        }
         contract.FileData = FileManipulator.ReplaceContractPlaceholders(replacements, template);
         UpdateDynamicFields(contract, replacements);
 
         await SaveChangesAsync();
+        return true;
+    }
+
+    private static bool ValidateReplacements(List<ContractDynamicFieldReplacement> replacements, Template template)
+    {
+        var replacementsWithType = replacements.Select(r => new ContractDynamicFieldDto
+        {
+            Name = r.Name,
+            Value = r.Value,
+            Type = template.Fields.First(f => f.Name == r.Name).Type
+        }).ToArray();
+
+        return replacementsWithType.All(IsValidReplacement);
+    }
+
+    private static bool IsValidReplacement(ContractDynamicFieldDto replacement)
+    {
+        return replacement.Type switch
+        {
+            "number" => !replacement.Value.Contains('+') && !replacement.Value.Contains('-') && uint.TryParse(replacement.Value, out uint _),
+            "email" => new EmailAddressAttribute().IsValid(replacement.Value),
+            "date" => DateTime.TryParseExact(replacement.Value, ["yyyy-MM-dd", "dd/MM/yyyy"], CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date) && date < DateTime.Now,
+            "string" => !string.IsNullOrWhiteSpace(replacement.Value),
+            _ => false
+        };
     }
 
     private void UpdateDynamicFields(Contract contract, List<ContractDynamicFieldReplacement> replacements)
