@@ -1,3 +1,4 @@
+import { useAuth } from "~/composables/useAuth";
 import type { Contract } from "~/Types/Contract";
 
 export const useContractsStore = defineStore("contract", () => {
@@ -21,10 +22,10 @@ export const useContractsStore = defineStore("contract", () => {
       const response = await auth.fetchWithToken<Blob>(`/contracts/${contractId}/pdf`, {
         method: "GET",
       });
-
+  
       if (!response.error) {
         const pdfBlobUrl = URL.createObjectURL(response);
-        window.open(pdfBlobUrl, "_blank"); 
+        window.open(pdfBlobUrl, "_blank");
       }
     } catch (error) {
       console.error("Error fetching PDF:", error);
