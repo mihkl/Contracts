@@ -122,7 +122,7 @@ async function generatePdf() {
       return;
     }
 
-    pdfUrl.value = `${runtimeConfig.public.apiBaseUrl}/contracts/${id}/pdf`;
+    pdfUrl.value = `${runtimeConfig.public.apiBaseUrl}contracts/${id}/pdf`;
   } catch (err) {
     toast.add({
       title: "Error",
