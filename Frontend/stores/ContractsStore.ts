@@ -1,12 +1,14 @@
+import { useAuth } from "~/composables/useAuth";
 import type { Contract } from "~/Types/Contract";
 
 export const useContractsStore = defineStore("contract", () => {
   const api = useApi();
+  const auth = useAuth();
 
   const contracts = ref<Contract[]>([]);
 
   const fetchContracts = async () => {
-      const response = await api.fetchWithErrorHandling<Contract[]>("/contracts", {
+      const response = await auth.fetchWithToken<Contract[]>("/contracts", {
         method: "GET",
       });
       if (!response.error){
@@ -17,7 +19,7 @@ export const useContractsStore = defineStore("contract", () => {
 
   const fetchPDF = async (contractId: number) => {
     try {
-      const response = await api.fetchWithErrorHandling<Blob>(`/contracts/${contractId}/pdf`, {
+      const response = await auth.fetchWithToken<Blob>(`/contracts/${contractId}/pdf`, {
         method: "GET",
       });
   

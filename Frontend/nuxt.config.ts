@@ -20,7 +20,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiBaseUrl: "http://localhost:5143/api/",
+      apiBaseUrl: "http://localhost:5143/",
     },
   },
   colorMode: {

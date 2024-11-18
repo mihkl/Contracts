@@ -32,7 +32,7 @@ import { object, string, type InferType } from "yup";
 import TemplateFieldList from "./templates/TemplateFieldList.vue";
 import type { FormSubmitEvent } from "#ui/types";
 
-const api = useApi();
+const auth = useAuth();
 const modal = useModal();
 const { serverResponse } = useTemplateStore();
 const template = serverResponse!.template;
@@ -48,7 +48,7 @@ const state = reactive({
 type Schema = InferType<typeof schema>;
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  await api.fetchWithErrorHandling("/save", {
+  await auth.fetchWithToken("/save", {
     method: "POST",
     body: JSON.stringify({ guid: serverResponse!.guid, name: state.name }),
   });

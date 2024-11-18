@@ -5,6 +5,7 @@ export const useTemplateStore = defineStore("file", () => {
   const modal = useModal();
   const toast = useToast();
   const api = useApi();
+  const auth = useAuth();
   const templates = ref<Template[]>([]);
   const serverResponse = ref<UploadFileResponse | null>(null);
   const selectedFile = ref<File | null>(null);
@@ -25,7 +26,7 @@ export const useTemplateStore = defineStore("file", () => {
     const formData = new FormData();
     formData.append("file", selectedFile.value);
 
-    const response = await api.fetchWithErrorHandling<UploadFileResponse>(
+    const response = await auth.fetchWithToken<UploadFileResponse>(
       "/upload",
       {
         method: "POST",
@@ -39,7 +40,7 @@ export const useTemplateStore = defineStore("file", () => {
   };
 
   const fetchTemplates = async () => {
-    const response = await api.fetchWithErrorHandling<Template[]>(
+    const response = await auth.fetchWithToken<Template[]>(
       "/templates",
       {
         method: "GET",
@@ -53,7 +54,7 @@ export const useTemplateStore = defineStore("file", () => {
 
   const downloadFile = async (id: number, fileName: string) => {
     try {
-      const response = await api.fetchWithErrorHandling(
+      const response = await auth.fetchWithToken(
         `/templates/${id}/file`,
         {
           method: "GET",
@@ -82,7 +83,7 @@ export const useTemplateStore = defineStore("file", () => {
 
   const deleteTemplate = async (id: number) => {
     try {
-      await api.fetchWithErrorHandling(`/templates/${id}`, {
+      await auth.fetchWithToken(`/templates/${id}`, {
         method: "DELETE",
       });
 

@@ -7,11 +7,17 @@
     </div>
     <UHorizontalNavigation :links="links" class="flex-1 content-center" />
     <ColorMode />
+    <UButton
+      v-if="auth.isAuthenticated.value"
+      @click="auth.logOut"
+      icon="i-heroicons-arrow-right-start-on-rectangle"
+      class="mr-6 my-0 mx-2 bg-indigo-500 hover:bg-indigo-600"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-const route = useRoute();
+const auth = useAuth();
 
 const links = [
   {

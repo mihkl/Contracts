@@ -20,7 +20,7 @@ public static class PlaceHolderMappings
         { new() {  Name = "Social security number", Type = "number" }, SocialSecurityNumberPlaceholder },
         { new() {  Name = "Date of birth", Type = "date" }, DateOfBirthPlaceholder },
         { new() {  Name = "Address", Type = "string" }, AddressPlaceholder },
-        { new() {  Name = "Bank account number", Type = "number" }, BankAccountNumberPlaceholder }
+        { new() {  Name = "Bank account number", Type = "string" }, BankAccountNumberPlaceholder }
 
     };
 }
