@@ -8,6 +8,7 @@ variables:
 stages:
   - build
   - api_test
+  - deploy
 
 build:back-end:
   image:
@@ -78,5 +79,39 @@ api_test:
   after_script:
     - docker logout ${ITB2203_REGISTRY}
   stage: api_test
+  tags:
+    - itb2203
+    
+deploy:
+  image: docker:27.3.1-alpine3.20
+  when: manual
+  only:
+    - master
+    - main
+  before_script:
+    # teeme kindlaks, et ssh on installitud
+    - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )"
+
+    # käivitame ssh
+    - eval $(ssh-agent -s)
+
+    # loome ssh kausta ja anname ssh kaustas lugemise, kirjutamise ja käivitamise õigused
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+
+    # leiame kõik serveri public key-d ja usaldame neid runneri keskkonnas
+    - ssh-keyscan ${DOMAIN} >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+  script:
+    # loeme GitLabi muutujatest private key
+    - echo "$SSH_PRIVATE_KEY"
+    - ssh-add <(echo "$SSH_PRIVATE_KEY" | tr -d '\r')
+
+    # loome ssh ühenduse
+    - ssh ubuntu@${DOMAIN} "(aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}) && CI_COMMIT_SHA=${CI_COMMIT_SHA} docker compose -f ~/app/docker-compose.yml up -d"
+  after_script:
+    - exit
+  stage: deploy
   tags:
     - itb2203
