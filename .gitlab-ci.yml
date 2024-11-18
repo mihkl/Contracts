@@ -73,9 +73,9 @@ api_test:
     - pip install --break-system-packages awscli
     - aws ecr get-login-password | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
   script:
-  #  - cd ApiTests
-  #  - docker compose up --abort-on-container-exit --exit-code-from newman
-   # - docker compose down -v
+    - cd ApiTests
+    - docker compose up --abort-on-container-exit --exit-code-from newman
+    - docker compose down -v
   after_script:
     - docker logout ${ITB2203_REGISTRY}
   stage: api_test
