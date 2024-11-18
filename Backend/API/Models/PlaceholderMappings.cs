@@ -17,10 +17,10 @@ public static class PlaceHolderMappings
         { new() {  Name = "Last name", Type = "string" }, LastNamePlaceholder },
         { new() {  Name = "Phone number", Type = "number" }, PhoneNumberPlaceholder },
         { new() {  Name = "Email", Type = "email" }, EmailPlaceholder },
-        { new() {  Name = "Social security number", Type = "number" }, SocialSecurityNumberPlaceholder },
+        { new() {  Name = "Social security number", Type = "ssn" }, SocialSecurityNumberPlaceholder },
         { new() {  Name = "Date of birth", Type = "date" }, DateOfBirthPlaceholder },
         { new() {  Name = "Address", Type = "string" }, AddressPlaceholder },
-        { new() {  Name = "Bank account number", Type = "string" }, BankAccountNumberPlaceholder }
+        { new() {  Name = "Bank account number", Type = "iban" }, BankAccountNumberPlaceholder }
 
     };
 }
