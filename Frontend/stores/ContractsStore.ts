@@ -31,9 +31,28 @@ export const useContractsStore = defineStore("contract", () => {
       console.error("Error fetching PDF:", error);
     }
   };
+
+  const deleteContract = async (contractId: number) => {
+    try {
+      await auth.fetchWithToken(`/contracts/${contractId}`, {
+        method: "DELETE",
+      });
+
+      await fetchContracts();
+
+      console.log(
+        `Contract with ID ${contractId} deleted successfully and contracts updated`
+      );
+    } catch (error) {
+      console.error(`Error deleting contract with ID ${contractId}:`, error);
+      throw error;
+    }
+  };
+
   return {
     contracts,
     fetchContracts,
     fetchPDF,
+    deleteContract
   };
 });
