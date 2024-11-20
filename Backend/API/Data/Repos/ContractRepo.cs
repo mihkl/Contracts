@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using API.FileManipulation;
 using API.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using OpenXmlPowerTools;
 
@@ -17,6 +18,7 @@ public class ContractRepo(DataContext context) : IContractRepo
         {
             return null;
         }
+        contract.CreationTime = DateTime.UtcNow;
         _context.Add(contract);
         user.Contracts.Add(contract);
         await SaveChangesAsync();

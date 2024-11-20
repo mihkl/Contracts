@@ -14,7 +14,8 @@ public static class Mappers
         LinkValidFrom = contract.LinkValidFrom,
         LinkValidUntil = contract.LinkValidUntil,
         TemplateId = contract.TemplateId,
-        Signatures = contract.Signatures.ToList()
+        Signatures = contract.Signatures.ToList(),
+        CreationTime = contract.CreationTime
     };
 
     public static ContractDynamicFieldDto ToContractDynamicFieldDto(ContractDynamicField field) => new()
