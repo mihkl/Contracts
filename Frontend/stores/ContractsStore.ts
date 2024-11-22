@@ -33,21 +33,21 @@ export const useContractsStore = defineStore("contract", () => {
   };
 
   const deleteContract = async (contractId: number) => {
-    try {
-      await auth.fetchWithToken(`/contracts/${contractId}`, {
-        method: "DELETE",
-      });
-
+    const response = await auth.fetchWithToken(`/contracts/${contractId}`, {
+      method: "DELETE",
+    });
+  
+    if (!response.error) {
       await fetchContracts();
-
       console.log(
         `Contract with ID ${contractId} deleted successfully and contracts updated`
       );
-    } catch (error) {
-      console.error(`Error deleting contract with ID ${contractId}:`, error);
-      throw error;
+    } else {
+      console.error(`Error deleting contract with ID ${contractId}:`, response.error);
+      return response.error; // Või viska viga, kui vaja
     }
   };
+  
 
   return {
     contracts,
