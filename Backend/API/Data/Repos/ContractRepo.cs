@@ -7,6 +7,7 @@ using IbanNet;
 using Microsoft.EntityFrameworkCore;
 using OpenXmlPowerTools;
 
+
 namespace API.Data.Repos;
 
 public class ContractRepo(DataContext context) : IContractRepo
@@ -19,6 +20,7 @@ public class ContractRepo(DataContext context) : IContractRepo
         {
             return null;
         }
+        contract.CreationTime = DateTime.UtcNow;
         _context.Add(contract);
         user.Contracts.Add(contract);
         await SaveChangesAsync();
