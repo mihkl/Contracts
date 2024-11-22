@@ -43,5 +43,6 @@ export const useApi = () => {
     }
   };
 
+
   return { customFetch, fetchWithErrorHandling };
 };

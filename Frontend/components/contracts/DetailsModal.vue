@@ -36,6 +36,7 @@
           {{ formatDateToString(new Date(selectedContract!.linkValidUntil)) }}
         </p>
         <UButton class="mr-3" @click="copyLink">Copy link</UButton>
+        <UButton v-if="canOpenDetails" @click="openContract">Open PDF</UButton>
       </div>
     </UCard>
   </UModal>
@@ -44,6 +45,7 @@
 <script setup lang="ts">
 import { useContractsStore } from "@/stores/ContractsStore";
 import { computed, defineProps } from "vue";
+import { SigningStatus } from "~/Types/Contract";
 
 const contractStore = useContractsStore();
 const modal = useModal();
@@ -53,9 +55,13 @@ const props = defineProps<{ contractId: number }>();
 
 const selectedContract = computed(() =>
   contractStore.contracts.find(
-    (contract: Contract) => contract.id === props.contractId
+    (contract) => contract.id === props.contractId
   )
-);
+);  
+
+const canOpenDetails = computed(() => {
+  return selectedContract.value?.signingStatus !== SigningStatus.SignedByNone;
+});
 
 const copyLink = () => {
   navigator.clipboard.writeText(
@@ -65,6 +71,14 @@ const copyLink = () => {
     title: "Success!",
     description: "The link has been copied to your clipboard.",
   });
+};
+
+const openContract = () => {
+  if (selectedContract.value) {
+    contractStore.fetchPDF(selectedContract.value.id);
+  } else {
+    console.error("No contract selected");
+  }
 };
 
 function formatDateToString(date: Date) {
