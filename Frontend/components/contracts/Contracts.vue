@@ -24,7 +24,6 @@
       />
     </div>
 
-    <!-- Sort Options Modal -->
   </div>
 </template>
 
@@ -42,7 +41,6 @@ const showSortOptionsModal = ref(false);
 const sortType = ref("alphabetical");
 const sortOrder = ref("asc");
 
-// Fetch Contracts
 async function fetchContracts() {
   await contractsStore.fetchContracts();
 }
@@ -51,7 +49,7 @@ onMounted(() => {
   fetchContracts();
 });
 
-// Open Sort Modal
+
 function openSortOptionsModal() {
   modal.open(SortOptionsModal, {
     'onApply-sort': applySortOptions,
