@@ -1,11 +1,12 @@
 <template>
   <div class="mt-10 px-4 w-full max-w-5xl">
     <div class="space-y-4">
-      <h1 class="text-3xl font-semibold my-6">My contracts</h1>
+      <h1 class="text-3xl font-semibold my-6">My Submissions</h1>
       <SubmissionItem
-        v-for="(contract, index) in contractsStore.contracts"
+        v-for="(submission, index) in submissions"
         :key="index"
-        :submission="contract"
+        :submission="submission"
+        @openDetailsModal="openDetailsModal(submission)"
       />
     </div>
   </div>
@@ -13,19 +14,18 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useContractsStore } from "@/stores/ContractsStore";
 import SubmissionItem from "./SubmissionItem.vue";
+import SubmissionDetailsModal from "./SubmissionDetailsModal.vue";
 
-const contractsStore = useContractsStore();
-const modal = useModal();
 const auth = useAuth();
 const submissions = ref<Contract[]>([]);
+const modal = useModal();
 
 async function fetchSubmissions() {
   const response = await auth.fetchWithToken<Contract[]>("/contracts", {
     method: "GET",
     query: {
-      SigningStatus: SigningStatus.SignedByFirstParty,
+      minimumStatus: SigningStatus.SignedByFirstParty,
     },
   });
 
@@ -33,6 +33,12 @@ async function fetchSubmissions() {
     submissions.value = [...response];
     return submissions.value;
   }
+}
+
+function openDetailsModal(submission: Contract) {
+  modal.open(SubmissionDetailsModal, {
+    submission,
+  });
 }
 
 onMounted(() => {

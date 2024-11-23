@@ -6,12 +6,9 @@ export const useContractsStore = defineStore("contract", () => {
 
   const contracts = ref<Contract[]>([]);
 
-  const fetchContracts = async (minimumStatus: SigningStatus) => {
+  const fetchContracts = async () => {
     const response = await auth.fetchWithToken<Contract[]>("/contracts", {
       method: "GET",
-      query: {
-        minimumStatus,
-      },
     });
     if (!response.error) {
       contracts.value = response;
