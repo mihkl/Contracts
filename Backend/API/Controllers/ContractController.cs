@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using static API.Mappers.Mappers;
 using static API.FileManipulation.FileManipulator;
-using API.Models.Requests;
 
 namespace API.Controllers;
 
@@ -21,10 +20,10 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
     [Authorize]
     [HttpGet("contracts")]
-    public async Task<IActionResult> GetContracts(GetContractsDto dto)
+    public async Task<IActionResult> GetContracts([FromQuery] SigningStatus? minimumStatus)
     {
         var userId = _userManager.GetUserId(User);
-        var contracts = await _crepo.GetAll(userId, dto);
+        var contracts = await _crepo.GetAll(userId, minimumStatus);
         var result = contracts.Select(ToContractDto).ToList();
         return Ok(result);
     }

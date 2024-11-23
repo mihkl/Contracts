@@ -1,28 +1,33 @@
 import { useAuth } from "~/composables/useAuth";
-import type { Contract } from "~/Types/Contract";
+import type { Contract, SigningStatus } from "~/Types/Contract";
 
 export const useContractsStore = defineStore("contract", () => {
-  const api = useApi();
   const auth = useAuth();
 
   const contracts = ref<Contract[]>([]);
 
-  const fetchContracts = async () => {
-      const response = await auth.fetchWithToken<Contract[]>("/contracts", {
-        method: "GET",
-      });
-      if (!response.error){
-        contracts.value = response;
-        return contracts.value;
-      }
+  const fetchContracts = async (minimumStatus: SigningStatus) => {
+    const response = await auth.fetchWithToken<Contract[]>("/contracts", {
+      method: "GET",
+      query: {
+        minimumStatus,
+      },
+    });
+    if (!response.error) {
+      contracts.value = response;
+      return contracts.value;
+    }
   };
 
   const fetchPDF = async (contractId: number) => {
     try {
-      const response = await auth.fetchWithToken<Blob>(`/contracts/${contractId}/pdf`, {
-        method: "GET",
-      });
-  
+      const response = await auth.fetchWithToken<Blob>(
+        `/contracts/${contractId}/pdf`,
+        {
+          method: "GET",
+        }
+      );
+
       if (!response.error) {
         const pdfBlobUrl = URL.createObjectURL(response);
         window.open(pdfBlobUrl, "_blank");

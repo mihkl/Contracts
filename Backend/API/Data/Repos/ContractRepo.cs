@@ -26,7 +26,7 @@ public class ContractRepo(DataContext context) : IContractRepo
         return contract;
     }
 
-    public async Task<List<Contract>> GetAll(string? userId, GetContractsDto? dto)
+    public async Task<List<Contract>> GetAll(string? userId, SigningStatus? minimumStatus)
     {
         var user = await _context.Users
             .Include(u => u.Contracts)
@@ -39,10 +39,10 @@ public class ContractRepo(DataContext context) : IContractRepo
 
         if (user == null) return [];
 
-        if (dto?.MinimumStage != null)
+        if (minimumStatus != null)
         {
             user.Contracts = user.Contracts
-                .Where(c => c.SigningStatus >= dto.MinimumStage)
+                .Where(c => c.SigningStatus >= minimumStatus)
                 .ToList();
         }
 
