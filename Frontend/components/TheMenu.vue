@@ -40,5 +40,10 @@ const links = [
     icon: "i-heroicons-paper-airplane",
     to: "/submissions",
   },
+  {
+    label: "Integrations",
+    icon: "i-heroicons-link",
+    to: "/integrations",
+  },
 ];
 </script>
