@@ -5,6 +5,7 @@ export type Contract = {
   url: string;
   linkValidFrom: string;
   linkValidUntil: string;
+  creationTime : Date;
 };
 
 export enum SigningStatus {
