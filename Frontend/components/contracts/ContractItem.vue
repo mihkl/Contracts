@@ -28,6 +28,13 @@
       >
         Details
       </button>
+
+      <button
+        class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+        @click="deleteContract(contract.id)"
+      >
+        Delete
+      </button>
     </div>
   </div>
 </template>
@@ -35,6 +42,7 @@
 <script setup lang="ts">
 import { SigningStatus, type Contract } from "../../Types/Contract.js";
 const emits = defineEmits(["openModal", "openDetailsModal"]);
+const store = useContractsStore();
 
 const contractStatuses = [
   "Link Generated",
@@ -61,6 +69,16 @@ const openDetails = async (id: number) => {
 const openDetailsModal = () => {
   emits("openDetailsModal", true);
 };
+
+const deleteContract = async (id: number) => {
+  try {
+    await store.deleteContract(id);
+    console.log(`Contract with ID ${id} deleted successfully`);
+  } catch (error) {
+    console.error("Error deleting contract:", error);
+  }
+};
+
 </script>
 
 <style>

@@ -82,21 +82,21 @@ export const useTemplateStore = defineStore("file", () => {
   };
 
   const deleteTemplate = async (id: number) => {
-    try {
-      await auth.fetchWithToken(`/templates/${id}`, {
-        method: "DELETE",
-      });
-
+    const response = await auth.fetchWithToken(`/templates/${id}`, {
+      method: "DELETE",
+    });
+  
+    if (!response.error) {
       await fetchTemplates();
-
       console.log(
         `Template with ID ${id} deleted successfully and templates updated`
       );
-    } catch (error) {
-      console.error(`Error deleting template with ID ${id}:`, error);
-      throw error;
+    } else {
+      console.error(`Error deleting template with ID ${id}:`, response.error);
+      return response.error; 
     }
   };
+  
 
   return {
     templates,
