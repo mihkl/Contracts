@@ -1,3 +1,3 @@
 <template>
-  <Submissions />
+  <Integrations />
 </template>

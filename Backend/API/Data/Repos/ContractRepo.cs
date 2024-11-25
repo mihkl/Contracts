@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using API.FileManipulation;
 using API.Models;
+using API.Models.Requests;
 using API.Validation;
 using IbanNet;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,7 @@ public class ContractRepo(DataContext context) : IContractRepo
         return contract;
     }
 
-    public async Task<List<Contract>> GetAll(string? userId)
+    public async Task<List<Contract>> GetAll(string? userId, SigningStatus? minimumStatus)
     {
         var user = await _context.Users
             .Include(u => u.Contracts)
@@ -38,7 +39,16 @@ public class ContractRepo(DataContext context) : IContractRepo
                     .ThenInclude(c => c.Signatures)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
-        return user?.Contracts.ToList() ?? [];
+        if (user == null) return [];
+
+        if (minimumStatus != null)
+        {
+            user.Contracts = user.Contracts
+                .Where(c => c.SigningStatus >= minimumStatus)
+                .ToList();
+        }
+
+        return user!.Contracts.ToList();
     }
 
     public async Task<Contract?> GetById(uint id, string? userId)
@@ -58,6 +68,7 @@ public class ContractRepo(DataContext context) : IContractRepo
         return await _context.Contracts
         .Include(c => c.Fields)
         .Include(c => c.SubmittedFields)
+        .Include(c => c.Signatures)
         .FirstOrDefaultAsync(c => c.Id == id);
     }
 
