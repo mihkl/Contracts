@@ -168,6 +168,34 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return File(fileBytes, "application/pdf", $"{contract.Name}.pdf");
     }
 
+    [HttpGet("contracts/{id}/signed-contract")]
+    [Authorize]
+    public async Task<IActionResult> GetSignedContract(uint id)
+    {
+        var contract = await _crepo.GetById(id);
+
+        if (contract is null)
+        {
+            return NotFound("Contract not found.");
+        }
+
+        if (contract.SigningStatus == SigningStatus.SignedByNone)
+        {
+            return BadRequest("This contract has not been signed");
+        }
+
+        var signature = contract.Signatures.FirstOrDefault(s => s.Type == ContractSignatureType.Candidate);
+
+        if (signature == null) return BadRequest("This contract does not have any matching signatures.");
+
+        var contentType = "application/vnd.etsi.asic-e+zip";
+        return new FileContentResult(signature.FileData, contentType)
+        {
+            FileDownloadName = "contract.asice"
+        };
+    }
+
+
     [Authorize]
     [HttpDelete("contracts/{id}")]
     public async Task<IActionResult> DeleteContract(uint id)

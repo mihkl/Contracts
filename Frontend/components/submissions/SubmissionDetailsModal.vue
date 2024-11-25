@@ -36,7 +36,9 @@
           {{ formatDateToString(new Date(submission.linkValidUntil)) }}
         </p>
         <UButton class="mr-3" @click="copyLink">Copy link</UButton>
-        <UButton v-if="canOpenDetails" @click="openContract">Open PDF</UButton>
+        <UButton class="mr-3" v-if="canOpenDetails" @click="openContract"
+          >Open PDF</UButton
+        >
       </div>
     </UCard>
   </UModal>
@@ -70,6 +72,12 @@ const copyLink = () => {
 const openContract = () => {
   if (props.submission) {
     contractStore.fetchPDF(props.submission.id);
+  }
+};
+
+const downloadSignedContract = () => {
+  if (props.submission) {
+    contractStore.fetchSignedContract(props.submission.id);
   }
 };
 

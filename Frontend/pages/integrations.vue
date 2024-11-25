@@ -1,1 +1,3 @@
-<template>Integrations</template>
+<template>
+  <Integrations />
+</template>

@@ -33,9 +33,29 @@ export const useContractsStore = defineStore("contract", () => {
       console.error("Error fetching PDF:", error);
     }
   };
+
+  const fetchSignedContract = async (contractId: number) => {
+    try {
+      const response = await auth.fetchWithToken<Blob>(
+        `/contracts/${contractId}/signed-contract`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.error) {
+        const blobUrl = URL.createObjectURL(response);
+        window.open(blobUrl, "_blank");
+      }
+    } catch (error) {
+      console.error("Error fetching signed contract:", error);
+    }
+  };
+
   return {
     contracts,
     fetchContracts,
     fetchPDF,
+    fetchSignedContract,
   };
 });
