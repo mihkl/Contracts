@@ -1,10 +1,11 @@
 <template>
-  <div class="p-2">
-    <NuxtLayout />
-    <NuxtPage />
+  <NuxtLayout>
+    <main class="flex-grow p-4 mx-auto max-w-4xl">
+      <NuxtPage />
+    </main>
     <UModals />
     <UNotifications />
-  </div>
+  </NuxtLayout>
 </template>
 
 <script setup>
