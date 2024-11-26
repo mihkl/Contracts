@@ -45,5 +45,10 @@ const links = [
     icon: "i-heroicons-link",
     to: "/integrations",
   },
+  {
+    label: "Get Started",
+    icon: "i-heroicons-hand-raised",
+    to: "/getStarted",
+  },
 ];
 </script>
