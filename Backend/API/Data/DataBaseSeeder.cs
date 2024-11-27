@@ -8,7 +8,7 @@ public static class DataBaseSeeder
 {
     public static async Task<Template> TemplateFromFileAsync(string path)
     {
-        var projectRoot = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName;
+        var projectRoot = Directory.GetParent(AppContext.BaseDirectory)?.FullName;
         var filePath = Path.Combine(projectRoot!, "TestFiles", path);
 
         await using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
