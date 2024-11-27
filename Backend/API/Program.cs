@@ -60,7 +60,27 @@ using (var scope = ((IApplicationBuilder)app).ApplicationServices.GetRequiredSer
 using (var context = scope.ServiceProvider.GetService<DataContext>())
 {
     context?.Database.EnsureCreated();
+
+    if (app.Environment.EnvironmentName == "Testing")
+    {
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+        var testUser = new User
+        {
+            UserName = "testUser@gmail.com",
+            Email = "testUser@gmail.com"
+        };
+        await userManager.CreateAsync(testUser, "testPassword");
+
+        var template = DataBaseSeeder.TemplateFromFileAsync("TestTemplate.docx").Result;
+        testUser.Templates.Add(template!);
+        var template2 = DataBaseSeeder.TemplateFromFileAsync("apitest.docx").Result;
+        testUser.Templates.Add(template2!);
+
+        await userManager.UpdateAsync(testUser);
+        context?.SaveChanges();
+    }
 }
+
 
 if (app.Environment.IsDevelopment())
 {
