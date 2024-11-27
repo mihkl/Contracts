@@ -10,7 +10,7 @@ services:
     image: ${DOCKER_REGISTRY}/back:${CI_COMMIT_SHA}
     container_name: back_end
     environment:
-      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_URLS=http://+:5143
       - ASPNETCORE_ENVIRONMENT=Testing
     depends_on:
       - postgres
@@ -34,7 +34,7 @@ services:
   newman:
     image: postman/newman:alpine
     entrypoint:
-      ["/etc/startup/wait-for", "-t", "30", "back_end:8080", "--", "newman"]
+      ["/etc/startup/wait-for", "-t", "30", "back_end:5143", "--", "newman"]
     container_name: newman
     depends_on:
       - postgres
