@@ -21,6 +21,8 @@ RUN apk update && apk add --no-cache \
 
 COPY --from=build-env /app/build ./
 
+COPY TestFiles ./TestFiles
+
 EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "API.dll"]
