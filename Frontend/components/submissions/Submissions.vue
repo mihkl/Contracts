@@ -17,6 +17,7 @@
 import { onMounted } from "vue";
 import SubmissionItem from "./SubmissionItem.vue";
 import SubmissionDetailsModal from "./SubmissionDetailsModal.vue";
+import UploadFinalContractModal from "./UploadFinalContractModal.vue";
 
 const auth = useAuth();
 const submissions = ref<Contract[]>([]);
@@ -43,7 +44,7 @@ function openDetailsModal(submission: Contract) {
 }
 
 function openUploadFinalContractModal(submission: Contract) {
-  modal.open(SubmissionDetailsModal, {
+  modal.open(UploadFinalContractModal, {
     submission,
   });
 }
