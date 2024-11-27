@@ -188,8 +188,12 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
         if (signature == null) return BadRequest("This contract does not have any matching signatures.");
 
+        string baseDirectory = AppContext.BaseDirectory;
+
+        var bytes = await System.IO.File.ReadAllBytesAsync(signature.FilePath);
+
         var contentType = "application/vnd.etsi.asic-e+zip";
-        return new FileContentResult(signature.FileData, contentType)
+        return new FileContentResult(bytes, contentType)
         {
             FileDownloadName = "contract.asice"
         };
@@ -263,16 +267,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
         if (contract == null) return NotFound($"Contract with id {id} does not exist");
 
-        // siia tulevad type checkid sisseloginud kasutaja rolli põhjal, praegu lihtsalt hard-coded type= candidate.
-        //if authenticated user (see kes üles laeb signatuuriga contracti) is admin then type = ContractSignatureType.CompanyRepresentative
-        var contractSignature = new ContractSignature
-        {
-            FileData = parsedFile,
-            ContractId = id,
-            Type = ContractSignatureType.Candidate
-        };
-
-        await _crepo.SaveSignatureAndUpdateContractStatus(contractSignature);
+        await _crepo.SaveSignature(contract, parsedFile);
 
         return Ok("Hey");
     }

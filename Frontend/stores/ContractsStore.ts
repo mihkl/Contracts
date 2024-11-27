@@ -45,7 +45,15 @@ export const useContractsStore = defineStore("contract", () => {
 
       if (!response.error) {
         const blobUrl = URL.createObjectURL(response);
-        window.open(blobUrl, "_blank");
+
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = "contract.asice";
+        document.body.appendChild(link);
+
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
       }
     } catch (error) {
       console.error("Error fetching signed contract:", error);

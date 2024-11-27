@@ -39,6 +39,12 @@
         <UButton class="mr-3" v-if="canOpenDetails" @click="openContract"
           >Open PDF</UButton
         >
+        <UButton
+          class="mr-3"
+          v-if="canOpenDetails"
+          @click="downloadSignedContract"
+          >Download contract</UButton
+        >
       </div>
     </UCard>
   </UModal>
