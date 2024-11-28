@@ -7,7 +7,6 @@
         </p>
   
         <div class="space-y-10">
-          <!-- Step 1 -->
           <div class="flex items-start space-x-4">
             <div class="flex-shrink-0">
               <div class="bg-indigo-100 text-indigo-600 rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold">
@@ -15,16 +14,20 @@
               </div>
             </div>
             <div>
-              <h2 class="text-xl font-semibold mb-2 text-indigo-600">Prepare Your Contract</h2>
+              <h2 class="text-xl font-semibold mb-2 text-indigo-600">Prepare Your Template</h2>
               <p class="text-gray-700">
                 Start by preparing a <strong>.docx</strong> file of the contract you'd like to use. Instead of leaving blank spaces for customers information, use placeholders like:
               </p>
               <div class="mt-3 bg-gray-50 p-4 rounded border border-gray-200">
-                <strong>Example:</strong>
+                <strong>Example of all currently supported placeholders:</strong>
                 <ul class="list-disc list-inside text-gray-600">
-                  <li><code>_firstName_</code>: Placeholder for the customer's first name.</li>
-                  <li><code>_lastName_</code>: Placeholder for the customer's last name.</li>
-                  <li><code>_email_</code>: Placeholder for the customer's email.</li>
+                  <li><code>_firstName_</code> : Placeholder for the customer's first name.</li>
+                  <li><code>_lastName_</code> : Placeholder for the customer's last name.</li>
+                  <li><code>_email_</code> : Placeholder for the customer's email.</li>
+                  <li><code>_socialSecurityNumber_</code> : Placeholder for the customer's social security number.</li>
+                  <li><code>_dateOfBirth_</code> : Placeholder for the customer's date of birth.</li>
+                  <li><code>_address_</code> : Placeholder for the customer's address.</li>
+                  <li><code>_bankAccountNumber_</code> : Placeholder for the customer's bank account number.</li>
                 </ul>
               </div>
             </div>
@@ -38,19 +41,18 @@
               </div>
             </div>
             <div>
-              <h2 class="text-xl font-semibold mb-2 text-indigo-600">Upload Your Contract</h2>
+              <h2 class="text-xl font-semibold mb-2 text-indigo-600">Upload Your Template</h2>
               <p class="text-gray-700">
-                Once your file is ready, upload it to the system. The system will store this template securely in your account.
+                Once your file is ready, upload it to the system from the Home page.
               </p>
               <img
-                src="public/logo.png"
+                src="public/upload.png"
                 alt="Upload Example"
                 class="mt-3 rounded shadow border border-gray-200"
               />
             </div>
           </div>
   
-          <!-- Step 3 -->
           <div class="flex items-start space-x-4">
             <div class="flex-shrink-0">
               <div class="bg-indigo-100 text-indigo-600 rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold">
@@ -58,19 +60,18 @@
               </div>
             </div>
             <div>
-              <h2 class="text-xl font-semibold mb-2 text-indigo-600">Generate and Customize</h2>
+              <h2 class="text-xl font-semibold mb-2 text-indigo-600">Send to customer</h2>
               <p class="text-gray-700">
-                After uploading your template, you can create personalized contracts by filling out the placeholders with customer-specific data.
-              </p>
+                After uploading your template, you can generate a link and send it to the customer to fill in the data. Once you generate the link, it will be copied to your clipboard.
+              </p>  
               <img
-                src="public/logo.png"
+                src="public/generate.png"
                 alt="Customize Example"
                 class="mt-3 rounded shadow border border-gray-200"
               />
             </div>
           </div>
   
-          <!-- Step 4 -->
           <div class="flex items-start space-x-4">
             <div class="flex-shrink-0">
               <div class="bg-indigo-100 text-indigo-600 rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold">
@@ -78,9 +79,9 @@
               </div>
             </div>
             <div>
-              <h2 class="text-xl font-semibold mb-2 text-indigo-600">Download or Share</h2>
+              <h2 class="text-xl font-semibold mb-2 text-indigo-600">Countersign the document</h2>
               <p class="text-gray-700">
-                Once the contract is ready, download it as a finalized PDF or share it directly with your customers.
+                If the customer has signed the document, it will appear on the Submissions page.
               </p>
             </div>
           </div>
