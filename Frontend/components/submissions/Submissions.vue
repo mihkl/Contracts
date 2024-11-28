@@ -45,7 +45,7 @@ function openDetailsModal(submission: Contract) {
 
 function openUploadFinalContractModal(submission: Contract) {
   modal.open(UploadFinalContractModal, {
-    submission,
+    contractId: submission.id,
   });
 }
 

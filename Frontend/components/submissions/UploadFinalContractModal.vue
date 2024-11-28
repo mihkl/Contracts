@@ -13,32 +13,71 @@
           >
             Upload final contract
           </h3>
-
-          <UButton
-            color="gray"
-            variant="ghost"
-            icon="i-heroicons-x-mark-20-solid"
-            class="-my-1"
-            @click="modal.close()"
-          />
         </div>
+        <section>
+          <input
+            type="file"
+            @change="onFileChange"
+            class="mt-5 block w-full text-sm text-gray-600 dark:text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200"
+            accept=".asice"
+          />
+          <button
+            type="button"
+            @click="submitFile"
+            class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 mt-4"
+          >
+            Upload File
+          </button>
+        </section>
       </template>
-      <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-3">
-        {{ submission.name }}
-      </h4>
-      <div>
-        <p class="truncate mb-3">
-          <b>Valid from:</b>
-          +
-        </p>
-        <p class="truncate mb-3">
-          <b>Valid until:</b>
-        </p>
-      </div>
     </UCard>
   </UModal>
 </template>
+
 <script setup lang="ts">
+const selectedFile = ref();
+const toast = useToast();
 const modal = useModal();
-const props = defineProps<{ submission: Contract }>();
+const api = useApi();
+
+const props = defineProps<{
+  contractId: number;
+}>();
+
+const onFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    selectedFile.value = input.files[0];
+  }
+};
+
+const submitFile = async () => {
+  if (!selectedFile.value) {
+    toast.add({
+      title: "No file selected",
+      description: "Please select a file to upload",
+    });
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", selectedFile.value);
+
+  const response = await api.fetchWithErrorHandling<UploadFileResponse>(
+    `contracts/${props.contractId}/sign`,
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+
+  if (response?.error) {
+    toast.add({
+      title: "There has been an error.",
+      description: response?.error,
+    });
+  } else {
+    modal.close();
+  }
+};
 </script>

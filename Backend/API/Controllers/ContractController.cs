@@ -267,7 +267,10 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
         if (contract == null) return NotFound($"Contract with id {id} does not exist");
 
-        await _crepo.SaveSignature(contract, parsedFile);
+        var contractSignatureType = User.Identity?.IsAuthenticated == true ?
+            ContractSignatureType.CompanyRepresentative
+            : ContractSignatureType.Candidate;
+        await _crepo.SaveSignature(contract, parsedFile, contractSignatureType);
 
         return Ok("Hey");
     }

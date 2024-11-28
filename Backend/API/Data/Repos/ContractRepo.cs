@@ -136,7 +136,7 @@ public class ContractRepo(DataContext context) : IContractRepo
         await SaveChangesAsync();
     }
 
-    public async Task<ContractSignature> SaveSignature(Contract contract, byte[] parsedFile)
+    public async Task<ContractSignature> SaveSignature(Contract contract, byte[] parsedFile, ContractSignatureType signatureType)
     {
         string baseDirectory = AppContext.BaseDirectory;
 
@@ -150,7 +150,7 @@ public class ContractRepo(DataContext context) : IContractRepo
         {
             FilePath = signedContractPath,
             ContractId = contract.Id,
-            Type = ContractSignatureType.Candidate
+            Type = signatureType
         };
 
         using var transaction = await _context.Database.BeginTransactionAsync();
@@ -158,10 +158,10 @@ public class ContractRepo(DataContext context) : IContractRepo
         await _context.AddAsync(contractSignature);
         await SaveChangesAsync();
 
-        // siin loogika muutub. Signingstatuse uuendamiseks peab enne ilmselt chekima, mis type´i üles laetav signatuur on ja mis on praegune contracti staatus.
         await Update(contractSignature.Id, new UpdateContract
         {
-            SigningStatus = SigningStatus.SignedByFirstParty
+            SigningStatus = signatureType == ContractSignatureType.Candidate ?
+                SigningStatus.SignedByFirstParty : SigningStatus.SignedByAll
         });
 
         await transaction.CommitAsync();
