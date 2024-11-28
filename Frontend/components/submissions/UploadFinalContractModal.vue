@@ -38,7 +38,7 @@
 const selectedFile = ref();
 const toast = useToast();
 const modal = useModal();
-const api = useApi();
+const auth = useAuth();
 
 const props = defineProps<{
   contractId: number;
@@ -63,7 +63,7 @@ const submitFile = async () => {
   const formData = new FormData();
   formData.append("file", selectedFile.value);
 
-  const response = await api.fetchWithErrorHandling<UploadFileResponse>(
+  const response = await auth.fetchWithToken<UploadFileResponse>(
     `contracts/${props.contractId}/sign`,
     {
       method: "POST",

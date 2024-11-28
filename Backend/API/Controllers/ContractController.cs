@@ -256,6 +256,8 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok(new { url });
     }
 
+    [Authorize]
+    [AllowAnonymous]
     [HttpPost("contracts/{id}/sign")]
     public async Task<IActionResult> SignContract(uint id, [FromForm] IFormFile file)
     {
@@ -267,12 +269,15 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
         if (contract == null) return NotFound($"Contract with id {id} does not exist");
 
-        var contractSignatureType = User.Identity?.IsAuthenticated == true ?
+        string? userId = _userManager.GetUserId(User);
+
+        var contractSignatureType = userId != null ?
             ContractSignatureType.CompanyRepresentative
             : ContractSignatureType.Candidate;
+
         await _crepo.SaveSignature(contract, parsedFile, contractSignatureType);
 
-        return Ok("Hey");
+        return Ok();
     }
 }
 

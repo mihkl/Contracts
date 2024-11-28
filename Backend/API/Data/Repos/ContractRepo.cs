@@ -150,7 +150,7 @@ public class ContractRepo(DataContext context) : IContractRepo
         {
             FilePath = signedContractPath,
             ContractId = contract.Id,
-            Type = signatureType
+            Type = signatureType,
         };
 
         using var transaction = await _context.Database.BeginTransactionAsync();
@@ -158,7 +158,7 @@ public class ContractRepo(DataContext context) : IContractRepo
         await _context.AddAsync(contractSignature);
         await SaveChangesAsync();
 
-        await Update(contractSignature.Id, new UpdateContract
+        await Update(contract.Id, new UpdateContract
         {
             SigningStatus = signatureType == ContractSignatureType.Candidate ?
                 SigningStatus.SignedByFirstParty : SigningStatus.SignedByAll
