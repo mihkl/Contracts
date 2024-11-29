@@ -17,7 +17,6 @@ import { type Contract } from "../../Types/Contract.js";
 
 const contractStore = useContractsStore();
 const downloadSignedContract = () => {
-  console.log("SIGNED CONTRACT");
   contractStore.fetchSignedContract(props.contract.id, "CompanyRepresentative");
 };
 

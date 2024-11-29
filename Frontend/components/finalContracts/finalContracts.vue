@@ -22,7 +22,7 @@ async function fetchContracts() {
   const response = await auth.fetchWithToken<Contract[]>("/contracts", {
     method: "GET",
     query: {
-      minimumStatus: SigningStatus.SignedByAll,
+      status: SigningStatus.SignedByAll,
     },
   });
 

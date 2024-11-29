@@ -22,7 +22,7 @@ public class ContractRepo(DataContext context) : IContractRepo
         return contract;
     }
 
-    public async Task<List<Contract>> GetAll(string? userId, SigningStatus? minimumStatus)
+    public async Task<List<Contract>> GetAll(string? userId, SigningStatus? status)
     {
         var user = await _context.Users
             .Include(u => u.Contracts)
@@ -35,10 +35,10 @@ public class ContractRepo(DataContext context) : IContractRepo
 
         if (user == null) return [];
 
-        if (minimumStatus != null)
+        if (status != null)
         {
             user.Contracts = user.Contracts
-                .Where(c => c.SigningStatus >= minimumStatus)
+                .Where(c => c.SigningStatus == status)
                 .ToList();
         }
 

@@ -27,7 +27,7 @@ async function fetchSubmissions() {
   const response = await auth.fetchWithToken<Contract[]>("/contracts", {
     method: "GET",
     query: {
-      minimumStatus: SigningStatus.SignedByFirstParty,
+      status: SigningStatus.SignedByFirstParty,
     },
   });
 

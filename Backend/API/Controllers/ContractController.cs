@@ -20,10 +20,10 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
     [Authorize]
     [HttpGet("contracts")]
-    public async Task<IActionResult> GetContracts([FromQuery] SigningStatus? minimumStatus)
+    public async Task<IActionResult> GetContracts([FromQuery] SigningStatus? status)
     {
         var userId = _userManager.GetUserId(User);
-        var contracts = await _crepo.GetAll(userId, minimumStatus);
+        var contracts = await _crepo.GetAll(userId, status);
         var result = contracts.Select(ToContractDto).ToList();
         return Ok(result);
     }
