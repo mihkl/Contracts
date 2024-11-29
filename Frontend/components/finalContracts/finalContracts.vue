@@ -31,20 +31,6 @@ async function fetchContracts() {
     return contracts.value;
   }
 }
-
-/*
-function openDetailsModal(submission: Contract) {
-  modal.open(SubmissionDetailsModal, {
-    submission,
-  });
-}
-
-function openUploadFinalContractModal(submission: Contract) {
-  modal.open(UploadFinalContractModal, {
-    contractId: submission.id,
-  });
-}*/
-
 onMounted(() => {
   fetchContracts();
 });
