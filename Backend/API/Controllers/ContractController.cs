@@ -188,8 +188,6 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
         if (signature == null) return BadRequest("This contract does not have any matching signatures.");
 
-        string baseDirectory = AppContext.BaseDirectory;
-
         var bytes = await System.IO.File.ReadAllBytesAsync(signature.FilePath);
 
         var contentType = "application/vnd.etsi.asic-e+zip";
