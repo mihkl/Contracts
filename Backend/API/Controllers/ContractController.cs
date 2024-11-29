@@ -170,7 +170,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
     [HttpGet("contracts/{id}/signed-contract")]
     [Authorize]
-    public async Task<IActionResult> GetSignedContract(uint id)
+    public async Task<IActionResult> GetSignedContract(uint id, [FromQuery] ContractSignatureType signatureType)
     {
         var contract = await _crepo.GetById(id);
 
@@ -184,7 +184,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
             return BadRequest("This contract has not been signed");
         }
 
-        var signature = contract.Signatures.FirstOrDefault(s => s.Type == ContractSignatureType.Candidate);
+        var signature = contract.Signatures.FirstOrDefault(s => s.Type == signatureType);
 
         if (signature == null) return BadRequest("This contract does not have any matching signatures.");
 

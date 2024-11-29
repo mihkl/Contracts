@@ -83,7 +83,7 @@ const openContract = () => {
 
 const downloadSignedContract = () => {
   if (props.submission) {
-    contractStore.fetchSignedContract(props.submission.id);
+    contractStore.fetchSignedContract(props.submission.id, "Candidate");
   }
 };
 

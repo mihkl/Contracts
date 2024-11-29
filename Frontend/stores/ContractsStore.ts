@@ -34,12 +34,18 @@ export const useContractsStore = defineStore("contract", () => {
     }
   };
 
-  const fetchSignedContract = async (contractId: number) => {
+  const fetchSignedContract = async (
+    contractId: number,
+    signatureType: "Candidate" | "CompanyRepresentative"
+  ) => {
     try {
       const response = await auth.fetchWithToken<Blob>(
         `/contracts/${contractId}/signed-contract`,
         {
           method: "GET",
+          query: {
+            signatureType,
+          },
         }
       );
 
