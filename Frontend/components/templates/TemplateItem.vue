@@ -4,7 +4,7 @@
       'p-4 border rounded-lg cursor-pointer transition flex items-center justify-between bg-white border-gray-300',
     ]"
   >
-    <span>{{ template.name }}</span>
+    <span style="color:black">{{ template.name }}</span>
     <div class="flex space-x-2">
       <button
         class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"

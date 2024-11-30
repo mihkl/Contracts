@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-100 flex items-center justify-center">
-    <div class="max-w-4xl w-full bg-white p-8 rounded shadow">
+    <div class="max-w-4xl w-full bg-white p-8">
       <h1 class="text-4xl font-bold mb-6 text-center text-indigo-600">Get Started</h1>
       <p class="text-lg text-gray-700 mb-6 text-center">
         Follow these simple steps to get started with your contract management system.

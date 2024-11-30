@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout>
-    <main class="flex-grow p-4 mx-auto max-w-4xl">
+    <main class="flex-grow p-4 mx-auto max-w-6xl">
       <NuxtPage />
     </main>
     <UModals />
