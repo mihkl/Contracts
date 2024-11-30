@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen flex items-center justify-center">
-    <div class="max-w-4xl w-full bg-white p-8">
+    <div class="max-w-4xl w-full p-8">
       <h1 class="text-4xl font-bold mb-6 text-center text-indigo-600">Get Started</h1>
-      <p class="text-lg text-gray-700 mb-6 text-center">
+      <p class="text-lg mb-6 text-center">
         Follow these simple steps to get started with your contract management system.
       </p>
 
@@ -18,14 +18,14 @@
           </button>
           <div
             v-show="openSteps.includes(1)"
-            class="mt-3 bg-gray-50 p-4 rounded border border-gray-200 transition-all duration-300"
+            class="mt-3 p-4 rounded border border-gray-200 transition-all duration-300"
           >
-            <p class="text-gray-700">
+            <p class="">
               Start by preparing a <strong>.docx</strong> file of the contract you'd like to use. Instead of leaving blank spaces for customers' information, use placeholders like:
             </p>
             <div class="mt-3">
               <strong>Example of all currently supported placeholders:</strong>
-              <ul class="list-disc list-inside text-gray-600">
+              <ul class="list-disc list-inside">
                 <li><code>_firstName_</code>: Placeholder for the customer's first name.</li>
                 <li><code>_lastName_</code>: Placeholder for the customer's last name.</li>
                 <li><code>_email_</code>: Placeholder for the customer's email.</li>
@@ -49,10 +49,10 @@
           </button>
           <div
             v-show="openSteps.includes(2)"
-            class="mt-3 bg-gray-50 p-4 rounded border border-gray-200 transition-all duration-300"
+            class="mt-3 p-4 rounded border border-gray-200 transition-all duration-300"
           >
-            <p class="text-gray-700">
-              Once your file is ready, upload it to the system from the Home page.
+            <p>
+              Once your file is ready, upload it to the system from the <strong>Home</strong> page.
             </p>
             <img
               src="public/upload.png"
@@ -73,10 +73,10 @@
           </button>
           <div
             v-show="openSteps.includes(3)"
-            class="mt-3 bg-gray-50 p-4 rounded border border-gray-200 transition-all duration-300"
+            class="mt-3 p-4 rounded border border-gray-200 transition-all duration-300"
           >
-            <p class="text-gray-700">
-              After uploading your template, it will appear on My Template page. You can now generate a link and send it to the customer to fill in the data and sign it. 
+            <p>
+              After uploading your template, it will appear on <strong>My Templates</strong> page. You can now generate a link and send it to the customer to fill in the data and sign it. 
               Once you generate the link, it will be copied to your clipboard which can be sent to customer.
             </p>
             <img
@@ -98,10 +98,10 @@
           </button>
           <div
             v-show="openSteps.includes(4)"
-            class="mt-3 bg-gray-50 p-4 rounded border border-gray-200 transition-all duration-300"
+            class="mt-3 p-4 rounded border border-gray-200 transition-all duration-300"
           >
-            <p class="text-gray-700">
-              If the customer has signed the document, it will appear on the Submissions page. Next step would be to countersign the document to finish the process.
+            <p>
+              If the customer has signed the document, it will appear on the <strong>Submissions</strong> page. Next step would be to countersign the document to finish the process.
             </p>
           </div>
         </div>
@@ -117,10 +117,10 @@
           </button>
           <div
             v-show="openSteps.includes(5)"
-            class="mt-3 bg-gray-50 p-4 rounded border border-gray-200 transition-all duration-300"
+            class="mt-3 p-4 rounded border border-gray-200 transition-all duration-300"
           >
-            <p class="text-gray-700">
-              If both parties have singed the contract, you can send the final product to the customer via email from the Integrations page.
+            <p>
+              If both parties have singed the contract, you can send the final product to the customer via email from the <strong>Integrations</strong> page.
             </p>
           </div>
         </div>
