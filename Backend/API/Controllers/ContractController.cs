@@ -20,10 +20,10 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
     [Authorize]
     [HttpGet("contracts")]
-    public async Task<IActionResult> GetContracts([FromQuery] SigningStatus? minimumStatus)
+    public async Task<IActionResult> GetContracts([FromQuery] SigningStatus? status)
     {
         var userId = _userManager.GetUserId(User);
-        var contracts = await _crepo.GetAll(userId, minimumStatus);
+        var contracts = await _crepo.GetAll(userId, status);
         var result = contracts.Select(ToContractDto).ToList();
         return Ok(result);
     }
@@ -170,7 +170,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
     [HttpGet("contracts/{id}/signed-contract")]
     [Authorize]
-    public async Task<IActionResult> GetSignedContract(uint id)
+    public async Task<IActionResult> GetSignedContract(uint id, [FromQuery] ContractSignatureType signatureType)
     {
         var contract = await _crepo.GetById(id);
 
@@ -184,12 +184,14 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
             return BadRequest("This contract has not been signed");
         }
 
-        var signature = contract.Signatures.FirstOrDefault(s => s.Type == ContractSignatureType.Candidate);
+        var signature = contract.Signatures.FirstOrDefault(s => s.Type == signatureType);
 
         if (signature == null) return BadRequest("This contract does not have any matching signatures.");
 
+        var bytes = await System.IO.File.ReadAllBytesAsync(signature.FilePath);
+
         var contentType = "application/vnd.etsi.asic-e+zip";
-        return new FileContentResult(signature.FileData, contentType)
+        return new FileContentResult(bytes, contentType)
         {
             FileDownloadName = "contract.asice"
         };
@@ -252,6 +254,8 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         return Ok(new { url });
     }
 
+    [Authorize]
+    [AllowAnonymous]
     [HttpPost("contracts/{id}/sign")]
     public async Task<IActionResult> SignContract(uint id, [FromForm] IFormFile file)
     {
@@ -263,18 +267,15 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
         if (contract == null) return NotFound($"Contract with id {id} does not exist");
 
-        // siia tulevad type checkid sisseloginud kasutaja rolli põhjal, praegu lihtsalt hard-coded type= candidate.
-        //if authenticated user (see kes üles laeb signatuuriga contracti) is admin then type = ContractSignatureType.CompanyRepresentative
-        var contractSignature = new ContractSignature
-        {
-            FileData = parsedFile,
-            ContractId = id,
-            Type = ContractSignatureType.Candidate
-        };
+        string? userId = _userManager.GetUserId(User);
 
-        await _crepo.SaveSignatureAndUpdateContractStatus(contractSignature);
+        var contractSignatureType = userId != null ?
+            ContractSignatureType.CompanyRepresentative
+            : ContractSignatureType.Candidate;
 
-        return Ok("Hey");
+        await _crepo.SaveSignature(contract, parsedFile, contractSignatureType);
+
+        return Ok();
     }
 }
 

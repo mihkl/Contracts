@@ -34,18 +34,32 @@ export const useContractsStore = defineStore("contract", () => {
     }
   };
 
-  const fetchSignedContract = async (contractId: number) => {
+  const fetchSignedContract = async (
+    contractId: number,
+    signatureType: "Candidate" | "CompanyRepresentative"
+  ) => {
     try {
       const response = await auth.fetchWithToken<Blob>(
         `/contracts/${contractId}/signed-contract`,
         {
           method: "GET",
+          query: {
+            signatureType,
+          },
         }
       );
 
       if (!response.error) {
         const blobUrl = URL.createObjectURL(response);
-        window.open(blobUrl, "_blank");
+
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = "contract.asice";
+        document.body.appendChild(link);
+
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
       }
     } catch (error) {
       console.error("Error fetching signed contract:", error);

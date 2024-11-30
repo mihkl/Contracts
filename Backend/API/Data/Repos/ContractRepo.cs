@@ -1,13 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using API.FileManipulation;
 using API.Models;
-using API.Models.Requests;
 using API.Validation;
-using IbanNet;
 using Microsoft.EntityFrameworkCore;
-using OpenXmlPowerTools;
-
 
 namespace API.Data.Repos;
 
@@ -28,7 +22,7 @@ public class ContractRepo(DataContext context) : IContractRepo
         return contract;
     }
 
-    public async Task<List<Contract>> GetAll(string? userId, SigningStatus? minimumStatus)
+    public async Task<List<Contract>> GetAll(string? userId, SigningStatus? status)
     {
         var user = await _context.Users
             .Include(u => u.Contracts)
@@ -41,10 +35,10 @@ public class ContractRepo(DataContext context) : IContractRepo
 
         if (user == null) return [];
 
-        if (minimumStatus != null)
+        if (status != null)
         {
             user.Contracts = user.Contracts
-                .Where(c => c.SigningStatus >= minimumStatus)
+                .Where(c => c.SigningStatus == status)
                 .ToList();
         }
 
@@ -142,21 +136,36 @@ public class ContractRepo(DataContext context) : IContractRepo
         await SaveChangesAsync();
     }
 
-    public async Task<ContractSignature> SaveSignatureAndUpdateContractStatus(ContractSignature signature)
+    public async Task<ContractSignature> SaveSignature(Contract contract, byte[] parsedFile, ContractSignatureType signatureType)
     {
+        string baseDirectory = AppContext.BaseDirectory;
+
+        string signedContractsFolder = Path.Combine(baseDirectory, "SignedContracts");
+
+        string signedContractPath = Path.Combine(signedContractsFolder, contract.Name + new Random().Next() + ".asice");
+
+        await File.WriteAllBytesAsync(signedContractPath, parsedFile!);
+
+        var contractSignature = new ContractSignature
+        {
+            FilePath = signedContractPath,
+            ContractId = contract.Id,
+            Type = signatureType,
+        };
+
         using var transaction = await _context.Database.BeginTransactionAsync();
 
-        await _context.AddAsync(signature);
+        await _context.AddAsync(contractSignature);
         await SaveChangesAsync();
 
-        // siin loogika muutub. Signingstatuse uuendamiseks peab enne ilmselt chekima, mis type´i üles laetav signatuur on ja mis on praegune contracti staatus.
-        await Update(signature.Id, new UpdateContract
+        await Update(contract.Id, new UpdateContract
         {
-            SigningStatus = SigningStatus.SignedByFirstParty
+            SigningStatus = signatureType == ContractSignatureType.Candidate ?
+                SigningStatus.SignedByFirstParty : SigningStatus.SignedByAll
         });
 
         await transaction.CommitAsync();
 
-        return signature;
+        return contractSignature;
     }
 }

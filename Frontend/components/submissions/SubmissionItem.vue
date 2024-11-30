@@ -28,13 +28,23 @@
       >
         Details
       </button>
+      <button
+        class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+        @click="uploadFinalContract(submission.id)"
+      >
+        Upload final contract
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { SigningStatus, type Contract } from "../../Types/Contract.js";
-const emits = defineEmits(["openModal", "openDetailsModal"]);
+const emits = defineEmits([
+  "openModal",
+  "openDetailsModal",
+  "openUploadFinalContractModal",
+]);
 
 const contractStatuses = [
   "Link Generated",
@@ -58,8 +68,16 @@ const openDetails = async (id: number) => {
   openDetailsModal();
 };
 
+const uploadFinalContract = async (id: number) => {
+  openUploadFinalContractModal();
+};
+
 const openDetailsModal = () => {
   emits("openDetailsModal", true);
+};
+
+const openUploadFinalContractModal = () => {
+  emits("openUploadFinalContractModal", true);
 };
 </script>
 
