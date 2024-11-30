@@ -46,7 +46,6 @@ public static class FileManipulator
 
         if (fields.All(f => f.Type != "email"))
         {
-            formattedFileData = InsertEmailPlaceholder(formattedFileData);
             fields.Add(new TemplateDynamicField
             {
                 Placeholder = PlaceHolderMappings.EmailPlaceholder,
@@ -62,7 +61,7 @@ public static class FileManipulator
                     FileData = formattedFileData,
                     Fields = fields
                 },
-                InfoMessage = "An Email placeholder was added at the bottom of your document, all documents require an email field."
+                InfoMessage = "An Email field was added to the list of fields, all documents require an email field."
             };
         }
         return new ParseDocxResult
@@ -74,26 +73,6 @@ public static class FileManipulator
                 Fields = fields
             }
         };
-    }
-
-    private static byte[] InsertEmailPlaceholder(byte[] fileData)
-    {
-        using MemoryStream memoryStream = new();
-        memoryStream.Write(fileData, 0, fileData.Length);
-        memoryStream.Position = 0;
-
-        using (WordprocessingDocument wordDocument = WordprocessingDocument.Open(memoryStream, true))
-        {
-            var mainPart = wordDocument.MainDocumentPart;
-            var document = mainPart!.Document;
-
-            var body = document.Body;
-            var paragraph = new Paragraph(new Run(new Text(PlaceHolderMappings.EmailPlaceholder)));
-            body!.Append(paragraph);
-
-            document.Save();
-        }
-        return memoryStream.ToArray();
     }
 
     private static List<TemplateDynamicField> FindTemplateDynamicFields(string text)
