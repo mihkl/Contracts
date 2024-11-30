@@ -27,7 +27,8 @@ builder.Services
     .AddDbContext<DataContext>(options => options.UseSqlite("Data Source=localdatabase.db"))
     .AddScoped<ContractRepo>()
     .AddScoped<IHMACService, HMACService>()
-    .AddScoped<TemplateRepo>();
+    .AddScoped<TemplateRepo>()
+    .AddScoped<ISettingsRepo, SettingsRepo>();
 
 builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
     {
