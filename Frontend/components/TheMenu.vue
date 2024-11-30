@@ -2,21 +2,22 @@
   <div class="flex items-center border-b border-gray-200 dark:border-gray-800">
     <div class="flex-shrink-0 mr-6">
       <nuxt-link to="/">
-        <img src="public/logo.png" alt="Epic logo" class="h-12 w-auto ml-2" />
+        <img src="public/logo.png" alt="Epic logo" class="h-12 w-auto ml-4" />
       </nuxt-link>
     </div>
-    <UHorizontalNavigation :links="links" class="flex-1 content-center" />
+    <UHorizontalNavigation :links="links" class="flex-1 content-center"/>
     <ColorMode />
     <UButton
       v-if="auth.isAuthenticated.value"
       @click="auth.logOut"
       icon="i-heroicons-arrow-right-start-on-rectangle"
-      class="mr-6 my-0 mx-2 bg-indigo-500 hover:bg-indigo-600"
+      class="mr-6 my-0 mx-2 bg-indigo-500 hover:bg-indigo-600 mr-4"
     />
   </div>
 </template>
 
 <script setup lang="ts">
+
 const auth = useAuth();
 
 const links = [
@@ -26,9 +27,9 @@ const links = [
     to: "/",
   },
   {
-    label: "My Templates",
+    label: "Templates",
     icon: "i-heroicons-queue-list",
-    to: "/templates",
+    to: "/templates", 
   },
   {
     label: "Contracts",
@@ -51,4 +52,5 @@ const links = [
     to: "/getStarted",
   },
 ];
+
 </script>
