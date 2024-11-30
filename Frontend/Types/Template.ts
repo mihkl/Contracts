@@ -1,6 +1,7 @@
 export type UploadFileResponse = {
   template : Template;
   guid: string;
+  infoMessage: string | null;
 }
 
 export type Template = {
