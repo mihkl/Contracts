@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex items-center justify-center">
+  <div class="min-h-screen flex items-center justify-center">
     <div class="max-w-4xl w-full bg-white p-8">
       <h1 class="text-4xl font-bold mb-6 text-center text-indigo-600">Get Started</h1>
       <p class="text-lg text-gray-700 mb-6 text-center">
@@ -68,7 +68,7 @@
             class="flex items-center justify-between w-full px-4 py-3 bg-indigo-100 rounded-lg text-indigo-600 font-semibold text-left"
             @click="toggleStep(3)"
           >
-            <span>Step 3: Send to Customer</span>
+            <span>Step 3: Send to Customer to Sign</span>
             <span>{{ openSteps.includes(3) ? "-" : "+" }}</span>
           </button>
           <div
@@ -76,7 +76,8 @@
             class="mt-3 bg-gray-50 p-4 rounded border border-gray-200 transition-all duration-300"
           >
             <p class="text-gray-700">
-              After uploading your template, you can generate a link and send it to the customer to fill in the data. Once you generate the link, it will be copied to your clipboard.
+              After uploading your template, it will appear on My Template page. You can now generate a link and send it to the customer to fill in the data and sign it. 
+              Once you generate the link, it will be copied to your clipboard which can be sent to customer.
             </p>
             <img
               src="public/generate.png"
@@ -100,7 +101,26 @@
             class="mt-3 bg-gray-50 p-4 rounded border border-gray-200 transition-all duration-300"
           >
             <p class="text-gray-700">
-              If the customer has signed the document, it will appear on the Submissions page.
+              If the customer has signed the document, it will appear on the Submissions page. Next step would be to countersign the document to finish the process.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div>
+          <button
+            class="flex items-center justify-between w-full px-4 py-3 bg-indigo-100 rounded-lg text-indigo-600 font-semibold text-left"
+            @click="toggleStep(5)"
+          >
+            <span>Step 5: Send Final Contract to Customer</span>
+            <span>{{ openSteps.includes(5) ? "-" : "+" }}</span>
+          </button>
+          <div
+            v-show="openSteps.includes(5)"
+            class="mt-3 bg-gray-50 p-4 rounded border border-gray-200 transition-all duration-300"
+          >
+            <p class="text-gray-700">
+              If both parties have singed the contract, you can send the final product to the customer via email from the Integrations page.
             </p>
           </div>
         </div>
@@ -118,15 +138,12 @@
 <script setup>
 import { ref } from "vue";
 
-// Tracks which steps are open
 const openSteps = ref([]);
 
 const toggleStep = (step) => {
   if (openSteps.value.includes(step)) {
-    // Close the step if it's already open
     openSteps.value = openSteps.value.filter((s) => s !== step);
   } else {
-    // Open the step if it's not already open
     openSteps.value.push(step);
   }
 };
