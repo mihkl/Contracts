@@ -1,6 +1,7 @@
 using API.Data;
 using API.Data.Repos;
 using API.Models;
+using API.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,17 +23,18 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManag
     [HttpPost("upload")]
     public ActionResult<UploadFileResponse> UploadDocxFile(IFormFile file)
     {
-        var template = ParseDocxFile(file, out var exception);
+        var parseResult = ParseDocxFile(file, out var exception);
 
-        if (template is not null)
+        if (parseResult.Template is not null)
         {
             var guid = Guid.NewGuid();
-            _cache.Set(guid, template, TimeSpan.FromMinutes(5));
+            _cache.Set(guid, parseResult.Template, TimeSpan.FromMinutes(5));
 
             var response = new UploadFileResponse
             {
-                Template = ToTemplateDto(template),
+                Template = ToTemplateDto(parseResult.Template),
                 Guid = guid,
+                InfoMessage = parseResult.InfoMessage ?? string.Empty
             };
             return Ok(response);
         }
