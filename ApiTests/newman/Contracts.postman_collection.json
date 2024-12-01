@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "9b39ca29-10f2-4c56-ba51-65ec8a16af54",
+		"_postman_id": "e91306f4-4a6f-4615-8a01-fbe68d015cbd",
 		"name": "Contracts",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "38209076"
+		"_exporter_id": "15718671"
 	},
 	"item": [
 		{
@@ -144,6 +144,53 @@
 					"path": [
 						"templates",
 						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TemplateTwo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Template has four fields\", function () {\r",
+							"    pm.expect(pm.response.json().fields.length).to.eql(4);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/templates/2",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"templates",
+						"2"
 					]
 				}
 			},
@@ -352,6 +399,48 @@
 			"response": []
 		},
 		{
+			"name": "ContractMissingSignature",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/contracts/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"contracts",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "GeneratePdf",
 			"event": [
 				{
@@ -383,7 +472,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"replacements\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"First name\",\r\n      \"value\": \"John\"\r\n    },\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"Last name\",\r\n      \"value\": \"Doe\"\r\n    },\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"Phone number\",\r\n      \"value\": \"12345678\"\r\n    }\r\n  ]\r\n}",
+					"raw": "{\r\n  \"replacements\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"First name\",\r\n      \"value\": \"John\"\r\n    },\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"Last name\",\r\n      \"value\": \"Doe\"\r\n    },\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"Phone number\",\r\n      \"value\": \"12345678\"\r\n    },\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"Email\",\r\n      \"value\": \"mail@email.com\"\r\n    }\r\n  ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
