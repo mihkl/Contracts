@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using API.Models;
+using API.Models.Responses;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 
@@ -7,18 +8,18 @@ namespace API.FileManipulation;
 
 public static class FileManipulator
 {
-    public static Template? ParseDocxFile(IFormFile file, out string exception)
+    public static ParseDocxResult ParseDocxFile(IFormFile file, out string exception)
     {
         exception = string.Empty;
         if (file is null || file.Length == 0)
         {
             exception = "File is null or empty";
-            return null;
+            return new ParseDocxResult();
         }
         if (file.ContentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
         {
             exception = "File is not a valid docx file";
-            return null;
+            return new ParseDocxResult();
         }
 
         byte[] fileData;
@@ -35,20 +36,43 @@ public static class FileManipulator
             if (doc.MainDocumentPart?.Document?.Body is null)
             {
                 exception = "The document is not in the expected format.";
-                return null;
+                return new ParseDocxResult();
             }
             docText = doc.MainDocumentPart.Document.Body.InnerText;
         }
 
         var formattedFileData = Formatter.FormatTextBody(fileData);
         var fields = FindTemplateDynamicFields(docText);
-        var response = new Template
+
+        if (fields.All(f => f.Type != "email"))
         {
-            Name = file.FileName,
-            FileData = formattedFileData,
-            Fields = fields
+            fields.Add(new TemplateDynamicField
+            {
+                Placeholder = PlaceHolderMappings.EmailPlaceholder,
+                Name = "Email",
+                Type = "email"
+            });
+
+            return new ParseDocxResult
+            {
+                Template = new Template
+                {
+                    Name = file.FileName,
+                    FileData = formattedFileData,
+                    Fields = fields
+                },
+                InfoMessage = "An Email field was added to the list of fields, all documents require an email field."
+            };
+        }
+        return new ParseDocxResult
+        {
+            Template = new Template
+            {
+                Name = file.FileName,
+                FileData = formattedFileData,
+                Fields = fields
+            }
         };
-        return response;
     }
 
     private static List<TemplateDynamicField> FindTemplateDynamicFields(string text)

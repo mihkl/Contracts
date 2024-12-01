@@ -2,14 +2,14 @@ namespace API.Models;
 
 public static class PlaceHolderMappings
 {
-    const string FirstNamePlaceholder = "_firstName_";
-    const string LastNamePlaceholder = "_lastName_";
-    const string PhoneNumberPlaceholder = "_phoneNumber_";
-    const string EmailPlaceholder = "_email_";
-    const string SocialSecurityNumberPlaceholder = "_socialSecurityNumber_";
-    const string DateOfBirthPlaceholder = "_dateOfBirth_";
-    const string AddressPlaceholder = "_address_";
-    const string BankAccountNumberPlaceholder = "_bankAccountNumber_";
+    public const string FirstNamePlaceholder = "_firstName_";
+    public const string LastNamePlaceholder = "_lastName_";
+    public const string PhoneNumberPlaceholder = "_phoneNumber_";
+    public const string EmailPlaceholder = "_email_";
+    public const string SocialSecurityNumberPlaceholder = "_socialSecurityNumber_";
+    public const string DateOfBirthPlaceholder = "_dateOfBirth_";
+    public const string AddressPlaceholder = "_address_";
+    public const string BankAccountNumberPlaceholder = "_bankAccountNumber_";
 
     public static readonly Dictionary<PlaceHolderData, string> Fields = new()
     {

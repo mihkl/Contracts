@@ -42,6 +42,11 @@ const links = [
     to: "/submissions",
   },
   {
+    label: "Final contracts",
+    icon: "i-heroicons-document-check",
+    to: "/final-contracts",
+  },
+  {
     label: "Integrations",
     icon: "i-heroicons-link",
     to: "/integrations",
