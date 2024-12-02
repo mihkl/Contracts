@@ -33,6 +33,18 @@ namespace API.Data.Repos
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteSmtpSettings(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return;
+
+            _context.Remove(settings);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<SmtpSettings?> GetSmtpSettings(string userId)
         {
             var settings = await _context.SmtpSettings

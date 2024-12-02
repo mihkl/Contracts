@@ -36,17 +36,16 @@
       <UFormGroup label="From email" name="email" class="mb-4" :required="true">
         <UInput type="email" v-model="state.fromEmail" />
       </UFormGroup>
-      <UButton type="submit" class="mr-10 bg-indigo-500 hover:bg-indigo-600"
-        >Submit</UButton
-      >
     </UForm>
   </div>
+  <UButton @click="submit" class="mr-10 bg-indigo-500 hover:bg-indigo-600"
+    >Save</UButton
+  >
 </template>
 
 <script setup lang="ts">
 const selected = ref(false);
 const auth = useAuth();
-
 const smtpSettings = ref();
 
 onMounted(async () => {
@@ -74,11 +73,16 @@ const state = reactive({
 });
 
 const submit = async () => {
-  await auth.fetchWithToken("/settings/smtp", {
-    method: "POST",
-    body: JSON.stringify({
-      ...state,
-    }),
-  });
+  if (selected.value === false)
+    await auth.fetchWithToken("/settings/smtp", {
+      method: "DELETE",
+    });
+  else
+    await auth.fetchWithToken("/settings/smtp", {
+      method: "POST",
+      body: JSON.stringify({
+        ...state,
+      }),
+    });
 };
 </script>

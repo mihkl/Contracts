@@ -39,5 +39,18 @@ namespace API.Controllers
 
             return Ok();
         }
+
+        [Authorize]
+        [HttpDelete("smtp")]
+        public async Task<IActionResult> DeleteSmtpSettings()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            if (userId == null) return Unauthorized();
+
+            await _settingsRepo.DeleteSmtpSettings(userId);
+
+            return Ok();
+        }
     }
 }
