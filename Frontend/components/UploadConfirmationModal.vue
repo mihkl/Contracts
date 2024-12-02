@@ -22,6 +22,7 @@
             >
           </UFormGroup>
         </UForm>
+        <p v-if="infoMessage" class="mt-3">{{ infoMessage }}</p>
       </template>
     </UCard>
   </UModal>
@@ -36,6 +37,7 @@ const auth = useAuth();
 const modal = useModal();
 const { serverResponse } = useTemplateStore();
 const template = serverResponse!.template;
+const infoMessage = serverResponse!.infoMessage;
 
 const schema = object({
   name: string().required("Required"),
