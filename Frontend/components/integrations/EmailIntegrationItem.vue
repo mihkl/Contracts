@@ -3,6 +3,24 @@
     <h2 class="font-semibold text-xl mb-1">Email integration</h2>
     <p class="text-lg !font-light mb-4">Configure automatic email sending</p>
     <UToggle v-model="selected" class="mb-4" />
+    <UButton
+      @click="submit"
+      class="mr-10 bg-indigo-500 hover:bg-indigo-600 block"
+      >Save settings</UButton
+    >
+  </div>
+  <div
+    v-if="selected === true"
+    :class="['p-4 border rounded-lg transition bg-white border-gray-300']"
+  >
+    <div class="flex flex-row gap-4 items-center mb-4">
+      <UToggle v-model="notifyOnContractUploadSelected" />
+      <p>Automatically send final contract to applicant.</p>
+    </div>
+    <div class="flex flex-row gap-4">
+      <UToggle v-model="sendFinalContractSelected" />
+      <p>Notify on new contract signature.</p>
+    </div>
   </div>
   <div
     v-if="selected === true"
@@ -38,13 +56,13 @@
       </UFormGroup>
     </UForm>
   </div>
-  <UButton @click="submit" class="mr-10 bg-indigo-500 hover:bg-indigo-600"
-    >Save</UButton
-  >
 </template>
 
 <script setup lang="ts">
 const selected = ref(false);
+const notifyOnContractUploadSelected = ref(false);
+const sendFinalContractSelected = ref(false);
+
 const auth = useAuth();
 const smtpSettings = ref();
 
