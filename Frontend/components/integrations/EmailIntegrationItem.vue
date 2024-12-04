@@ -17,9 +17,31 @@
       <UToggle v-model="notifyOnContractUploadSelected" />
       <p>Automatically send final contract to applicant.</p>
     </div>
-    <div class="flex flex-row gap-4">
+    <div v-if="notifyOnContractUploadSelected" class="mb-4">
+      <label for="emailContent" class="block font-medium mb-2">Email Content</label>
+      <textarea
+        id="emailContent"
+        v-model="emailContent"
+        class="w-full border rounded-lg p-2"
+        placeholder="Write your email content here..."
+        rows="4"
+      ></textarea>
+    </div>
+    <div class="flex flex-row gap-4 items-center mb-4">
       <UToggle v-model="sendFinalContractSelected" />
       <p>Notify on new contract signature.</p>
+    </div>
+    <div v-if="sendFinalContractSelected" class="mb-4">
+      <label for="signatureEmail" class="block font-medium mb-2"
+        >Notification Receiver</label
+      >
+      <UInput
+        id="signatureEmail"
+        type="email"
+        v-model="signatureNotificationEmail"
+        placeholder="Enter email for signature notifications"
+        class="w-full border rounded-lg p-2"
+      />
     </div>
   </div>
   <div
@@ -58,10 +80,14 @@
   </div>
 </template>
 
+
 <script setup lang="ts">
 const selected = ref(false);
 const notifyOnContractUploadSelected = ref(false);
 const sendFinalContractSelected = ref(false);
+const emailContent = ref("");
+const signatureNotificationEmail = ref("");
+
 
 const auth = useAuth();
 const smtpSettings = ref();
@@ -103,4 +129,5 @@ const submit = async () => {
       }),
     });
 };
+
 </script>
