@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'p-4 border rounded-lg cursor-pointer transition flex items-center justify-between bg-white border-gray-300',
+      'p-4 border rounded-lg cursor-pointer transition flex items-center justify-between border-gray-300',
     ]"
   >
     <span>{{ template.name }}</span>

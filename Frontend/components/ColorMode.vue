@@ -11,7 +11,7 @@ function iconName(theme) {
   <div>
     <ul>
       <li
-        v-for="theme of ['light', 'dark', 'system', 'sepia']"
+        v-for="theme of ['light', 'dark']"
         :key="theme"
         :class="{
           preferred: !$colorMode.unknown && theme === $colorMode.preference,

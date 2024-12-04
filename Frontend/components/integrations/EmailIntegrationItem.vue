@@ -1,5 +1,5 @@
 <template>
-  <div :class="['p-4 border rounded-lg transition bg-white border-gray-300']">
+  <div :class="['p-4 border rounded-lg transition border-gray-300']">
     <h2 class="font-semibold text-xl mb-1">Email integration</h2>
     <p class="text-lg !font-light mb-4">Configure automatic email sending</p>
     <UToggle v-model="selected" class="mb-4" />
@@ -24,7 +24,7 @@
   </div>
   <div
     v-if="selected === true"
-    :class="['p-4 border rounded-lg transition bg-white border-gray-300']"
+    :class="['p-4 border rounded-lg transition border-gray-300']"
   >
     <h1 class="font-bold text-xl mb-1">SMTP settings</h1>
     <p class="text-lg !font-light mb-4">Configure automatic email sending</p>

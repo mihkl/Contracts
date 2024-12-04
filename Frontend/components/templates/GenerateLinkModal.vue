@@ -38,7 +38,7 @@
         <UFormGroup label="Valid until (optional)" name="validUntil">
           <UInput type="date" v-model="state.validUntil" />
         </UFormGroup>
-        <UButton type="submit"> Submit </UButton>
+        <UButton type="submit" color="indigo"> Submit </UButton>
       </UForm>
     </UCard>
   </UModal>
