@@ -54,7 +54,7 @@ const links = [
   {
     label: "Get Started",
     icon: "i-heroicons-hand-raised",
-    to: "/getStarted",
+    to: "/get-started",
   },
 ];
 
