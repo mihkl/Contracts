@@ -17,6 +17,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext(options)
     public required DbSet<Template> Templates { get; set; }
     public new required DbSet<User> Users { get; set; }
     public required DbSet<ContractSignature> Signatures { get; set; }
+    public required DbSet<SmtpSettings> SmtpSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

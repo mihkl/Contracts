@@ -3,6 +3,24 @@
     <h2 class="font-semibold text-xl mb-1">Email integration</h2>
     <p class="text-lg !font-light mb-4">Configure automatic email sending</p>
     <UToggle v-model="selected" class="mb-4" />
+    <UButton
+      @click="submit"
+      class="mr-10 bg-indigo-500 hover:bg-indigo-600 block"
+      >Save settings</UButton
+    >
+  </div>
+  <div
+    v-if="selected === true"
+    :class="['p-4 border rounded-lg transition bg-white border-gray-300']"
+  >
+    <div class="flex flex-row gap-4 items-center mb-4">
+      <UToggle v-model="notifyOnContractUploadSelected" />
+      <p>Automatically send final contract to applicant.</p>
+    </div>
+    <div class="flex flex-row gap-4">
+      <UToggle v-model="sendFinalContractSelected" />
+      <p>Notify on new contract signature.</p>
+    </div>
   </div>
   <div
     v-if="selected === true"
@@ -10,12 +28,12 @@
   >
     <h1 class="font-bold text-xl mb-1">SMTP settings</h1>
     <p class="text-lg !font-light mb-4">Configure automatic email sending</p>
-    <UForm :state="state">
+    <UForm :state="state" @submit="submit">
       <UFormGroup label="SMTP host" name="host" class="mb-4" :required="true">
-        <UInput type="text" />
+        <UInput type="text" v-model="state.host" />
       </UFormGroup>
       <UFormGroup label="SMTP port" name="port" class="mb-4" :required="true">
-        <UInput type="number" />
+        <UInput type="number" v-model="state.port" />
       </UFormGroup>
       <UFormGroup
         label="Username"
@@ -23,7 +41,7 @@
         class="mb-4"
         :required="true"
       >
-        <UInput type="text" />
+        <UInput type="text" v-model="state.username" />
       </UFormGroup>
       <UFormGroup
         label="Password"
@@ -31,26 +49,58 @@
         class="mb-4"
         :required="true"
       >
-        <UInput type="password" />
+        <UInput type="password" v-model="state.password" />
       </UFormGroup>
       <UFormGroup label="From email" name="email" class="mb-4" :required="true">
-        <UInput type="email" />
+        <UInput type="email" v-model="state.fromEmail" />
       </UFormGroup>
-      <UButton type="submit" class="mr-10 bg-indigo-500 hover:bg-indigo-600"
-        >Submit</UButton
-      >
     </UForm>
   </div>
 </template>
 
 <script setup lang="ts">
 const selected = ref(false);
+const notifyOnContractUploadSelected = ref(false);
+const sendFinalContractSelected = ref(false);
+
+const auth = useAuth();
+const smtpSettings = ref();
+
+onMounted(async () => {
+  const response = await auth.fetchWithToken("/settings/smtp");
+  if (!response?.error || !response) {
+    smtpSettings.value = response;
+
+    if (response) {
+      selected.value = true;
+      state.host = response?.host;
+      state.fromEmail = response?.fromEmail;
+      state.port = response?.port;
+      state.username = response?.username;
+      state.password = response?.password;
+    }
+  }
+});
 
 const state = reactive({
   host: "",
   port: 0,
   username: "",
   password: "",
-  email: "",
+  fromEmail: "",
 });
+
+const submit = async () => {
+  if (selected.value === false)
+    await auth.fetchWithToken("/settings/smtp", {
+      method: "DELETE",
+    });
+  else
+    await auth.fetchWithToken("/settings/smtp", {
+      method: "POST",
+      body: JSON.stringify({
+        ...state,
+      }),
+    });
+};
 </script>
