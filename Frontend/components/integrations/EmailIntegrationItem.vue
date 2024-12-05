@@ -11,7 +11,7 @@
   </div>
   <div
     v-if="selected === true"
-    :class="['p-4 border rounded-lg transition bg-white border-gray-300']"
+    :class="['p-4 border rounded-lg transition border-gray-300']"
   >
     <div class="flex flex-row gap-4 items-center mb-4">
       <UToggle v-model="notifyOnContractUploadSelected" />
@@ -89,7 +89,7 @@ const emailContent = ref("");
 const signatureNotificationEmail = ref("");
 
 
-const auth = useAuth();
+const auth = useAuth(); 
 const smtpSettings = ref();
 
 onMounted(async () => {
