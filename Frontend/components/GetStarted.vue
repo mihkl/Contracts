@@ -101,7 +101,7 @@
             class="mt-3 p-4 rounded border border-gray-200 transition-all duration-300"
           >
             <p>
-              If the customer has signed the document, it will appear on the <strong>Submissions</strong> page. Next step would be to countersign the document to finish the process.
+              If the customer has signed the document, it will appear on the <strong>Submissions</strong> page. Next step would be to countersign the document.
             </p>
           </div>
         </div>
