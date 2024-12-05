@@ -21,7 +21,7 @@ namespace API.Data.Repos
                 FromEmail = smtpSettings.FromEmail,
                 NotifyOnUploadContent = smtpSettings.NotifyOnUploadContent,
                 NotifyOnSignatureContent = smtpSettings.NotifyOnSignatureContent,
-                SignatureNotificationEmail = smtpSettings.SignatureNotificationEmail // New
+                SignatureNotificationEmail = smtpSettings.SignatureNotificationEmail
             });
 
             else

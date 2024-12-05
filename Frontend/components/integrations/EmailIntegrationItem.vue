@@ -18,10 +18,10 @@
       <p>Automatically send final contract to applicant.</p>
     </div>
     <div v-if="notifyOnContractUploadSelected" class="mb-4">
-      <label for="applicantEmailContent" class="block font-medium mb-2">Email Content</label>
+      <label for="notifyOnUploadContent" class="block font-medium mb-2">Email Content</label>
       <textarea
-        id="applicantEmailContent"
-        v-model="state.applicantEmailContent"
+        id="notifyOnUploadContent"
+        v-model="state.notifyOnUploadContent"
         class="w-full border rounded-lg p-2"
         placeholder="Write your email content here..."
         rows="4"
@@ -42,12 +42,12 @@
       />
     </div>
     <div v-if="sendFinalContractSelected" class="mb-4">
-      <label for="signatureEmailContent" class="block font-medium mb-2">
+      <label for="notifyOnSignatureContent" class="block font-medium mb-2">
         Email Content
       </label>
       <textarea
-        id="signatureEmailContent"
-        v-model="state.signatureEmailContent"
+        id="notifyOnSignatureContent"
+        v-model="state.notifyOnSignatureContent"
         class="w-full border rounded-lg p-2"
         placeholder="Write the email content for the signature notification..."
         rows="4"
@@ -106,9 +106,9 @@ const state = reactive({
   username: "",
   password: "",
   fromEmail: "",
-  applicantEmailContent: "",
+  notifyOnUploadContent: "",
   signatureNotificationEmail: "",
-  signatureEmailContent: "",
+  notifyOnSignatureContent: "",
 });
 
 onMounted(async () => {
@@ -123,9 +123,9 @@ onMounted(async () => {
       state.port = response?.port;
       state.username = response?.username;
       state.password = response?.password;
-      state.applicantEmailContent = response?.applicantEmailContent;
+      state.notifyOnUploadContent = response?.notifyOnUploadContent;
       state.signatureNotificationEmail = response?.signatureNotificationEmail;
-      state.signatureEmailContent = response?.signatureEmailContent;
+      state.notifyOnSignatureContent = response?.notifyOnSignatureContent;
     }
   }
 });
