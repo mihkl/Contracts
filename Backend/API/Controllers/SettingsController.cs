@@ -25,7 +25,7 @@ namespace API.Controllers
             var smtpSettings = await _settingsRepo.GetSmtpSettings(userId);
 
             return Ok(smtpSettings);
-        }
+        }   
 
         [Authorize]
         [HttpPost("smtp")]

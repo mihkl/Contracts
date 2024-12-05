@@ -18,7 +18,10 @@ namespace API.Data.Repos
                 Port = smtpSettings.Port,
                 Username = smtpSettings.Username,
                 Password = smtpSettings.Password,
-                FromEmail = smtpSettings.FromEmail
+                FromEmail = smtpSettings.FromEmail,
+                NotifyOnUploadContent = smtpSettings.NotifyOnUploadContent,
+                NotifyOnSignatureContent = smtpSettings.NotifyOnSignatureContent,
+                SignatureNotificationEmail = smtpSettings.SignatureNotificationEmail // New
             });
 
             else
@@ -28,6 +31,9 @@ namespace API.Data.Repos
                 currentSettings.Host = smtpSettings.Host;
                 currentSettings.Username = smtpSettings.Username;
                 currentSettings.FromEmail = smtpSettings.FromEmail;
+                currentSettings.NotifyOnUploadContent = smtpSettings.NotifyOnUploadContent;
+                currentSettings.NotifyOnSignatureContent = smtpSettings.NotifyOnSignatureContent;
+                currentSettings.SignatureNotificationEmail = smtpSettings.SignatureNotificationEmail;
             }
 
             await _context.SaveChangesAsync();

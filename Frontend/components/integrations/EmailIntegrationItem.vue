@@ -18,10 +18,10 @@
       <p>Automatically send final contract to applicant.</p>
     </div>
     <div v-if="notifyOnContractUploadSelected" class="mb-4">
-      <label for="emailContent" class="block font-medium mb-2">Email Content</label>
+      <label for="applicantEmailContent" class="block font-medium mb-2">Email Content</label>
       <textarea
-        id="emailContent"
-        v-model="emailContent"
+        id="applicantEmailContent"
+        v-model="state.applicantEmailContent"
         class="w-full border rounded-lg p-2"
         placeholder="Write your email content here..."
         rows="4"
@@ -32,16 +32,26 @@
       <p>Notify on new contract signature.</p>
     </div>
     <div v-if="sendFinalContractSelected" class="mb-4">
-      <label for="signatureEmail" class="block font-medium mb-2"
-        >Notification Receiver</label
-      >
+      <label for="signatureEmail" class="block font-medium mb-2">Notification Receiver</label>
       <UInput
         id="signatureEmail"
         type="email"
-        v-model="signatureNotificationEmail"
+        v-model="state.signatureNotificationEmail"
         placeholder="Enter email for signature notifications"
         class="w-full border rounded-lg p-2"
       />
+    </div>
+    <div v-if="sendFinalContractSelected" class="mb-4">
+      <label for="signatureEmailContent" class="block font-medium mb-2">
+        Email Content
+      </label>
+      <textarea
+        id="signatureEmailContent"
+        v-model="state.signatureEmailContent"
+        class="w-full border rounded-lg p-2"
+        placeholder="Write the email content for the signature notification..."
+        rows="4"
+      ></textarea>
     </div>
   </div>
   <div
@@ -80,17 +90,26 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
+import { ref, reactive, onMounted } from "vue";
+
 const selected = ref(false);
 const notifyOnContractUploadSelected = ref(false);
 const sendFinalContractSelected = ref(false);
-const emailContent = ref("");
-const signatureNotificationEmail = ref("");
 
-
-const auth = useAuth(); 
+const auth = useAuth();
 const smtpSettings = ref();
+
+const state = reactive({
+  host: "",
+  port: 0,
+  username: "",
+  password: "",
+  fromEmail: "",
+  applicantEmailContent: "",
+  signatureNotificationEmail: "",
+  signatureEmailContent: "",
+});
 
 onMounted(async () => {
   const response = await auth.fetchWithToken("/settings/smtp");
@@ -104,30 +123,25 @@ onMounted(async () => {
       state.port = response?.port;
       state.username = response?.username;
       state.password = response?.password;
+      state.applicantEmailContent = response?.applicantEmailContent;
+      state.signatureNotificationEmail = response?.signatureNotificationEmail;
+      state.signatureEmailContent = response?.signatureEmailContent;
     }
   }
 });
 
-const state = reactive({
-  host: "",
-  port: 0,
-  username: "",
-  password: "",
-  fromEmail: "",
-});
-
 const submit = async () => {
-  if (selected.value === false)
+  if (selected.value === false) {
     await auth.fetchWithToken("/settings/smtp", {
       method: "DELETE",
     });
-  else
+  } else {
     await auth.fetchWithToken("/settings/smtp", {
       method: "POST",
       body: JSON.stringify({
         ...state,
       }),
     });
+  }
 };
-
 </script>
