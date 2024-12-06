@@ -125,6 +125,7 @@ import { ref, reactive, onMounted } from "vue";
 const selected = ref(false);
 const notifyOnContractUploadSelected = ref(false);
 const sendFinalContractSelected = ref(false);
+const toast = useToast();
 
 const auth = useAuth();
 const smtpSettings = ref();
@@ -231,17 +232,23 @@ const submit = async () => {
   if (!validate()) {
     return;
   }
+  toast.add({
+    title: "Saving!",
+    description: "Saving new settings."
+  })
 
   const payload: Partial<typeof state> = { ...state };
 
-  if (!notifyOnContractUploadSelected.value) {
-    delete payload.notifyOnUploadContent;
-  }
+    payload.notifyOnUploadContent = notifyOnContractUploadSelected.value
+    ? state.notifyOnUploadContent
+    : "";
 
-  if (!sendFinalContractSelected.value) {
-    delete payload.signatureNotificationEmail;
-    delete payload.notifyOnSignatureContent;
-  }
+  payload.signatureNotificationEmail = sendFinalContractSelected.value
+    ? state.signatureNotificationEmail
+    : "";
+  payload.notifyOnSignatureContent = sendFinalContractSelected.value
+    ? state.notifyOnSignatureContent
+    : "";
 
   if (selected.value === false) {
     await auth.fetchWithToken("/settings/smtp", {
