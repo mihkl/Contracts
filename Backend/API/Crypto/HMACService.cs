@@ -24,10 +24,6 @@ namespace API.Controllers
         {
             var message = generateMessage(startDate, endDate, templateId);
             var expectedSignature = GenerateHmac(message);
-
-            Console.WriteLine("EXpected is " + expectedSignature);
-            Console.WriteLine("Real is " + signature);
-
             return expectedSignature == signature;
         }
 
