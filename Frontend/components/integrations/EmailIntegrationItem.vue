@@ -14,7 +14,7 @@
     :class="['p-4 border rounded-lg transition border-gray-300']"
   >
     <div class="flex flex-row gap-4 items-center mb-4">
-      <UToggle v-model="notifyOnContractUploadSelected" />
+      <UToggle v-model="notifyOnContractUploadSelected" @change="handleContractUploadToggle" />
       <p>Automatically send final contract to applicant.</p>
     </div>
     <div v-if="notifyOnContractUploadSelected" class="mb-4">
@@ -28,7 +28,7 @@
       ></textarea>
     </div>
     <div class="flex flex-row gap-4 items-center mb-4">
-      <UToggle v-model="sendFinalContractSelected" />
+      <UToggle v-model="sendFinalContractSelected" @change="handleSignatureToggle" />
       <p>Notify on new contract signature.</p>
     </div>
     <div v-if="sendFinalContractSelected" class="mb-4">
@@ -78,8 +78,7 @@
       <UFormGroup
         label="Password"
         name="password"
-        class="mb-4"
-        :required="true"
+        class="mb-4" :required="true"
       >
         <UInput type="password" v-model="state.password" />
       </UFormGroup>
@@ -100,6 +99,10 @@ const sendFinalContractSelected = ref(false);
 const auth = useAuth();
 const smtpSettings = ref();
 
+const defaultUploadContent = "Example upload text";
+const defaultNotificationEmail = "";
+const defaultNotificationContent = "Example notification text";
+
 const state = reactive({
   host: "",
   port: 0,
@@ -110,6 +113,24 @@ const state = reactive({
   signatureNotificationEmail: "",
   notifyOnSignatureContent: "",
 });
+
+const handleContractUploadToggle = () => {
+  if (!notifyOnContractUploadSelected.value) {
+    state.notifyOnUploadContent = "";
+  } else {
+    state.notifyOnUploadContent = defaultUploadContent;
+  }
+};
+
+const handleSignatureToggle = () => {
+  if (!sendFinalContractSelected.value) {
+    state.signatureNotificationEmail = "";
+    state.notifyOnSignatureContent = "";
+  } else {
+    state.signatureNotificationEmail = defaultNotificationEmail;
+    state.notifyOnSignatureContent = defaultNotificationContent;
+  }
+};
 
 onMounted(async () => {
   const response = await auth.fetchWithToken("/settings/smtp");
@@ -123,14 +144,26 @@ onMounted(async () => {
       state.port = response?.port;
       state.username = response?.username;
       state.password = response?.password;
-      state.notifyOnUploadContent = response?.notifyOnUploadContent;
-      state.signatureNotificationEmail = response?.signatureNotificationEmail;
-      state.notifyOnSignatureContent = response?.notifyOnSignatureContent;
+      state.notifyOnUploadContent = response?.notifyOnUploadContent || "";
+      state.signatureNotificationEmail = response?.signatureNotificationEmail || "";
+      state.notifyOnSignatureContent = response?.notifyOnSignatureContent || "";
     }
   }
 });
 
 const submit = async () => {
+  // Create a Partial payload to allow optional properties
+  const payload: Partial<typeof state> = { ...state };
+
+  if (!notifyOnContractUploadSelected.value) {
+    payload.notifyOnUploadContent = undefined; // Set as undefined instead of using delete
+  }
+
+  if (!sendFinalContractSelected.value) {
+    payload.signatureNotificationEmail = undefined; // Set as undefined instead of using delete
+    payload.notifyOnSignatureContent = undefined;
+  }
+
   if (selected.value === false) {
     await auth.fetchWithToken("/settings/smtp", {
       method: "DELETE",
@@ -138,10 +171,9 @@ const submit = async () => {
   } else {
     await auth.fetchWithToken("/settings/smtp", {
       method: "POST",
-      body: JSON.stringify({
-        ...state,
-      }),
+      body: JSON.stringify(payload),
     });
   }
 };
+
 </script>
