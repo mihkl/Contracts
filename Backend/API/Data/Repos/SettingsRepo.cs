@@ -53,5 +53,16 @@ namespace API.Data.Repos
 
             return settings;
         }
+
+        public async Task<bool> IsEmailIntegrationEnabled(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return false;
+
+            return !string.IsNullOrWhiteSpace(settings.Host) && !string.IsNullOrWhiteSpace(settings.FromEmail);
+        }
     }
 }

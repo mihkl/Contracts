@@ -7,5 +7,6 @@ namespace API.Data.Repos
         Task<SmtpSettings?> GetSmtpSettings(string userId);
         Task AddUpdateSmtpSettings(string userId, AddUpdateSmtpSettings smtpSettings);
         Task DeleteSmtpSettings(string userId);
+        Task<bool> IsEmailIntegrationEnabled(string userId);
     }
 }

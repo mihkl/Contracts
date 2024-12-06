@@ -8,7 +8,7 @@ namespace API.FileManipulation;
 
 public static class FileManipulator
 {
-    public static ParseDocxResult ParseDocxFile(IFormFile file, out string exception)
+    public static ParseDocxResult ParseDocxFile(IFormFile file, out string exception, bool isEmailIntegrationEnabled)
     {
         exception = string.Empty;
         if (file is null || file.Length == 0)
@@ -44,7 +44,7 @@ public static class FileManipulator
         var formattedFileData = Formatter.FormatTextBody(fileData);
         var fields = FindTemplateDynamicFields(docText);
 
-        if (fields.All(f => f.Type != "email"))
+        if (isEmailIntegrationEnabled && fields.All(f => f.Type != "email"))
         {
             fields.Add(new TemplateDynamicField
             {

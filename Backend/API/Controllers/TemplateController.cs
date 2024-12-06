@@ -13,17 +13,22 @@ namespace API.Controllers;
 
 [ApiController]
 [Authorize]
-public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManager<User> userManager) : ControllerBase
+public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManager<User> userManager, ISettingsRepo settingsRepo) : ControllerBase
 {
     private readonly TemplateRepo _repo = repo;
     private readonly IMemoryCache _cache = cache;
     private readonly UserManager<User> _userManager = userManager;
+    private readonly ISettingsRepo _settingsRepo = settingsRepo;
 
     [Authorize]
     [HttpPost("upload")]
-    public ActionResult<UploadFileResponse> UploadDocxFile(IFormFile file)
+    public async Task<ActionResult<UploadFileResponse>> UploadDocxFile(IFormFile file)
     {
-        var parseResult = ParseDocxFile(file, out var exception);
+        var userId = _userManager.GetUserId(User);
+
+        var isEmailIntegrationEnabled = await _settingsRepo.IsEmailIntegrationEnabled(userId);
+
+        var parseResult = ParseDocxFile(file, out var exception, isEmailIntegrationEnabled);
 
         if (parseResult.Template is not null)
         {
