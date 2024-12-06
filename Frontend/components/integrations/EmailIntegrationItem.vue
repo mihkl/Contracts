@@ -24,12 +24,21 @@
         v-model="state.notifyOnUploadContent"
         class="w-full border rounded-lg p-2"
         :class="{ 'border-red-500': errors.notifyOnUploadContent }"
-        placeholder="Write your email content here..."
+        placeholder="Write your email content here."
         rows="4"
       ></textarea>
       <p v-if="errors.notifyOnUploadContent" class="text-red-500 text-sm">
         {{ errors.notifyOnUploadContent }}
       </p>
+      <div class="flex items-center mt-2">
+        <input
+          id="includeUploadAttachment"
+          type="checkbox"
+          v-model="state.applicantDocumentIsAttached"
+          class="mr-2"
+        />
+        <label for="includeUploadAttachment" class="text-sm">Include contract as email attachment</label>
+      </div>
     </div>
     <div class="flex flex-row gap-4 items-center mb-4">
       <UToggle v-model="sendFinalContractSelected" @change="handleSignatureToggle" />
@@ -42,7 +51,7 @@
         type="email"
         v-model="state.signatureNotificationEmail"
         :class="{ 'border-red-500': errors.signatureNotificationEmail }"
-        placeholder="Enter email for signature notifications"
+        placeholder="Enter email that will receive the notification"
         class="w-full border rounded-lg p-2"
       />
       <p v-if="errors.signatureNotificationEmail" class="text-red-500 text-sm">
@@ -58,12 +67,21 @@
         v-model="state.notifyOnSignatureContent"
         :class="{ 'border-red-500': errors.notifyOnSignatureContent }"
         class="w-full border rounded-lg p-2"
-        placeholder="Write the email content for the signature notification..."
+        placeholder="Write the email content for the signature notification."
         rows="4"
       ></textarea>
       <p v-if="errors.notifyOnSignatureContent" class="text-red-500 text-sm">
         {{ errors.notifyOnSignatureContent }}
       </p>
+      <div class="flex items-center mt-2">
+        <input
+          id="includeSignatureAttachment"
+          type="checkbox"
+          v-model="state.notificationDocumentIsAttached"
+          class="mr-2"
+        />
+        <label for="includeSignatureAttachment" class="text-sm">Include contract as email attachment</label>
+      </div>
     </div>
   </div>
   <div
@@ -124,6 +142,8 @@ const state = reactive({
   notifyOnUploadContent: "",
   signatureNotificationEmail: "",
   notifyOnSignatureContent: "",
+  applicantDocumentIsAttached: false,
+  notificationDocumentIsAttached: false,
 });
 
 const errors = reactive({
@@ -135,6 +155,7 @@ const errors = reactive({
 const handleContractUploadToggle = () => {
   if (!notifyOnContractUploadSelected.value) {
     state.notifyOnUploadContent = "";
+    state.applicantDocumentIsAttached = false;
     errors.notifyOnUploadContent = ""; 
   } else {
     state.notifyOnUploadContent = defaultUploadContent;
@@ -145,6 +166,7 @@ const handleSignatureToggle = () => {
   if (!sendFinalContractSelected.value) {
     state.signatureNotificationEmail = "";
     state.notifyOnSignatureContent = "";
+    state.notificationDocumentIsAttached = false;
     errors.signatureNotificationEmail = "";
     errors.notifyOnSignatureContent = ""; 
   } else {
@@ -199,6 +221,8 @@ onMounted(async () => {
       state.notifyOnUploadContent = response?.notifyOnUploadContent || "";
       state.signatureNotificationEmail = response?.signatureNotificationEmail || "";
       state.notifyOnSignatureContent = response?.notifyOnSignatureContent || "";
+      state.applicantDocumentIsAttached = response?.applicantDocumentIsAttached || false;
+      state.notificationDocumentIsAttached = response?.notificationDocumentIsAttached || false;
     }
   }
 });

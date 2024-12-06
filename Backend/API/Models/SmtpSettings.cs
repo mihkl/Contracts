@@ -13,4 +13,7 @@ public record SmtpSettings
     public string? NotifyOnUploadContent { get; set; }
     public string? NotifyOnSignatureContent { get; set; }
     public string? SignatureNotificationEmail { get; set; }
+    public bool? DocumentIsAttached { get; set; }
+    public bool? NotificationDocumentIsAttached { get; set; }
+    
 }

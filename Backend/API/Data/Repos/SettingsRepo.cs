@@ -21,7 +21,9 @@ namespace API.Data.Repos
                 FromEmail = smtpSettings.FromEmail,
                 NotifyOnUploadContent = smtpSettings.NotifyOnUploadContent,
                 NotifyOnSignatureContent = smtpSettings.NotifyOnSignatureContent,
-                SignatureNotificationEmail = smtpSettings.SignatureNotificationEmail
+                SignatureNotificationEmail = smtpSettings.SignatureNotificationEmail,
+                DocumentIsAttached = smtpSettings.DocumentIsAttached,
+                NotificationDocumentIsAttached = smtpSettings.NotificationDocumentIsAttached
             });
 
             else
@@ -34,6 +36,8 @@ namespace API.Data.Repos
                 currentSettings.NotifyOnUploadContent = smtpSettings.NotifyOnUploadContent;
                 currentSettings.NotifyOnSignatureContent = smtpSettings.NotifyOnSignatureContent;
                 currentSettings.SignatureNotificationEmail = smtpSettings.SignatureNotificationEmail;
+                currentSettings.DocumentIsAttached = smtpSettings.DocumentIsAttached;
+                currentSettings.NotificationDocumentIsAttached = smtpSettings.NotificationDocumentIsAttached;
             }
 
             await _context.SaveChangesAsync();
