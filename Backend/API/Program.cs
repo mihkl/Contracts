@@ -5,6 +5,7 @@ using API.Controllers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using API.emails;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +29,8 @@ builder.Services
     .AddScoped<ContractRepo>()
     .AddScoped<IHMACService, HMACService>()
     .AddScoped<TemplateRepo>()
-    .AddScoped<ISettingsRepo, SettingsRepo>();
+    .AddScoped<ISettingsRepo, SettingsRepo>()
+    .AddScoped<IEmailsService, EmailsService>();
 
 builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
     {
