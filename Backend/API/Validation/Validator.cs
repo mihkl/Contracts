@@ -1,5 +1,10 @@
+using System.IO.Compression;
 using API.Models;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using DocumentFormat.OpenXml.Packaging;
 using IbanNet;
+using UglyToad.PdfPig;
 
 namespace API.Validation;
 
@@ -108,5 +113,60 @@ public static class FormValidator
             sum += (isikukood[i] - '0') * weights[i];
         }
         return sum % 11;
+    }
+}
+
+public class AsiceValidator
+{
+    private string _tempAsicePath = string.Empty;
+    private string _tempAsiceFilePath = string.Empty;
+    private string _extractedTempAsiceFilePath = string.Empty;
+    
+    public async Task<bool> ValidateSignatures(IFormFile file, string? userId)
+    {
+        _tempAsicePath = Path.Combine(AppContext.BaseDirectory, "tempAsiceFiles");
+        _tempAsiceFilePath = Path.Combine(_tempAsicePath, file.FileName + new Random().Next() + ".asice");
+
+        using var stream = new FileStream(_tempAsiceFilePath, FileMode.Create);
+        await file.CopyToAsync(stream);
+
+        _extractedTempAsiceFilePath = Path.Combine(_tempAsicePath, "extracted");
+        Directory.CreateDirectory(_extractedTempAsiceFilePath);
+
+        ZipFile.ExtractToDirectory(_tempAsiceFilePath, _extractedTempAsiceFilePath);
+
+        var hasSignature0 = File.Exists(Path.Combine(_extractedTempAsiceFilePath, "META-INF", "signatures0.xml"));
+        var hasSignature1 = File.Exists(Path.Combine(_extractedTempAsiceFilePath, "META-INF", "signatures1.xml"));
+
+        return (hasSignature0 && userId is null && !hasSignature1) ||
+        (hasSignature0 && userId is not null && hasSignature1);
+    }
+
+    public bool ValidateContent(Contract contract)
+    {
+        var pdfFilePath = Directory.GetFiles(_extractedTempAsiceFilePath, "*.pdf", SearchOption.AllDirectories).FirstOrDefault();
+        if (pdfFilePath is null)
+        {
+            return false;
+        }
+        string pdfText = string.Empty;
+        using var pdfDocument = PdfDocument.Open(pdfFilePath);
+        pdfText = string.Join("\n", pdfDocument.GetPages().Select(page => page.Text));
+
+        string docxText = string.Empty;
+        using var stream = new MemoryStream(contract.FileData);
+        using var docxDocument = WordprocessingDocument.Open(stream, false);
+        docxText = docxDocument.MainDocumentPart.Document.Body.InnerText;
+
+        File.Delete(_tempAsiceFilePath);
+        Directory.Delete(_extractedTempAsiceFilePath, true);
+
+        return CompareContent(pdfText, docxText);
+    }
+
+    private static bool CompareContent(string text1, string text2)
+    {
+        static string Normalize(string text) => text.Trim().Replace("\r", "").Replace("\n", "").Replace(" ", "");
+        return Normalize(text1) == Normalize(text2);
     }
 }
