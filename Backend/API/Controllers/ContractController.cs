@@ -8,16 +8,19 @@ using Microsoft.AspNetCore.Mvc;
 using static API.Mappers.Mappers;
 using static API.FileManipulation.FileManipulator;
 using API.Validation;
+using API.emails;
 
 namespace API.Controllers;
 
 [ApiController]
-public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACService hmacService, UserManager<User> userManager) : ControllerBase
+public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACService hmacService, UserManager<User> userManager, ISettingsRepo settingsRepo, IEmailsService emailsService) : ControllerBase
 {
     private readonly ContractRepo _crepo = crepo;
     private readonly TemplateRepo _trepo = trepo;
     private readonly IHMACService _hmacService = hmacService;
     private readonly UserManager<User> _userManager = userManager;
+    private readonly ISettingsRepo _settingsRepo = settingsRepo;
+    private readonly IEmailsService _emailsService = emailsService;
 
     [Authorize]
     [HttpGet("contracts")]
@@ -272,7 +275,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
         var asiceValidator = new AsiceValidator();
         var signatureValidationResult = await asiceValidator.ValidateSignatures(file, userId);
-        var contentValidationResult =  asiceValidator.ValidateContent(contract);
+        var contentValidationResult = asiceValidator.ValidateContent(contract);
 
         if (!signatureValidationResult) return BadRequest("Missing or invalid signature(s)");
 
@@ -283,6 +286,13 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
             : ContractSignatureType.Candidate;
 
         await _crepo.SaveSignature(contract, parsedFile, contractSignatureType);
+
+        var companyUserId = userId ?? await _crepo.GetUserByContractId(id);
+        if (await _settingsRepo.IsEmailIntegrationEnabled(companyUserId!))
+        {
+            EmailMessage message = new EmailMessage("martinvali12@gmail.com", DateTime.UtcNow, EmailMessage.EmailMessageType.FinalContractNotification);
+            await _emailsService.SendEmailsAsync(new List<EmailMessage> { message }, companyUserId!);
+        }
 
         return Ok();
     }
