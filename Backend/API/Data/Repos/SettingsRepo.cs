@@ -55,6 +55,18 @@ namespace API.Data.Repos
             await _context.SaveChangesAsync();
         }
 
+        public async Task<string?> GetSignedContractUploadNotificationEmailAddress(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return null;
+
+            return settings.SignatureNotificationEmail;
+
+        }
+
         public async Task<SmtpSettings?> GetSmtpSettings(string userId)
         {
             var settings = await _context.SmtpSettings
@@ -64,15 +76,26 @@ namespace API.Data.Repos
             return settings;
         }
 
-        public async Task<bool> IsSendFinalContractEmailEnabled(string userId)
+        public async Task<string?> GetSendFinalContractEmailContent(string userId)
         {
             var settings = await _context.SmtpSettings
                 .Where(x => x.UserId == userId)
                 .FirstOrDefaultAsync();
 
-            if (settings == null) return false;
+            if (settings == null) return null;
 
-            return !string.IsNullOrWhiteSpace(settings.NotifyOnUploadContent);
+            return settings.NotifyOnUploadContent;
+        }
+
+        public async Task<string?> GetSendSignedContractUploadEmailContent(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return null;
+
+            return settings.NotifyOnSignatureContent;
         }
     }
 }

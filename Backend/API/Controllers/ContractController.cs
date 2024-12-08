@@ -288,7 +288,25 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         await _crepo.SaveSignature(contract, parsedFile, contractSignatureType);
 
         var companyUserId = userId ?? await _crepo.GetUserByContractId(id);
-        if (contractSignatureType == ContractSignatureType.CompanyRepresentative && await _settingsRepo.IsSendFinalContractEmailEnabled(companyUserId!))
+
+        if (contractSignatureType == ContractSignatureType.Candidate)
+        {
+            var content = await _settingsRepo.GetSendSignedContractUploadEmailContent(companyUserId!);
+
+            if (!string.IsNullOrWhiteSpace(content))
+            {
+                var companyRepresentativeEmail = await _settingsRepo.GetSignedContractUploadNotificationEmailAddress(companyUserId!);
+
+                if (!string.IsNullOrWhiteSpace(companyRepresentativeEmail))
+                {
+                    EmailMessage message = new EmailMessage(companyRepresentativeEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.SignedContractReceivedNotification);
+                    await _emailsService.SendEmailsAsync(new List<EmailMessage> { message }, companyUserId!);
+                }
+
+            }
+        }
+
+        else if (contractSignatureType == ContractSignatureType.CompanyRepresentative && !string.IsNullOrWhiteSpace(await _settingsRepo.GetSendFinalContractEmailContent(companyUserId!)))
         {
             var applicantEmail = contract.SubmittedFields.FirstOrDefault(x => x.Name == "Email")?.Value;
 
