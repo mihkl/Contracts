@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using static API.Mappers.Mappers;
 using static API.FileManipulation.FileManipulator;
+using API.Validation;
 
 namespace API.Controllers;
 
@@ -268,6 +269,14 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         if (contract == null) return NotFound($"Contract with id {id} does not exist");
 
         string? userId = _userManager.GetUserId(User);
+
+        var asiceValidator = new AsiceValidator();
+        var signatureValidationResult = await asiceValidator.ValidateSignatures(file, userId);
+        var contentValidationResult =  asiceValidator.ValidateContent(contract);
+
+        if (!signatureValidationResult) return BadRequest("Missing or invalid signature(s)");
+
+        if (!contentValidationResult) return BadRequest("File content does not match contract");
 
         var contractSignatureType = userId != null ?
             ContractSignatureType.CompanyRepresentative

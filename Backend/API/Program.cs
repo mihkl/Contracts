@@ -100,12 +100,14 @@ void CreateRequiredDirectories()
     string temporaryDocxFilesPath = Path.Combine(baseDirectory, "TemporaryDocxFiles");
     string pdfFilesPath = Path.Combine(baseDirectory, "PdfFiles");
     string uploadedContractsPath = Path.Combine(baseDirectory, "SignedContracts");
+    var tempAsicePath = Path.Combine(baseDirectory, "tempAsiceFiles");
 
     Directory.CreateDirectory(temporaryDocxFilesPath);
     Directory.CreateDirectory(pdfFilesPath);
     Directory.CreateDirectory(uploadedContractsPath);
+    Directory.CreateDirectory(tempAsicePath);
 
-    Console.WriteLine($"Created directories: {temporaryDocxFilesPath}, {pdfFilesPath}, {uploadedContractsPath}");
+    Console.WriteLine($"Created directories: {temporaryDocxFilesPath}, {pdfFilesPath}, {uploadedContractsPath}, {tempAsicePath}");
 }
 app.MapIdentityApi<User>();
 
