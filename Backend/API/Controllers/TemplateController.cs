@@ -26,7 +26,7 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManag
     {
         var userId = _userManager.GetUserId(User);
 
-        var isEmailIntegrationEnabled = await _settingsRepo.IsEmailIntegrationEnabled(userId);
+        var isEmailIntegrationEnabled = await _settingsRepo.IsSendFinalContractEmailEnabled(userId);
 
         var parseResult = ParseDocxFile(file, out var exception, isEmailIntegrationEnabled);
 

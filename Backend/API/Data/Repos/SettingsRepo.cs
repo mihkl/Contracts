@@ -64,7 +64,7 @@ namespace API.Data.Repos
             return settings;
         }
 
-        public async Task<bool> IsEmailIntegrationEnabled(string userId)
+        public async Task<bool> IsSendFinalContractEmailEnabled(string userId)
         {
             var settings = await _context.SmtpSettings
                 .Where(x => x.UserId == userId)
@@ -72,7 +72,7 @@ namespace API.Data.Repos
 
             if (settings == null) return false;
 
-            return !string.IsNullOrWhiteSpace(settings.Host) && !string.IsNullOrWhiteSpace(settings.FromEmail);
+            return !string.IsNullOrWhiteSpace(settings.NotifyOnUploadContent);
         }
     }
 }
