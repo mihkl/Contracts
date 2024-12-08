@@ -17,6 +17,18 @@
       <p>Automatically send final contract to applicant.</p>
     </div>
     <div v-if="notifyOnContractUploadSelected" class="mb-4">
+      <label for="notifyOnUploadSubject" class="block font-medium mb-2">Email Subject</label>
+      <textarea
+        id="notifyOnUploadSubject"
+        v-model="state.notifyOnUploadSubject"
+        class="w-full border rounded-lg p-2"
+        :class="{ 'border-red-500': errors.notifyOnUploadSubject }"
+        placeholder="Enter email subject for final contract"
+        rows="2"
+      ></textarea>
+      <p v-if="errors.notifyOnUploadSubject" class="text-red-500 text-sm">
+        {{ errors.notifyOnUploadSubject }}
+      </p>
       <label for="notifyOnUploadContent" class="block font-medium mb-2">Email Content</label>
       <textarea
         id="notifyOnUploadContent"
@@ -52,11 +64,23 @@
         type="email"
         v-model="state.signatureNotificationEmail"
         :class="{ 'border-red-500': errors.signatureNotificationEmail }"
-        placeholder="Enter email that will receive the notification"
+        placeholder="Enter email to receive the notification"
         class="w-full border rounded-lg p-2"
       />
       <p v-if="errors.signatureNotificationEmail" class="text-red-500 text-sm">
         {{ errors.signatureNotificationEmail }}
+      </p>
+      <label for="notifyOnSignatureSubject" class="block font-medium mb-2">Email Subject</label>
+      <textarea
+        id="notifyOnSignatureSubject"
+        v-model="state.notifyOnSignatureSubject"
+        class="w-full border rounded-lg p-2"
+        :class="{ 'border-red-500': errors.notifyOnSignatureSubject }"
+        placeholder="Enter email subject for signature notification"
+        rows="2"
+      ></textarea>
+      <p v-if="errors.notifyOnSignatureSubject" class="text-red-500 text-sm">
+        {{ errors.notifyOnSignatureSubject }}
       </p>
       <label for="notifyOnSignatureContent" class="block font-medium mb-2 mt-4">
         Email Content
@@ -108,6 +132,7 @@
   </div>
 </template>
 
+
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 
@@ -116,11 +141,9 @@ const notifyOnContractUploadSelected = ref(false);
 const sendFinalContractSelected = ref(false);
 const toast = useToast();
 const auth = useAuth();
-const smtpSettings = ref();
 
-const defaultUploadContent = `Subject: Your Document Has Been Countersigned
-
-We are pleased to inform you that your document has been successfully countersigned, and the signing process is now complete. 
+const defaultUploadSubject = "Subject: Your Document Has Been Countersigned"
+const defaultUploadContent = `We are pleased to inform you that your document has been successfully countersigned, and the signing process is now complete. 
 
 If you have any further questions or need assistance, please do not hesitate to contact us.
 
@@ -129,14 +152,14 @@ Thank you for trusting us with your business.
 Best regards,  
 Y`;
 
-const defaultNotificationContent = `Subject: Client Signed the Document - Your Action Required
-
-This email is to notify you that the client has signed the document. The next step is for you to review and countersign the document to finalize the process.
+const defaultNotificationSubject = "Subject: Client Signed the Document - Your Action Required"
+const defaultNotificationContent = `This email is to notify you that the client has signed the document. The next step is for you to review and countersign the document to finalize the process.
 
 If you have any questions or need further details, please reach out to our team.
 
 Best regards,  
 Y`;
+
 
 // State object
 const state = reactive({
@@ -145,7 +168,9 @@ const state = reactive({
   username: "",
   password: "",
   fromEmail: "",
+  notifyOnUploadSubject: "",
   notifyOnUploadContent: "",
+  notifyOnSignatureSubject: "",
   signatureNotificationEmail: "",
   notifyOnSignatureContent: "",
   documentIsAttached: false,
@@ -154,7 +179,9 @@ const state = reactive({
 
 // Error tracking
 const errors = reactive({
+  notifyOnUploadSubject: "",
   notifyOnUploadContent: "",
+  notifyOnSignatureSubject: "",
   signatureNotificationEmail: "",
   notifyOnSignatureContent: "",
 });
@@ -163,11 +190,14 @@ const errors = reactive({
 const handleContractUploadToggle = () => {
   if (notifyOnContractUploadSelected.value) {
     if (!state.notifyOnUploadContent) {
+      state.notifyOnUploadSubject = defaultUploadSubject;
       state.notifyOnUploadContent = defaultUploadContent;
     }
   } else {
+    state.notifyOnUploadSubject = "";
     state.notifyOnUploadContent = "";
     state.documentIsAttached = false;
+    errors.notifyOnUploadSubject = "";
     errors.notifyOnUploadContent = "";
   }
 };
@@ -175,12 +205,15 @@ const handleContractUploadToggle = () => {
 const handleSignatureToggle = () => {
   if (sendFinalContractSelected.value) {
     if (!state.notifyOnSignatureContent) {
+      state.notifyOnSignatureSubject = defaultNotificationSubject;
       state.notifyOnSignatureContent = defaultNotificationContent;
     }
   } else {
+    state.notifyOnSignatureSubject = "";
     state.signatureNotificationEmail = "";
     state.notifyOnSignatureContent = "";
     state.notificationDocumentIsAttached = false;
+    errors.notifyOnSignatureSubject = "";
     errors.signatureNotificationEmail = "";
     errors.notifyOnSignatureContent = "";
   }
@@ -189,11 +222,21 @@ const handleSignatureToggle = () => {
 // Validation
 const validate = () => {
   let isValid = true;
-  if (notifyOnContractUploadSelected.value && !state.notifyOnUploadContent) {
-    errors.notifyOnUploadContent = "Email content is required.";
-    isValid = false;
+  if (notifyOnContractUploadSelected.value) {
+    if (!state.notifyOnUploadSubject) {
+      errors.notifyOnUploadSubject = "Email subject is required.";
+      isValid = false;
+    }
+    if (!state.notifyOnUploadContent) {
+      errors.notifyOnUploadContent = "Email content is required.";
+      isValid = false;
+    }
   }
   if (sendFinalContractSelected.value) {
+    if (!state.notifyOnSignatureSubject) {
+      errors.notifyOnSignatureSubject = "Email subject is required.";
+      isValid = false;
+    }
     if (!state.signatureNotificationEmail) {
       errors.signatureNotificationEmail = "Notification email is required.";
       isValid = false;
@@ -228,8 +271,10 @@ const submit = async () => {
   const payload = {
     ...state,
     notifyOnUploadContent: notifyOnContractUploadSelected.value ? state.notifyOnUploadContent : "",
+    notifyOnUploadSubject: notifyOnContractUploadSelected.value ? state.notifyOnUploadSubject : "",
     signatureNotificationEmail: sendFinalContractSelected.value ? state.signatureNotificationEmail : "",
     notifyOnSignatureContent: sendFinalContractSelected.value ? state.notifyOnSignatureContent : "",
+    notifyOnSignatureSubject: sendFinalContractSelected.value ? state.notifyOnSignatureSubject : "",
     documentIsAttached: notifyOnContractUploadSelected.value ? state.documentIsAttached : false,
     notificationDocumentIsAttached: sendFinalContractSelected.value ? state.notificationDocumentIsAttached : false,
   };
