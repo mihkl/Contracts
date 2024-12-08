@@ -121,7 +121,7 @@ public class AsiceValidator
     private string _tempAsicePath = string.Empty;
     private string _tempAsiceFilePath = string.Empty;
     private string _extractedTempAsiceFilePath = string.Empty;
-    
+
     public async Task<bool> ValidateSignatures(IFormFile file, string? userId)
     {
         _tempAsicePath = Path.Combine(AppContext.BaseDirectory, "tempAsiceFiles");
@@ -147,6 +147,8 @@ public class AsiceValidator
         var pdfFilePath = Directory.GetFiles(_extractedTempAsiceFilePath, "*.pdf", SearchOption.AllDirectories).FirstOrDefault();
         if (pdfFilePath is null)
         {
+            File.Delete(_tempAsiceFilePath);
+            Directory.Delete(_extractedTempAsiceFilePath, true);
             return false;
         }
         string pdfText = string.Empty;
