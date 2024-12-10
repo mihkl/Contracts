@@ -19,7 +19,9 @@ namespace API.Data.Repos
                 Username = smtpSettings.Username,
                 Password = smtpSettings.Password,
                 FromEmail = smtpSettings.FromEmail,
+                NotifyOnUploadSubject = smtpSettings.NotifyOnUploadSubject,
                 NotifyOnUploadContent = smtpSettings.NotifyOnUploadContent,
+                NotifyOnSignatureSubject = smtpSettings.NotifyOnSignatureSubject,
                 NotifyOnSignatureContent = smtpSettings.NotifyOnSignatureContent,
                 SignatureNotificationEmail = smtpSettings.SignatureNotificationEmail,
                 DocumentIsAttached = smtpSettings.DocumentIsAttached,
@@ -33,7 +35,9 @@ namespace API.Data.Repos
                 currentSettings.Host = smtpSettings.Host;
                 currentSettings.Username = smtpSettings.Username;
                 currentSettings.FromEmail = smtpSettings.FromEmail;
+                currentSettings.NotifyOnUploadSubject = smtpSettings.NotifyOnUploadSubject;
                 currentSettings.NotifyOnUploadContent = smtpSettings.NotifyOnUploadContent;
+                currentSettings.NotifyOnSignatureSubject = smtpSettings.NotifyOnSignatureSubject;
                 currentSettings.NotifyOnSignatureContent = smtpSettings.NotifyOnSignatureContent;
                 currentSettings.SignatureNotificationEmail = smtpSettings.SignatureNotificationEmail;
                 currentSettings.DocumentIsAttached = smtpSettings.DocumentIsAttached;
