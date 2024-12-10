@@ -291,18 +291,18 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
         if (contractSignatureType == ContractSignatureType.Candidate)
         {
-            var content = await _settingsRepo.GetSendSignedContractUploadEmailContent(companyUserId!);
+            var companyRepresentativeEmail = await _settingsRepo.GetSignedContractUploadNotificationEmailAddress(companyUserId!);
 
-            if (!string.IsNullOrWhiteSpace(content))
+            if (!string.IsNullOrWhiteSpace(companyRepresentativeEmail))
             {
-                var companyRepresentativeEmail = await _settingsRepo.GetSignedContractUploadNotificationEmailAddress(companyUserId!);
+                var emailContent = await _settingsRepo.GetSendSignedContractUploadEmailContentAndSubject(companyUserId!);
 
                 if (!string.IsNullOrWhiteSpace(companyRepresentativeEmail))
                 {
-                    EmailMessage message = new EmailMessage(companyRepresentativeEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.SignedContractReceivedNotification);
+                    Console.WriteLine("email content is " + emailContent.Value.content);
+                    EmailMessage message = new EmailMessage(companyRepresentativeEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.SignedContractReceivedNotification, emailContent.Value.content, emailContent.Value.subject);
                     await _emailsService.SendEmailsAsync(new List<EmailMessage> { message }, companyUserId!);
                 }
-
             }
         }
 
@@ -312,7 +312,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
             if (!string.IsNullOrEmpty(applicantEmail))
             {
-                EmailMessage message = new EmailMessage(applicantEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.FinalContractNotification);
+                EmailMessage message = new EmailMessage(applicantEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.FinalContractNotification, "hey", "hay");
                 await _emailsService.SendEmailsAsync(new List<EmailMessage> { message }, companyUserId!);
             }
         }

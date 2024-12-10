@@ -80,7 +80,7 @@ namespace API.Data.Repos
             return settings;
         }
 
-        public async Task<string?> GetSendFinalContractEmailContent(string userId)
+        public async Task<(string content, string subject)?> GetSendSignedContractUploadEmailContentAndSubject(string userId)
         {
             var settings = await _context.SmtpSettings
                 .Where(x => x.UserId == userId)
@@ -88,7 +88,7 @@ namespace API.Data.Repos
 
             if (settings == null) return null;
 
-            return settings.NotifyOnUploadContent;
+            return (settings.NotifyOnUploadContent, settings.NotifyOnUploadSubject);
         }
 
         public async Task<string?> GetSendSignedContractUploadEmailContent(string userId)
@@ -101,5 +101,17 @@ namespace API.Data.Repos
 
             return settings.NotifyOnSignatureContent;
         }
+
+        public async Task<string?> GetSendFinalContractEmailContent(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return null;
+
+            return settings.NotifyOnSignatureContent;
+        }
+
     }
 }

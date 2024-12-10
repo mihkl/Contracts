@@ -8,7 +8,7 @@ namespace API.Data.Repos
         Task AddUpdateSmtpSettings(string userId, AddUpdateSmtpSettings smtpSettings);
         Task DeleteSmtpSettings(string userId);
         Task<string?> GetSendFinalContractEmailContent(string userId);
-        Task<string?> GetSendSignedContractUploadEmailContent(string userId);
+        Task<(string content, string subject)?> GetSendSignedContractUploadEmailContentAndSubject(string userId);
         Task<string?> GetSignedContractUploadNotificationEmailAddress(string userId);
     }
 }

@@ -38,10 +38,10 @@ namespace API.emails
                 MimeMessage emailMessage = new MimeMessage();
                 emailMessage.From.Add(MailboxAddress.Parse(smtpSettings!.FromEmail));
                 emailMessage.To.Add(MailboxAddress.Parse(email.To));
-                emailMessage.Subject = "HEY";
+                emailMessage.Subject = email.Subject;
 
                 BodyBuilder builder = new BodyBuilder();
-                builder.TextBody = "tere";
+                builder.TextBody = email.Content;
                 emailMessage.Body = builder.ToMessageBody();
 
                 await smtpClient.SendAsync(emailMessage);
