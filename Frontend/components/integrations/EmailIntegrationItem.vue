@@ -112,26 +112,29 @@
   <div v-if="selected" :class="['p-4 border rounded-lg transition border-gray-300']">
     <h1 class="font-bold text-xl mb-1">SMTP settings</h1>
     <p class="text-lg !font-light mb-4">Configure automatic email sending</p>
-    <UForm :state="state" @submit="submit">
-      <UFormGroup label="SMTP host" name="host" class="mb-4" :required="true">
-        <UInput type="text" v-model="state.host" />
-      </UFormGroup>
-      <UFormGroup label="SMTP port" name="port" class="mb-4" :required="true">
-        <UInput type="number" v-model="state.port" />
-      </UFormGroup>
-      <UFormGroup label="Username" name="username" class="mb-4" :required="true">
-        <UInput type="text" v-model="state.username" />
-      </UFormGroup>
-      <UFormGroup label="Password" name="password" class="mb-4" :required="true">
-        <UInput type="password" v-model="state.password" />
-      </UFormGroup>
-      <UFormGroup label="From email" name="email" class="mb-4" :required="true">
-        <UInput type="email" v-model="state.fromEmail" />
-      </UFormGroup>
-    </UForm>
+    <UFormGroup label="SMTP host" name="host" class="mb-4" :required="true">
+    <UInput type="text" v-model="state.host" :class="{ 'border-red-500': errors.host }" />
+    <p v-if="errors.host" class="text-red-500 text-sm">{{ errors.host }}</p>
+  </UFormGroup>
+  <UFormGroup label="SMTP port" name="port" class="mb-4" :required="true">
+    <UInput type="number" v-model="state.port" :class="{ 'border-red-500': errors.port }" />
+    <p v-if="errors.port" class="text-red-500 text-sm">{{ errors.port }}</p>
+  </UFormGroup>
+  <UFormGroup label="Username" name="username" class="mb-4" :required="true">
+    <UInput type="text" v-model="state.username" :class="{ 'border-red-500': errors.username }" />
+    <p v-if="errors.username" class="text-red-500 text-sm">{{ errors.username }}</p>
+  </UFormGroup>
+  <UFormGroup label="Password" name="password" class="mb-4" :required="true">
+    <UInput type="password" v-model="state.password" :class="{ 'border-red-500': errors.password }" />
+    <p v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</p>
+  </UFormGroup>
+  <UFormGroup label="From email" name="email" class="mb-4" :required="true">
+    <UInput type="email" v-model="state.fromEmail" :class="{ 'border-red-500': errors.fromEmail }" />
+    <p v-if="errors.fromEmail" class="text-red-500 text-sm">{{ errors.fromEmail }}</p>
+  </UFormGroup>
+
   </div>
 </template>
-
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
@@ -142,7 +145,7 @@ const sendFinalContractSelected = ref(false);
 const toast = useToast();
 const auth = useAuth();
 
-const defaultUploadSubject = "Subject: Your Document Has Been Countersigned"
+const defaultUploadSubject = "Subject: Your Document Has Been Countersigned";
 const defaultUploadContent = `We are pleased to inform you that your document has been successfully countersigned, and the signing process is now complete. 
 
 If you have any further questions or need assistance, please do not hesitate to contact us.
@@ -152,7 +155,7 @@ Thank you for trusting us with your business.
 Best regards,  
 Y`;
 
-const defaultNotificationSubject = "Subject: Client Signed the Document - Your Action Required"
+const defaultNotificationSubject = "Subject: Client Signed the Document - Your Action Required";
 const defaultNotificationContent = `This email is to notify you that the client has signed the document. The next step is for you to review and countersign the document to finalize the process.
 
 If you have any questions or need further details, please reach out to our team.
@@ -160,8 +163,6 @@ If you have any questions or need further details, please reach out to our team.
 Best regards,  
 Y`;
 
-
-// State object
 const state = reactive({
   host: "",
   port: 0,
@@ -177,16 +178,8 @@ const state = reactive({
   notificationDocumentIsAttached: false,
 });
 
-// Error tracking
-const errors = reactive({
-  notifyOnUploadSubject: "",
-  notifyOnUploadContent: "",
-  notifyOnSignatureSubject: "",
-  signatureNotificationEmail: "",
-  notifyOnSignatureContent: "",
-});
+const errors = reactive<Record<string, string>>({});
 
-// Toggles
 const handleContractUploadToggle = () => {
   if (notifyOnContractUploadSelected.value) {
     if (!state.notifyOnUploadContent) {
@@ -197,9 +190,8 @@ const handleContractUploadToggle = () => {
     state.notifyOnUploadSubject = "";
     state.notifyOnUploadContent = "";
     state.documentIsAttached = false;
-    errors.notifyOnUploadSubject = "";
-    errors.notifyOnUploadContent = "";
   }
+  clearErrors();
 };
 
 const handleSignatureToggle = () => {
@@ -213,49 +205,75 @@ const handleSignatureToggle = () => {
     state.signatureNotificationEmail = "";
     state.notifyOnSignatureContent = "";
     state.notificationDocumentIsAttached = false;
-    errors.notifyOnSignatureSubject = "";
-    errors.signatureNotificationEmail = "";
-    errors.notifyOnSignatureContent = "";
   }
+  clearErrors();
 };
 
-// Validation
-const validate = () => {
-  let isValid = true;
+const validate = (): boolean => {
+  clearErrors();
+  const newErrors: Record<string, string> = {};
+
+  // Check SMTP settings fields
+  if (selected.value) {
+    if (!state.host) {
+      newErrors.host = "SMTP host is required.";
+    }
+    if (!state.port || state.port <= 0) {
+      newErrors.port = "SMTP port is required and must be greater than 0.";
+    }
+    if (!state.username) {
+      newErrors.username = "SMTP username is required.";
+    }
+    if (!state.password) {
+      newErrors.password = "SMTP password is required.";
+    }
+    if (!state.fromEmail) {
+      newErrors.fromEmail = "From email is required.";
+    }
+  }
+
+  // Check email configuration for contract upload
   if (notifyOnContractUploadSelected.value) {
     if (!state.notifyOnUploadSubject) {
-      errors.notifyOnUploadSubject = "Email subject is required.";
-      isValid = false;
+      newErrors.notifyOnUploadSubject = "Email subject is required.";
     }
     if (!state.notifyOnUploadContent) {
-      errors.notifyOnUploadContent = "Email content is required.";
-      isValid = false;
+      newErrors.notifyOnUploadContent = "Email content is required.";
     }
   }
+
+  // Check email configuration for signature notification
   if (sendFinalContractSelected.value) {
     if (!state.notifyOnSignatureSubject) {
-      errors.notifyOnSignatureSubject = "Email subject is required.";
-      isValid = false;
+      newErrors.notifyOnSignatureSubject = "Email subject is required.";
     }
     if (!state.signatureNotificationEmail) {
-      errors.signatureNotificationEmail = "Notification email is required.";
-      isValid = false;
+      newErrors.signatureNotificationEmail = "Notification email is required.";
     }
     if (!state.notifyOnSignatureContent) {
-      errors.notifyOnSignatureContent = "Notification content is required.";
-      isValid = false;
+      newErrors.notifyOnSignatureContent = "Notification content is required.";
     }
   }
-  return isValid;
+
+  if (Object.keys(newErrors).length > 0) {
+    Object.assign(errors, newErrors); // Update the reactive errors object
+    return false;
+  }
+  return true;
 };
 
-// Fetch initial settings
+const clearErrors = () => {
+  Object.keys(errors).forEach((key) => {
+    errors[key] = "";
+  });
+};
+
+
 onMounted(async () => {
   const response = await auth.fetchWithToken("/settings/smtp");
   if (!response?.error) {
     Object.assign(state, response);
 
-    // Initialize toggles based on fetched data
     notifyOnContractUploadSelected.value = !!response.notifyOnUploadContent;
     sendFinalContractSelected.value = !!response.notifyOnSignatureContent;
 
@@ -263,10 +281,11 @@ onMounted(async () => {
   }
 });
 
-// Submit settings
 const submit = async () => {
-  if (!validate()) return;
-  toast.add({ title: "Saving!", description: "Saving new settings." });
+  if (!validate()) {
+    toast.add({ title: "Unsuccessful", description: "Please fill all required fields."});
+    return;
+  }
 
   const payload = {
     ...state,
@@ -280,6 +299,15 @@ const submit = async () => {
   };
 
   const method = selected.value ? "POST" : "DELETE";
-  await auth.fetchWithToken("/settings/smtp", { method, body: JSON.stringify(payload) });
+
+  const response = await auth.fetchWithToken("/settings/smtp", { method, body: JSON.stringify(payload) });
+
+  if (response?.error) {
+    toast.add({ title: "Unsuccessful", description: "Failed to save settings." });
+  } else {
+    toast.add({ title: "Success", description: "Settings saved successfully." });
+  }
 };
+
+
 </script>
