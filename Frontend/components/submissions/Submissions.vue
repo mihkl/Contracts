@@ -55,9 +55,12 @@ function applySortOptions({ type, order }: { type: string; order: string }) {
 }
 
 const filteredContracts = computed(() => {
-  let filtered = contractsStore.contracts.filter((contract) =>
-    contract.name.toLowerCase().includes(filterQuery.value.toLowerCase())
+  let filtered = contractsStore.contracts.filter(
+    (contract) =>
+      contract.name.toLowerCase().includes(filterQuery.value.toLowerCase()) &&
+      contract.signingStatus === SigningStatus.SignedByFirstParty
   );
+
 
   filtered = filtered.sort((a, b) => {
     if (sortType.value === "alphabetical") {
