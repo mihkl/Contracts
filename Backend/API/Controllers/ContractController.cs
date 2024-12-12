@@ -299,21 +299,25 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
                 if (!string.IsNullOrWhiteSpace(companyRepresentativeEmail))
                 {
-                    Console.WriteLine("email content is " + emailContent.Value.content);
                     EmailMessage message = new EmailMessage(companyRepresentativeEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.SignedContractReceivedNotification, emailContent.Value.content, emailContent.Value.subject);
                     await _emailsService.SendEmailsAsync(new List<EmailMessage> { message }, companyUserId!);
                 }
             }
         }
 
-        else if (contractSignatureType == ContractSignatureType.CompanyRepresentative && !string.IsNullOrWhiteSpace(await _settingsRepo.GetSendFinalContractEmailContent(companyUserId!)))
+        else if (contractSignatureType == ContractSignatureType.CompanyRepresentative)
         {
-            var applicantEmail = contract.SubmittedFields.FirstOrDefault(x => x.Name == "Email")?.Value;
+            var sendFinalContractEmail = await _settingsRepo.GetSendFinalContractEmailContentAndSubject(companyUserId!);
 
-            if (!string.IsNullOrEmpty(applicantEmail))
+            if (!string.IsNullOrEmpty(sendFinalContractEmail.Value.content) && !string.IsNullOrEmpty(sendFinalContractEmail.Value.subject))
             {
-                EmailMessage message = new EmailMessage(applicantEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.FinalContractNotification, "hey", "hay");
-                await _emailsService.SendEmailsAsync(new List<EmailMessage> { message }, companyUserId!);
+                var applicantEmail = contract.SubmittedFields.FirstOrDefault(x => x.Name == "Email")?.Value;
+
+                if (!string.IsNullOrEmpty(applicantEmail))
+                {
+                    EmailMessage message = new EmailMessage(applicantEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.FinalContractNotification, sendFinalContractEmail.Value.content, sendFinalContractEmail.Value.subject);
+                    await _emailsService.SendEmailsAsync(new List<EmailMessage> { message }, companyUserId!);
+                }
             }
         }
 
