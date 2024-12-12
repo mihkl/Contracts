@@ -213,7 +213,6 @@ const validate = (): boolean => {
   clearErrors();
   const newErrors: Record<string, string> = {};
 
-  // Check SMTP settings fields
   if (selected.value) {
     if (!state.host) {
       newErrors.host = "SMTP host is required.";
@@ -232,7 +231,6 @@ const validate = (): boolean => {
     }
   }
 
-  // Check email configuration for contract upload
   if (notifyOnContractUploadSelected.value) {
     if (!state.notifyOnUploadSubject) {
       newErrors.notifyOnUploadSubject = "Email subject is required.";
@@ -242,7 +240,6 @@ const validate = (): boolean => {
     }
   }
 
-  // Check email configuration for signature notification
   if (sendFinalContractSelected.value) {
     if (!state.notifyOnSignatureSubject) {
       newErrors.notifyOnSignatureSubject = "Email subject is required.";
@@ -256,7 +253,7 @@ const validate = (): boolean => {
   }
 
   if (Object.keys(newErrors).length > 0) {
-    Object.assign(errors, newErrors); // Update the reactive errors object
+    Object.assign(errors, newErrors); 
     return false;
   }
   return true;

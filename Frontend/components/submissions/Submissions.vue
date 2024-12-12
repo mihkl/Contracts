@@ -3,7 +3,7 @@
     <div class="space-y-4">
       <h1 class="text-3xl font-semibold my-6">Submissions</h1>
 
-      <div class="flex justify-between mb-4">
+      <div v-if="filteredContracts.length > 0" class="flex justify-between mb-4">
         <input
           type="text"
           v-model="filterQuery"
@@ -15,6 +15,9 @@
         </button>
       </div>
 
+      <div v-if="filteredContracts.length === 0" class="text-center text-gray-500">
+        No Submissions Available
+      </div>
       <SubmissionItem
         v-for="(submission, index) in filteredContracts"
         :key="index"
