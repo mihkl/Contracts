@@ -13,100 +13,105 @@
   <div v-if="selected" :class="['p-4 border rounded-lg transition border-gray-300']">
     <!-- Automatically Send Final Contract -->
     <div class="flex flex-row gap-4 items-center mb-4">
-      <UToggle v-model="notifyOnContractUploadSelected" @change="handleContractUploadToggle" />
-      <p>Automatically send final contract to applicant.</p>
-    </div>
-    <div v-if="notifyOnContractUploadSelected" class="mb-4">
-      <label for="notifyOnUploadSubject" class="block font-medium mb-2">Email Subject</label>
-      <textarea
-        id="notifyOnUploadSubject"
-        v-model="state.notifyOnUploadSubject"
-        class="w-full border rounded-lg p-2"
-        :class="{ 'border-red-500': errors.notifyOnUploadSubject }"
-        placeholder="Enter email subject for final contract"
-        rows="2"
-      ></textarea>
-      <p v-if="errors.notifyOnUploadSubject" class="text-red-500 text-sm">
-        {{ errors.notifyOnUploadSubject }}
-      </p>
-      <label for="notifyOnUploadContent" class="block font-medium mb-2">Email Content</label>
-      <textarea
-        id="notifyOnUploadContent"
-        v-model="state.notifyOnUploadContent"
-        class="w-full border rounded-lg p-2"
-        :class="{ 'border-red-500': errors.notifyOnUploadContent }"
-        placeholder="Write your email content here."
-        rows="4"
-      ></textarea>
-      <p v-if="errors.notifyOnUploadContent" class="text-red-500 text-sm">
-        {{ errors.notifyOnUploadContent }}
-      </p>
-      <div class="flex items-center mt-2">
-        <input
-          id="includeUploadAttachment"
-          type="checkbox"
-          v-model="state.documentIsAttached"
-          class="mr-2"
-        />
-        <label for="includeUploadAttachment" class="text-sm">Include contract as email attachment</label>
+        <UToggle v-model="notifyOnContractUploadSelected" @change="handleContractUploadToggle" />
+        <p>Automatically send final contract to applicant.</p>
       </div>
-    </div>
+
+      <div v-if="notifyOnContractUploadSelected" class="mb-4">
+        <UFormGroup label="Email Subject" name="notifyOnUploadSubject" class="mb-4" :required="true">
+          <UTextarea
+            id="notifyOnUploadSubject"
+            v-model="state.notifyOnUploadSubject"
+            class="w-full border rounded-lg p-2"
+            :class="{ 'border-red-500': errors.notifyOnUploadSubject }"
+            placeholder="Enter email subject for final contract"
+            
+          ></UTextarea>
+          <p v-if="errors.notifyOnUploadSubject" class="text-red-500 text-sm">
+            {{ errors.notifyOnUploadSubject }}
+          </p>
+        </UFormGroup>
+
+        <UFormGroup label="Email Content" name="notifyOnUploadContent" class="mb-4" :required="true">
+          <UTextarea
+            id="notifyOnUploadContent"
+            v-model="state.notifyOnUploadContent"
+            class="w-full border rounded-lg p-2"
+            :class="{ 'border-red-500': errors.notifyOnUploadContent }"
+            placeholder="Write your email content here."
+            
+          ></UTextarea>
+          <p v-if="errors.notifyOnUploadContent" class="text-red-500 text-sm">
+            {{ errors.notifyOnUploadContent }}
+          </p>
+        </UFormGroup>
+
+        <div class="flex items-center mt-2">
+          <input
+            id="includeUploadAttachment"
+            type="checkbox"
+            v-model="state.documentIsAttached"
+            class="mr-2"
+          />
+          <label for="includeUploadAttachment" class="text-sm">Include contract as email attachment</label>
+        </div>
+      </div>
 
     <!-- Notify on New Contract Signature -->
     <div class="flex flex-row gap-4 items-center mb-4">
-      <UToggle v-model="sendFinalContractSelected" @change="handleSignatureToggle" />
-      <p>Notify on new contract signature.</p>
-    </div>
-    <div v-if="sendFinalContractSelected" class="mb-4">
-      <label for="signatureEmail" class="block font-medium mb-2">Notification Receiver</label>
-      <UInput
-        id="signatureEmail"
-        type="email"
-        v-model="state.signatureNotificationEmail"
-        :class="{ 'border-red-500': errors.signatureNotificationEmail }"
-        placeholder="Enter email to receive the notification"
-        class="w-full border rounded-lg p-2"
-      />
-      <p v-if="errors.signatureNotificationEmail" class="text-red-500 text-sm">
-        {{ errors.signatureNotificationEmail }}
-      </p>
-      <label for="notifyOnSignatureSubject" class="block font-medium mb-2">Email Subject</label>
-      <textarea
-        id="notifyOnSignatureSubject"
-        v-model="state.notifyOnSignatureSubject"
-        class="w-full border rounded-lg p-2"
-        :class="{ 'border-red-500': errors.notifyOnSignatureSubject }"
-        placeholder="Enter email subject for signature notification"
-        rows="2"
-      ></textarea>
-      <p v-if="errors.notifyOnSignatureSubject" class="text-red-500 text-sm">
-        {{ errors.notifyOnSignatureSubject }}
-      </p>
-      <label for="notifyOnSignatureContent" class="block font-medium mb-2 mt-4">
-        Email Content
-      </label>
-      <textarea
-        id="notifyOnSignatureContent"
-        v-model="state.notifyOnSignatureContent"
-        :class="{ 'border-red-500': errors.notifyOnSignatureContent }"
-        class="w-full border rounded-lg p-2"
-        placeholder="Write the email content for the signature notification."
-        rows="4"
-      ></textarea>
-      <p v-if="errors.notifyOnSignatureContent" class="text-red-500 text-sm">
-        {{ errors.notifyOnSignatureContent }}
-      </p>
-      <div class="flex items-center mt-2">
-        <input
-          id="includeSignatureAttachment"
-          type="checkbox"
-          v-model="state.notificationDocumentIsAttached"
-          class="mr-2"
-        />
-        <label for="includeSignatureAttachment" class="text-sm">Include contract as email attachment</label>
+        <UToggle v-model="sendFinalContractSelected" @change="handleSignatureToggle" />
+        <p>Notify on new contract signature.</p>
+      </div>
+      <div v-if="sendFinalContractSelected" class="mb-4">
+        <UFormGroup label="Notification Receiver" name="signatureNotificationEmail" class="mb-4" :required="true">
+          <UInput
+            id="signatureEmail"
+            type="email"
+            v-model="state.signatureNotificationEmail"
+            :class="{ 'border-red-500': errors.signatureNotificationEmail }"
+            placeholder="Enter email to receive the notification"
+            class="w-full border rounded-lg p-2"
+          />
+          <p v-if="errors.signatureNotificationEmail" class="text-red-500 text-sm">
+            {{ errors.signatureNotificationEmail }}
+          </p>
+        </UFormGroup>
+        <UFormGroup label="Email Subject" name="notifyOnSignatureSubject" class="mb-4" :required="true">
+          <UTextarea
+            id="notifyOnSignatureSubject"
+            v-model="state.notifyOnSignatureSubject"
+            class="w-full border rounded-lg p-2"
+            :class="{ 'border-red-500': errors.notifyOnSignatureSubject }"
+            placeholder="Enter email subject for signature notification"
+          ></UTextarea>
+          <p v-if="errors.notifyOnSignatureSubject" class="text-red-500 text-sm">
+            {{ errors.notifyOnSignatureSubject }}
+          </p>
+        </UFormGroup>
+        <UFormGroup label="Email Content" name="notifyOnSignatureContent" class="mb-4" :required="true">
+          <UTextarea
+            id="notifyOnSignatureContent"
+            v-model="state.notifyOnSignatureContent"
+            :class="{ 'border-red-500': errors.notifyOnSignatureContent }"
+            class="w-full border rounded-lg p-2"
+            placeholder="Write the email content for the signature notification."
+          ></UTextarea>
+          <p v-if="errors.notifyOnSignatureContent" class="text-red-500 text-sm">
+            {{ errors.notifyOnSignatureContent }}
+          </p>
+        </UFormGroup>
+        <div class="flex items-center mt-2">
+          <input
+            id="includeSignatureAttachment"
+            type="checkbox"
+            v-model="state.notificationDocumentIsAttached"
+            class="mr-2"
+          />
+          <label for="includeSignatureAttachment" class="text-sm">Include contract as email attachment</label>
+        </div>
       </div>
     </div>
-  </div>
+
 
   <!-- SMTP Settings -->
   <div v-if="selected" :class="['p-4 border rounded-lg transition border-gray-300']">
@@ -228,6 +233,8 @@ const validate = (): boolean => {
     }
     if (!state.fromEmail) {
       newErrors.fromEmail = "From email is required.";
+    } else if (!state.fromEmail.includes("@")) {
+      newErrors.fromEmail = "FromEmail must contain an '@' symbol.";
     }
   }
 
@@ -246,6 +253,8 @@ const validate = (): boolean => {
     }
     if (!state.signatureNotificationEmail) {
       newErrors.signatureNotificationEmail = "Notification email is required.";
+    } else if (!state.signatureNotificationEmail.includes("@")) {
+      newErrors.signatureNotificationEmail = "Notification email must contain an '@' symbol.";
     }
     if (!state.notifyOnSignatureContent) {
       newErrors.notifyOnSignatureContent = "Notification content is required.";
