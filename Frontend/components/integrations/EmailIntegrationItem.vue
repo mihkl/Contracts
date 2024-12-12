@@ -125,13 +125,11 @@
     <UInput type="number" v-model="state.port" :class="{ 'border-red-500': errors.port }" />
     <p v-if="errors.port" class="text-red-500 text-sm">{{ errors.port }}</p>
   </UFormGroup>
-  <UFormGroup label="Username" name="username" class="mb-4" :required="true">
-    <UInput type="text" v-model="state.username" :class="{ 'border-red-500': errors.username }" />
-    <p v-if="errors.username" class="text-red-500 text-sm">{{ errors.username }}</p>
+  <UFormGroup label="Username" name="username" class="mb-4">
+    <UInput type="text" v-model="state.username" />
   </UFormGroup>
-  <UFormGroup label="Password" name="password" class="mb-4" :required="true">
-    <UInput type="password" v-model="state.password" :class="{ 'border-red-500': errors.password }" />
-    <p v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</p>
+  <UFormGroup label="Password" name="password" class="mb-4">
+    <UInput type="password" v-model="state.password" />
   </UFormGroup>
   <UFormGroup label="From email" name="email" class="mb-4" :required="true">
     <UInput type="email" v-model="state.fromEmail" :class="{ 'border-red-500': errors.fromEmail }" />
@@ -225,16 +223,10 @@ const validate = (): boolean => {
     if (!state.port || state.port <= 0) {
       newErrors.port = "SMTP port is required and must be greater than 0.";
     }
-    if (!state.username) {
-      newErrors.username = "SMTP username is required.";
-    }
-    if (!state.password) {
-      newErrors.password = "SMTP password is required.";
-    }
     if (!state.fromEmail) {
       newErrors.fromEmail = "From email is required.";
     } else if (!state.fromEmail.includes("@")) {
-      newErrors.fromEmail = "FromEmail must contain an '@' symbol.";
+      newErrors.fromEmail = "Email must contain '@' symbol."
     }
   }
 
@@ -254,7 +246,7 @@ const validate = (): boolean => {
     if (!state.signatureNotificationEmail) {
       newErrors.signatureNotificationEmail = "Notification email is required.";
     } else if (!state.signatureNotificationEmail.includes("@")) {
-      newErrors.signatureNotificationEmail = "Notification email must contain an '@' symbol.";
+      newErrors.signatureNotificationEmail = "Email must contain '@' symbol.";
     }
     if (!state.notifyOnSignatureContent) {
       newErrors.notifyOnSignatureContent = "Notification content is required.";
