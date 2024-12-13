@@ -1,3 +1,3 @@
 <template>
-    <Templates />
+    <TiptapEditor   />
 </template>

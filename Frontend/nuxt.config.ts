@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@nuxtjs/color-mode",
     "nuxt-svgo",
+    "nuxt-tiptap-editor",
   ],
   svgo: {
     autoImportPath: "./public/",
@@ -27,5 +28,8 @@ export default defineNuxtConfig({
     preference: "system",
     fallback: "light",
     classSuffix: "",
+  },
+  tiptap: {
+    prefix: 'Tiptap',
   },
 });
