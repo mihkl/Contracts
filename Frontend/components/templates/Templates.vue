@@ -3,7 +3,7 @@
     <div class="space-y-4">
       <h1 class="text-3xl font-semibold my-6">My Templates</h1>
       
-      <div v-if="filteredTemplates.length > 0" class="flex justify-between mb-4">
+      <div v-if="!(filteredTemplates.length === 0 && filterQuery === '')" class="flex justify-between mb-4">
         <input
           type="text"
           v-model="filterQuery"

@@ -26,20 +26,19 @@ export const useTemplateStore = defineStore("file", () => {
     const formData = new FormData();
     formData.append("file", selectedFile.value);
 
-    const response = await auth.fetchWithToken<UploadFileResponse>(
-      "/upload",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const response = await auth.fetchWithToken<UploadFileResponse>("/upload", {
+      method: "POST",
+      body: formData,
+    });
     if (!response.error) {
       serverResponse.value = response;
       modal.open(UploadConfirmationModal);
     }
   };
 
-  const fetchTemplates = async (searchQuery: string | undefined = undefined) => {
+  const fetchTemplates = async (
+    searchQuery: string | undefined = undefined
+  ) => {
     const response = await auth.fetchWithToken<Template[]>(
       `/templates?searchQuery=${searchQuery || ""}`,
       {
@@ -54,13 +53,10 @@ export const useTemplateStore = defineStore("file", () => {
 
   const downloadFile = async (id: number, fileName: string) => {
     try {
-      const response = await auth.fetchWithToken(
-        `/templates/${id}/file`,
-        {
-          method: "GET",
-          responseType: "blob",
-        }
-      );
+      const response = await auth.fetchWithToken(`/templates/${id}/file`, {
+        method: "GET",
+        responseType: "blob",
+      });
 
       const blob = response as Blob;
 
@@ -85,7 +81,7 @@ export const useTemplateStore = defineStore("file", () => {
     const response = await auth.fetchWithToken(`/templates/${id}`, {
       method: "DELETE",
     });
-  
+
     if (!response.error) {
       await fetchTemplates();
       console.log(
@@ -93,10 +89,9 @@ export const useTemplateStore = defineStore("file", () => {
       );
     } else {
       console.error(`Error deleting template with ID ${id}:`, response.error);
-      return response.error; 
+      return response.error;
     }
   };
-  
 
   return {
     templates,

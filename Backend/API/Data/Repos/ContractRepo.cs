@@ -173,7 +173,7 @@ public class ContractRepo(DataContext context) : IContractRepo
     public async Task<List<Contract>> Search(string searchQuery, string? userId)
     {
         var user = await _context.Users
-            .Include(u => u.Templates)
+            .Include(u => u.Contracts)
             .ThenInclude(t => t.Fields)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
