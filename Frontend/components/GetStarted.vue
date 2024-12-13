@@ -103,6 +103,11 @@
             <p>
               If the customer has signed the document, it will appear on the <strong>Submissions</strong> page. Next step would be to countersign the document.
             </p>
+            <img
+              src="public/submissions.png"
+              alt="Customize Example"
+              class="mt-3 rounded shadow border border-gray-200"
+            />
           </div>
         </div>
 
@@ -122,6 +127,7 @@
             <p>
               If both parties have singed the contract, you can send the final product to the customer via email from the <strong>Integrations</strong> page.
             </p>
+
           </div>
         </div>
       </div>
