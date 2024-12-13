@@ -24,10 +24,18 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
     [Authorize]
     [HttpGet("contracts")]
-    public async Task<IActionResult> GetContracts([FromQuery] SigningStatus? status)
+    public async Task<IActionResult> GetContracts([FromQuery] SigningStatus? status, string? searchQuery)
     {
         var userId = _userManager.GetUserId(User);
-        var contracts = await _crepo.GetAll(userId, status);
+        List<Contract> contracts;
+        if (searchQuery is null)
+        {
+            contracts = await _crepo.GetAll(userId, status);
+        }
+        else
+        {
+            contracts = await _crepo.Search(searchQuery, userId);
+        }
         var result = contracts.Select(ToContractDto).ToList();
         return Ok(result);
     }

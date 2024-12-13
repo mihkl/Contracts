@@ -74,10 +74,18 @@ public class TemplateController(IMemoryCache cache, TemplateRepo repo, UserManag
 
     [Authorize]
     [HttpGet("templates")]
-    public async Task<IActionResult> GetTemplates()
+    public async Task<IActionResult> GetTemplates(string? searchQuery)
     {
         var userId = _userManager.GetUserId(User);
-        var templates = await _repo.GetAll(userId);
+        List<Template> templates;
+        if (searchQuery is null)
+        {
+            templates = await _repo.GetAll(userId);
+        }
+        else
+        {
+            templates = await _repo.Search(searchQuery, userId);
+        }
         var result = templates.Select(ToTemplateDto).ToList();
         return Ok(result);
     }
