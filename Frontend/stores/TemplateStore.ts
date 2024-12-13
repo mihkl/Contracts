@@ -39,9 +39,9 @@ export const useTemplateStore = defineStore("file", () => {
     }
   };
 
-  const fetchTemplates = async () => {
+  const fetchTemplates = async (searchQuery: string | undefined = undefined) => {
     const response = await auth.fetchWithToken<Template[]>(
-      "/templates",
+      `/templates?searchQuery=${searchQuery || ""}`,
       {
         method: "GET",
       }

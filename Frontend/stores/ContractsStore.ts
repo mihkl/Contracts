@@ -6,10 +6,15 @@ export const useContractsStore = defineStore("contract", () => {
 
   const contracts = ref<Contract[]>([]);
 
-  const fetchContracts = async () => {
-    const response = await auth.fetchWithToken<Contract[]>("/contracts", {
-      method: "GET",
-    });
+  const fetchContracts = async (
+    searchQuery: string | undefined = undefined
+  ) => {
+    const response = await auth.fetchWithToken<Contract[]>(
+      `/contracts?searchQuery=${searchQuery || ""}`,
+      {
+        method: "GET",
+      }
+    );
     if (!response.error) {
       contracts.value = response;
       return contracts.value;

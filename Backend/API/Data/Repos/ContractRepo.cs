@@ -1,6 +1,7 @@
 using API.FileManipulation;
 using API.Models;
 using API.Validation;
+using DocumentFormat.OpenXml.Packaging;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data.Repos;
@@ -168,4 +169,36 @@ public class ContractRepo(DataContext context) : IContractRepo
 
         return contractSignature;
     }
+
+    public async Task<List<Contract>> Search(string searchQuery, string? userId)
+    {
+        var user = await _context.Users
+            .Include(u => u.Templates)
+            .ThenInclude(t => t.Fields)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        var contracts = user?.Contracts ?? [];
+        List<Contract> filtererContracts = [];
+        var keywords = searchQuery.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        foreach (var contract in contracts)
+        {
+            if (contract?.FileData == null)
+            {
+                continue;
+            }
+
+            using var stream = new MemoryStream(contract.FileData);
+            using var docxDocument = WordprocessingDocument.Open(stream, false);
+            string docxText = docxDocument.MainDocumentPart?.Document?.Body?.InnerText ?? string.Empty;
+
+            if (keywords.Any(keyword => docxText.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+            || keywords.Any(keyword => contract.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
+            {
+                filtererContracts.Add(contract);
+            }
+        }
+        return filtererContracts;
+    }
+
 }

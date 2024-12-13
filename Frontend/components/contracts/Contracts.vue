@@ -1,4 +1,3 @@
-
 <template>
   <div class="mt-10 px-4 w-full">
     <div class="space-y-4">
@@ -8,7 +7,7 @@
         <input
           type="text"
           v-model="filterQuery"
-          placeholder="Search by name"
+          placeholder="Search by name/keywords"
           class="border px-3 py-2 rounded"
         />
         <button @click="openSortOptionsModal" class="border px-3 py-2 rounded flex items-center">
@@ -28,11 +27,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useContractsStore } from "@/stores/ContractsStore";
 import ContractItem from "./ContractItem.vue";
 import DetailsModal from "./DetailsModal.vue";
 import SortOptionsModal from "../templates/SortOptionsModal.vue";
+import debounce from "lodash/debounce";
 
 const contractsStore = useContractsStore();
 const modal = useModal();
@@ -41,14 +41,19 @@ const showSortOptionsModal = ref(false);
 const sortType = ref("alphabetical");
 const sortOrder = ref("asc");
 
-async function fetchContracts() {
-  await contractsStore.fetchContracts();
+async function fetchContracts(query: string) {
+  await contractsStore.fetchContracts(query);
 }
 
 onMounted(() => {
-  fetchContracts();
+  fetchContracts(filterQuery.value);
 });
 
+const debouncedFetchContracts = debounce(fetchContracts, 300);
+
+watch(filterQuery, (newQuery) => {
+  debouncedFetchContracts(newQuery);
+});
 
 function openSortOptionsModal() {
   modal.open(SortOptionsModal, {
@@ -64,9 +69,7 @@ function applySortOptions({ type, order }: { type: string; order: string }) {
 }
 
 const filteredContracts = computed(() => {
-  let filtered = contractsStore.contracts.filter((contract) =>
-    contract.name.toLowerCase().includes(filterQuery.value.toLowerCase())
-  );
+  let filtered = contractsStore.contracts;
 
   filtered = filtered.sort((a, b) => {
     if (sortType.value === "alphabetical") {
