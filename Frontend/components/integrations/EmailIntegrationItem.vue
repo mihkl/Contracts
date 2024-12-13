@@ -77,13 +77,9 @@
           </p>
         </UFormGroup>
         <UFormGroup label="Email Subject" name="notifyOnSignatureSubject" class="mb-4" :required="true">
-          <TipTapEditor 
-            id="notifyOnSignatureSubject"
-            v-model="state.notifyOnSignatureSubject"
-            class="w-full border rounded-lg p-2"
-            :class="{ 'border-red-500': errors.notifyOnSignatureSubject }"
-            placeholder="Enter email subject for signature notification"
-          />
+          <client-only>
+            <TiptapEditor v-model="state.notifyOnSignatureSubject" />
+          </client-only>
           <p v-if="errors.notifyOnSignatureSubject" class="text-red-500 text-sm">
             {{ errors.notifyOnSignatureSubject }}
           </p>
@@ -141,7 +137,9 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
-import TiptapEditor from "../TiptapEditor.vue";
+import TiptapEditor from '~/components/TiptapEditor.vue'
+
+
 
 const selected = ref(false);
 const notifyOnContractUploadSelected = ref(false);
