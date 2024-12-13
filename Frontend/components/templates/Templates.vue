@@ -3,11 +3,11 @@
     <div class="space-y-4">
       <h1 class="text-3xl font-semibold my-6">My Templates</h1>
       
-      <div v-if="filteredTemplates.length > 0" class="flex justify-between mb-4">
+      <div v-if="!(filteredTemplates.length === 0 && filterQuery === '')" class="flex justify-between mb-4">
         <input
           type="text"
           v-model="filterQuery"
-          placeholder="Search by name"
+          placeholder="Search by name/keywords"
           class="border px-3 py-2 rounded"
         />
 
@@ -39,6 +39,8 @@ import GenerateLinkModal from "./GenerateLinkModal.vue";
 import { useTemplateStore } from "~/stores/TemplateStore";
 import DetailsModal from "./DetailsModal.vue";
 import SortOptionsModal from "./SortOptionsModal.vue";
+import { ref, watch } from "vue";
+import debounce from "lodash/debounce";
 
 const templateStore = useTemplateStore();
 const modal = useModal();
@@ -47,12 +49,18 @@ const showSortOptionsModal = ref(false);
 const sortType = ref("alphabetical");
 const sortOrder = ref("asc");
 
-async function fetchTemplates() {
-  await templateStore.fetchTemplates();
+async function fetchTemplates(query: string) {
+  await templateStore.fetchTemplates(query);
 }
 
 onMounted(() => {
-  fetchTemplates();
+  fetchTemplates(filterQuery.value);
+});
+
+const debouncedFetchTemplates = debounce(fetchTemplates, 300);
+
+watch(filterQuery, (newQuery) => {
+  debouncedFetchTemplates(newQuery);
 });
 
 function openModal(templateId: number) {
@@ -81,9 +89,7 @@ function applySortOptions({ type, order }: { type: string; order: string }) {
 }
 
 const filteredTemplates = computed(() => {
-  let filtered = templateStore.templates.filter((template) =>
-    template.name.toLowerCase().includes(filterQuery.value.toLowerCase())
-  );
+  let filtered = templateStore.templates;
 
   filtered = filtered.sort((a, b) => {
     if (sortType.value === "alphabetical") {

@@ -3,11 +3,11 @@
     <div class="space-y-4">
       <h1 class="text-3xl font-semibold my-6">Submissions</h1>
 
-      <div v-if="filteredContracts.length > 0" class="flex justify-between mb-4">
+      <div v-if="!(filteredContracts.length === 0 && filterQuery === '')" class="flex justify-between mb-4">
         <input
           type="text"
           v-model="filterQuery"
-          placeholder="Search by name"
+          placeholder="Search by name/keywords"
           class="border px-3 py-2 rounded"
         />
         <button @click="openSortOptionsModal" class="border px-3 py-2 rounded flex items-center">
@@ -30,14 +30,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import SubmissionItem from "./SubmissionItem.vue";
 import SubmissionDetailsModal from "./SubmissionDetailsModal.vue";
 import UploadFinalContractModal from "./UploadFinalContractModal.vue";
 import SortOptionsModal from "../templates/SortOptionsModal.vue";
+import debounce from "lodash/debounce";
 
 const auth = useAuth();
-const submissions = ref<Contract[]>([]);
 const modal = useModal();
 const sortType = ref("alphabetical");
 const sortOrder = ref("asc");
@@ -60,10 +60,8 @@ function applySortOptions({ type, order }: { type: string; order: string }) {
 const filteredContracts = computed(() => {
   let filtered = contractsStore.contracts.filter(
     (contract) =>
-      contract.name.toLowerCase().includes(filterQuery.value.toLowerCase()) &&
       contract.signingStatus === SigningStatus.SignedByFirstParty
   );
-
 
   filtered = filtered.sort((a, b) => {
     if (sortType.value === "alphabetical") {
@@ -82,8 +80,8 @@ const filteredContracts = computed(() => {
 });
 
 
-async function fetchSubmissions() {
-  const response = await auth.fetchWithToken<Contract[]>("/contracts", {
+async function fetchSubmissions(searchQuery: string | undefined = undefined) {
+  const response = await auth.fetchWithToken<Contract[]>(`/contracts?searchQuery=${searchQuery || ""}`, {
     method: "GET",
     query: {
       status: SigningStatus.SignedByFirstParty,
@@ -91,8 +89,7 @@ async function fetchSubmissions() {
   });
 
   if (!response.error) {
-    submissions.value = [...response];
-    return submissions.value;
+    contractsStore.contracts = [...response];
   }
 }
 
@@ -109,6 +106,12 @@ function openUploadFinalContractModal(submission: Contract) {
 }
 
 onMounted(() => {
-  fetchSubmissions();
+  fetchSubmissions(filterQuery.value);
 });
+
+watch(filterQuery, (newQuery) => {
+  debouncedFetchSubmissions(newQuery);
+});
+
+const debouncedFetchSubmissions = debounce(fetchSubmissions, 300);
 </script>

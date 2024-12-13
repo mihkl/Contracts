@@ -3,11 +3,11 @@
     <div class="space-y-4">
       <h1 class="text-3xl font-semibold my-6">Final contracts</h1>
 
-      <div v-if="filteredContracts.length > 0" class="flex justify-between mb-4">
+      <div v-if="!(filteredContracts.length === 0 && filterQuery === '')" class="flex justify-between mb-4">
         <input
           type="text"
           v-model="filterQuery"
-          placeholder="Search by name"
+          placeholder="Search by name/keywords"
           class="border px-3 py-2 rounded"
         />
         <button @click="openSortOptionsModal" class="border px-3 py-2 rounded flex items-center">
@@ -31,9 +31,9 @@
 import { onMounted } from "vue";
 import finalContractItem from "./finalContractItem.vue";
 import SortOptionsModal from "../templates/SortOptionsModal.vue";
+import debounce from "lodash/debounce";
 
 const auth = useAuth();
-const contracts = ref<Contract[]>([]);
 const filterQuery = ref("");
 const sortType = ref("alphabetical");
 const sortOrder = ref("asc");
@@ -56,7 +56,6 @@ function applySortOptions({ type, order }: { type: string; order: string }) {
 const filteredContracts = computed(() => {
   let filtered = contractsStore.contracts.filter(
     (contract) =>
-      contract.name.toLowerCase().includes(filterQuery.value.toLowerCase()) &&
       contract.signingStatus === SigningStatus.SignedByAll
   );
 
@@ -76,8 +75,8 @@ const filteredContracts = computed(() => {
   return filtered;
 });
 
-async function fetchContracts() {
-  const response = await auth.fetchWithToken<Contract[]>("/contracts", {
+async function fetchContracts(searchQuery: string | undefined = undefined) {
+  const response = await auth.fetchWithToken<Contract[]>(`/contracts?searchQuery=${searchQuery || ""}`, {
     method: "GET",
     query: {
       status: SigningStatus.SignedByAll,
@@ -85,11 +84,16 @@ async function fetchContracts() {
   });
 
   if (!response.error) {
-    contracts.value = [...response];
-    return contracts.value;
+    contractsStore.contracts = [...response];
   }
 }
 onMounted(() => {
-  fetchContracts();
+  fetchContracts(filterQuery.value);
 });
+
+watch(filterQuery, (newQuery) => {
+  debouncedFetchContracts(newQuery);
+});
+
+const debouncedFetchContracts = debounce(fetchContracts, 300);
 </script>

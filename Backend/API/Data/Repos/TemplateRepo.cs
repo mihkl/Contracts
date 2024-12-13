@@ -1,5 +1,6 @@
 using API.FileManipulation;
 using API.Models;
+using DocumentFormat.OpenXml.Packaging;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data.Repos;
@@ -25,7 +26,7 @@ public class TemplateRepo(DataContext context) : ITemplateRepo
     {
         var user = await _context.Users
             .Include(u => u.Templates)
-            .ThenInclude(t => t.Fields) 
+            .ThenInclude(t => t.Fields)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
         return user?.Templates.ToList() ?? [];
@@ -38,7 +39,7 @@ public class TemplateRepo(DataContext context) : ITemplateRepo
             .ThenInclude(t => t.Fields)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
-        return user?.Templates.FirstOrDefault(t => t.Id == id) ?? null; 
+        return user?.Templates.FirstOrDefault(t => t.Id == id) ?? null;
     }
 
     public async Task<Template?> GetById(uint id)
@@ -52,6 +53,37 @@ public class TemplateRepo(DataContext context) : ITemplateRepo
     {
         _context.Remove(template);
         await SaveChangesAsync();
+    }
+
+    public async Task<List<Template>> Search(string searchQuery, string? userId)
+    {
+        var user = await _context.Users
+            .Include(u => u.Templates)
+            .ThenInclude(t => t.Fields)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        var templates = user?.Templates ?? [];
+        List<Template> filteredTemplates = [];
+        var keywords = searchQuery.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        foreach (var template in templates)
+        {
+            if (template?.FileData == null)
+            {
+                continue;
+            }
+
+            using var stream = new MemoryStream(template.FileData);
+            using var docxDocument = WordprocessingDocument.Open(stream, false);
+            string docxText = docxDocument.MainDocumentPart?.Document?.Body?.InnerText ?? string.Empty;
+
+            if (keywords.Any(keyword => docxText.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+            || keywords.Any(keyword => template.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
+            {
+                filteredTemplates.Add(template);
+            }
+        }
+        return filteredTemplates;
     }
 
     public async Task SaveChangesAsync()
