@@ -70,7 +70,7 @@ const submitFile = async () => {
   const formData = new FormData();
   formData.append("file", selectedFile.value);
 
-  const response = await auth.fetchWithToken<UploadFileResponse>(
+  const response = await auth.fetchWithErrorHandling<UploadFileResponse>(
     `contracts/${props.contractId}/sign`,
     {
       method: "POST",
