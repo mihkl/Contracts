@@ -32,7 +32,6 @@
 
 <script setup>
 const emits = defineEmits(["openModal", "openDetailsModal"]);
-const api = useApi();
 const store = useTemplateStore();
 
 const props = defineProps({

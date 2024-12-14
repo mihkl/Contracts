@@ -28,15 +28,14 @@
       >
         No Templates Available
       </div>
-      <div v-else>
-        <TemplateItem
-          v-for="(template, index) in filteredTemplates"
-          :key="index"
-          :template="template"
-          @openModal="openModal(template.id)"
-          @openDetailsModal="openDetailsModal(template.id)"
-        />
-      </div>
+      <TemplateItem
+        v-else
+        v-for="(template, index) in filteredTemplates"
+        :key="index"
+        :template="template"
+        @openModal="openModal(template.id)"
+        @openDetailsModal="openDetailsModal(template.id)"
+      />
     </div>
   </div>
 </template>
