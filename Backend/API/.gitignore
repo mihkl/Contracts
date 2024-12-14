@@ -484,6 +484,9 @@ $RECYCLE.BIN/
 *.swp
 
 localdatabase.db
+localdatabase.db-shm
+localdatabase.db-wal
+
 
 TemporaryDocxFiles
 PdfFiles
