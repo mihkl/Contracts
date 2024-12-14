@@ -35,7 +35,7 @@ builder.Services
 builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
 {
     builder
-        .WithOrigins("https://contracts.itb2203.tautar.ee")
+        .SetIsOriginAllowed(_ => true)
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials();
