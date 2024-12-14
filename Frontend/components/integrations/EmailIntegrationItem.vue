@@ -26,7 +26,7 @@
       <p>Automatically send final contract to applicant.</p>
     </div>
 
-    <div v-if="notifyOnContractUploadSelected" class="mb-4">
+    <div v-if="notifyOnContractUploadSelected" class="mb-10">
       <UFormGroup
         label="Email Subject"
         name="notifyOnUploadSubject"
@@ -36,7 +36,7 @@
         <UTextarea
           id="notifyOnUploadSubject"
           v-model="state.notifyOnUploadSubject"
-          class="w-full border rounded-lg p-2"
+          class="w-full rounded-lg mb-4"
           :class="{ 'border-red-500': errors.notifyOnUploadSubject }"
           placeholder="Enter email subject for final contract"
         ></UTextarea>
@@ -54,7 +54,7 @@
         <UTextarea
           id="notifyOnUploadContent"
           v-model="state.notifyOnUploadContent"
-          class="w-full border rounded-lg p-2"
+          class="w-full rounded-lg"
           :class="{ 'border-red-500': errors.notifyOnUploadContent }"
           placeholder="Write your email content here."
         ></UTextarea>
@@ -64,13 +64,13 @@
       </UFormGroup>
 
       <div class="flex items-center mt-2">
-        <input
+        <UCheckbox
           id="includeUploadAttachment"
           type="checkbox"
           v-model="state.documentIsAttached"
           class="mr-2"
         />
-        <label for="includeUploadAttachment" class="text-sm"
+        <label for="includeUploadAttachment" class="text-md"
           >Include contract as email attachment</label
         >
       </div>
@@ -97,7 +97,7 @@
           v-model="state.signatureNotificationEmail"
           :class="{ 'border-red-500': errors.signatureNotificationEmail }"
           placeholder="Enter email to receive the notification"
-          class="w-full border rounded-lg p-2"
+          class="w-full rounded-lg"
         />
         <p
           v-if="errors.signatureNotificationEmail"
@@ -115,7 +115,7 @@
         <UTextarea
           id="notifyOnSignatureSubject"
           v-model="state.notifyOnSignatureSubject"
-          class="w-full border rounded-lg p-2"
+          class="w-full"
           :class="{ 'border-red-500': errors.notifyOnSignatureSubject }"
           placeholder="Enter email subject for signature notification"
         ></UTextarea>
@@ -133,7 +133,7 @@
           id="notifyOnSignatureContent"
           v-model="state.notifyOnSignatureContent"
           :class="{ 'border-red-500': errors.notifyOnSignatureContent }"
-          class="w-full border rounded-lg p-2"
+          class="w-full rounded-lg"
           placeholder="Write the email content for the signature notification."
         ></UTextarea>
         <p v-if="errors.notifyOnSignatureContent" class="text-red-500 text-sm">
@@ -141,13 +141,13 @@
         </p>
       </UFormGroup>
       <div class="flex items-center mt-2">
-        <input
+        <UCheckbox
           id="includeSignatureAttachment"
           type="checkbox"
           v-model="state.notificationDocumentIsAttached"
           class="mr-2"
         />
-        <label for="includeSignatureAttachment" class="text-sm"
+        <label for="includeSignatureAttachment" class="text-md"
           >Include contract as email attachment</label
         >
       </div>
