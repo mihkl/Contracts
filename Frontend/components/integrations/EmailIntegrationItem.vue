@@ -51,20 +51,17 @@
         class="mb-4"
         :required="true"
       >
-        <client-only>
-          <!-- Conditionally render TiptapEditor -->
-          <TiptapEditor
-            v-if="notifyOnContractUploadSelected"
-            v-model="state.notifyOnUploadContent"
-            class="border"
-          />
-        </client-only>
-
+      <tiptap-editor
+          id="notifyOnUploadContent"
+          v-model="state.notifyOnUploadContent"
+          class="w-full rounded-lg"
+          :class="{ 'border-red-500': errors.notifyOnUploadContent }"
+          placeholder="Write your email content here."
+      />
         <p v-if="errors.notifyOnUploadContent" class="text-red-500 text-sm">
           {{ errors.notifyOnUploadContent }}
         </p>
-      </UFormGroup>
-
+      </UFormGroup> 
 
       <div class="flex items-center mt-2">
         <UCheckbox
@@ -132,13 +129,13 @@
         class="mb-4"
         :required="true"
       >
-        <UTextarea
-          id="notifyOnSignatureContent"
+      <tiptap-editor
+          id="notifyOnUploadContent"
           v-model="state.notifyOnSignatureContent"
-          :class="{ 'border-red-500': errors.notifyOnSignatureContent }"
           class="w-full rounded-lg"
-          placeholder="Write the email content for the signature notification."
-        ></UTextarea>
+          :class="{ 'border-red-500': errors.notifyOnSignatureContent }"
+          placeholder="Write your email content here."
+      />
         <p v-if="errors.notifyOnSignatureContent" class="text-red-500 text-sm">
           {{ errors.notifyOnSignatureContent }}
         </p>
@@ -201,7 +198,6 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
-import TiptapEditor from '~/components/TiptapEditor.vue'
 
 const selected = ref(false);
 const notifyOnContractUploadSelected = ref(false);
@@ -247,17 +243,17 @@ const errors = reactive<Record<string, string>>({});
 
 const handleContractUploadToggle = () => {
   if (notifyOnContractUploadSelected.value) {
-    state.notifyOnUploadSubject ||= defaultUploadSubject; // Initialize if empty
-    state.notifyOnUploadContent ||= defaultUploadContent;
+    if (!state.notifyOnUploadContent) {
+      state.notifyOnUploadSubject = defaultUploadSubject;
+      state.notifyOnUploadContent = defaultUploadContent;
+    }
   } else {
     state.notifyOnUploadSubject = "";
-    state.notifyOnUploadContent = ""; // Clear content to unmount TiptapEditor
+    state.notifyOnUploadContent = "";
     state.documentIsAttached = false;
   }
-  clearErrors(); // Clear validation errors
+  clearErrors();
 };
-
-
 
 const handleSignatureToggle = () => {
   if (sendFinalContractSelected.value) {

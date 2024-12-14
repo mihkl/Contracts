@@ -22,9 +22,7 @@ const editor = useEditor({
 });
 
 onBeforeUnmount(() => {
-  if (editor) {
-    editor.destroy();
-  }
+  unref(editor).destroy();
 });
 </script>
 
@@ -126,7 +124,7 @@ onBeforeUnmount(() => {
       >
         Redo
       </button>
-    </div>
+    </div v-if="editor">
       <TiptapEditorContent :editor="editor" class="border border-gray-400 p-2"/>
     </div>
   </template>
