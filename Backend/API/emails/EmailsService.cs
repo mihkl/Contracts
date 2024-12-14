@@ -42,6 +42,9 @@ namespace API.emails
 
                 BodyBuilder builder = new BodyBuilder();
                 builder.TextBody = email.Content;
+
+                if (email.Attachment != null) builder.Attachments.Add("contract.asice", email.Attachment);
+
                 emailMessage.Body = builder.ToMessageBody();
 
                 await smtpClient.SendAsync(emailMessage);

@@ -10,5 +10,7 @@ namespace API.Data.Repos
         Task<(string content, string subject)?> GetSendFinalContractEmailContentAndSubject(string userId);
         Task<(string content, string subject)?> GetSendSignedContractUploadEmailContentAndSubject(string userId);
         Task<string?> GetSignedContractUploadNotificationEmailAddress(string userId);
+        Task<bool?> IncludeAttachmentInFinalContractNotification(string userId);
+        Task<bool?> IncludeAttachmentInContractUploadNotification(string userId);
     }
 }

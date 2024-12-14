@@ -112,5 +112,27 @@ namespace API.Data.Repos
 
             return (settings.NotifyOnUploadContent, settings.NotifyOnUploadSubject);
         }
+
+        public async Task<bool?> IncludeAttachmentInContractUploadNotification(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return false;
+
+            return settings.NotificationDocumentIsAttached;
+        }
+
+        public async Task<bool?> IncludeAttachmentInFinalContractNotification(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return false;
+
+            return settings.DocumentIsAttached;
+        }
     }
 }

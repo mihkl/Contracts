@@ -307,7 +307,17 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
                 if (!string.IsNullOrWhiteSpace(companyRepresentativeEmail))
                 {
-                    EmailMessage message = new EmailMessage(companyRepresentativeEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.SignedContractReceivedNotification, emailContent.Value.content, emailContent.Value.subject);
+                    byte[]? attachmentBytes = null;
+
+                    if (await _settingsRepo.IncludeAttachmentInContractUploadNotification(companyUserId!) == true)
+                    {
+                        using var memoryStream = new MemoryStream();
+                        file.OpenReadStream().CopyTo(memoryStream);
+                        attachmentBytes = memoryStream.ToArray();
+                    }
+
+                    EmailMessage message = new EmailMessage(companyRepresentativeEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.SignedContractReceivedNotification, emailContent.Value.content, emailContent.Value.subject, attachmentBytes);
+
                     await _emailsService.SendEmailsAsync(new List<EmailMessage> { message }, companyUserId!);
                 }
             }
@@ -323,7 +333,16 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
                 if (!string.IsNullOrEmpty(applicantEmail))
                 {
-                    EmailMessage message = new EmailMessage(applicantEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.FinalContractNotification, sendFinalContractEmail.Value.content, sendFinalContractEmail.Value.subject);
+                    byte[]? attachmentBytes = null;
+
+                    if (await _settingsRepo.IncludeAttachmentInFinalContractNotification(companyUserId!) == true)
+                    {
+                        using var memoryStream = new MemoryStream();
+                        file.OpenReadStream().CopyTo(memoryStream);
+                        attachmentBytes = memoryStream.ToArray();
+                    }
+
+                    EmailMessage message = new EmailMessage(applicantEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.FinalContractNotification, sendFinalContractEmail.Value.content, sendFinalContractEmail.Value.subject, attachmentBytes);
                     await _emailsService.SendEmailsAsync(new List<EmailMessage> { message }, companyUserId!);
                 }
             }
