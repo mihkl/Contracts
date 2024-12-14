@@ -33,13 +33,13 @@ builder.Services
     .AddScoped<IEmailsService, EmailsService>();
 
 builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
-    {
-        builder
-        .SetIsOriginAllowed(_ => true)
-        .AllowCredentials()
+{
+    builder
+        .WithOrigins("https://contracts.itb2203.tautar.ee")
         .AllowAnyMethod()
-        .AllowAnyHeader();
-    }));
+        .AllowAnyHeader()
+        .AllowCredentials();
+}));
 
 builder.Services.AddAuthorization();
 
