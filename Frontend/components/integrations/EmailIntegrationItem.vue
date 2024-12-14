@@ -51,13 +51,10 @@
         class="mb-4"
         :required="true"
       >
-        <UTextarea
-          id="notifyOnUploadContent"
-          v-model="state.notifyOnUploadContent"
-          class="w-full rounded-lg"
-          :class="{ 'border-red-500': errors.notifyOnUploadContent }"
-          placeholder="Write your email content here."
-        ></UTextarea>
+        <client-only>
+            <TiptapEditor v-model="state.notifyOnUploadContent" />
+        </client-only>
+
         <p v-if="errors.notifyOnUploadContent" class="text-red-500 text-sm">
           {{ errors.notifyOnUploadContent }}
         </p>
@@ -198,6 +195,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
+import TiptapEditor from '~/components/TiptapEditor.vue'
 
 const selected = ref(false);
 const notifyOnContractUploadSelected = ref(false);
