@@ -105,17 +105,6 @@ onBeforeUnmount(() => {
       >
         Ordered List
       </button>
-
-      <button
-        @click="editor.chain().focus().toggleBlockquote().run()"
-        :class="[ 
-          'px-2 py-1 rounded text-black font-semibold',
-          editor.isActive('blockquote') ? 'bg-indigo-500 text-white' : 'hover:bg-indigo-300 cursor-pointer'
-        ]"
-      >
-        Blockquote
-      </button>
-
       <button
         @click="editor.chain().focus().undo().run()"
         :disabled="!editor.can().chain().focus().undo().run()"
@@ -141,3 +130,34 @@ onBeforeUnmount(() => {
       <TiptapEditorContent :editor="editor" class="border border-gray-400 p-2"/>
     </div>
   </template>
+
+<style>
+.tiptap h1 {
+  font-size: 24px;
+  font-weight: bold;
+}
+.tiptap h2 {
+  font-size: 18px;
+  font-weight: bold;
+}
+.tiptap ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;  
+  padding-left: 1rem;   
+}
+
+
+.tiptap ol {
+  list-style-type: decimal; 
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+}
+
+
+.tiptap li {
+  margin-bottom: 0.5rem; 
+  font-size: 16px;       
+  line-height: 1.5;      
+}
+
+</style>
