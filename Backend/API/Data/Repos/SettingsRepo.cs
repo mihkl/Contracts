@@ -59,6 +59,18 @@ namespace API.Data.Repos
             await _context.SaveChangesAsync();
         }
 
+        public async Task<string?> GetSignedContractUploadNotificationEmailAddress(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return null;
+
+            return settings.SignatureNotificationEmail;
+
+        }
+
         public async Task<SmtpSettings?> GetSmtpSettings(string userId)
         {
             var settings = await _context.SmtpSettings
@@ -66,6 +78,61 @@ namespace API.Data.Repos
                 .FirstOrDefaultAsync();
 
             return settings;
+        }
+
+        public async Task<(string content, string subject)?> GetSendSignedContractUploadEmailContentAndSubject(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return null;
+
+            return (settings.NotifyOnSignatureContent, settings.NotifyOnSignatureSubject);
+        }
+
+        public async Task<string?> GetSendSignedContractUploadEmailContent(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return null;
+
+            return settings.NotifyOnSignatureContent;
+        }
+
+        public async Task<(string content, string subject)?> GetSendFinalContractEmailContentAndSubject(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return null;
+
+            return (settings.NotifyOnUploadContent, settings.NotifyOnUploadSubject);
+        }
+
+        public async Task<bool?> IncludeAttachmentInContractUploadNotification(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return false;
+
+            return settings.NotificationDocumentIsAttached;
+        }
+
+        public async Task<bool?> IncludeAttachmentInFinalContractNotification(string userId)
+        {
+            var settings = await _context.SmtpSettings
+                .Where(x => x.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (settings == null) return false;
+
+            return settings.DocumentIsAttached;
         }
     }
 }

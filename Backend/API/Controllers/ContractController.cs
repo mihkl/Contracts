@@ -8,16 +8,19 @@ using Microsoft.AspNetCore.Mvc;
 using static API.Mappers.Mappers;
 using static API.FileManipulation.FileManipulator;
 using API.Validation;
+using API.emails;
 
 namespace API.Controllers;
 
 [ApiController]
-public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACService hmacService, UserManager<User> userManager) : ControllerBase
+public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACService hmacService, UserManager<User> userManager, ISettingsRepo settingsRepo, IEmailsService emailsService) : ControllerBase
 {
     private readonly ContractRepo _crepo = crepo;
     private readonly TemplateRepo _trepo = trepo;
     private readonly IHMACService _hmacService = hmacService;
     private readonly UserManager<User> _userManager = userManager;
+    private readonly ISettingsRepo _settingsRepo = settingsRepo;
+    private readonly IEmailsService _emailsService = emailsService;
 
     [Authorize]
     [HttpGet("contracts")]
@@ -280,7 +283,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
 
         var asiceValidator = new AsiceValidator();
         var signatureValidationResult = await asiceValidator.ValidateSignatures(file, userId);
-        var contentValidationResult =  asiceValidator.ValidateContent(contract);
+        var contentValidationResult = asiceValidator.ValidateContent(contract);
 
         if (!signatureValidationResult) return BadRequest("Missing or invalid signature(s)");
 
@@ -291,6 +294,59 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
             : ContractSignatureType.Candidate;
 
         await _crepo.SaveSignature(contract, parsedFile, contractSignatureType);
+
+        var companyUserId = userId ?? await _crepo.GetUserByContractId(id);
+
+        if (contractSignatureType == ContractSignatureType.Candidate)
+        {
+            var companyRepresentativeEmail = await _settingsRepo.GetSignedContractUploadNotificationEmailAddress(companyUserId!);
+
+            if (!string.IsNullOrWhiteSpace(companyRepresentativeEmail))
+            {
+                var emailContent = await _settingsRepo.GetSendSignedContractUploadEmailContentAndSubject(companyUserId!);
+
+                if (!string.IsNullOrWhiteSpace(companyRepresentativeEmail))
+                {
+                    byte[]? attachmentBytes = null;
+
+                    if (await _settingsRepo.IncludeAttachmentInContractUploadNotification(companyUserId!) == true)
+                    {
+                        using var memoryStream = new MemoryStream();
+                        file.OpenReadStream().CopyTo(memoryStream);
+                        attachmentBytes = memoryStream.ToArray();
+                    }
+
+                    EmailMessage message = new EmailMessage(companyRepresentativeEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.SignedContractReceivedNotification, emailContent.Value.content, emailContent.Value.subject, attachmentBytes);
+
+                    await _emailsService.SendEmailsAsync(new List<EmailMessage> { message }, companyUserId!);
+                }
+            }
+        }
+
+        else if (contractSignatureType == ContractSignatureType.CompanyRepresentative)
+        {
+            var sendFinalContractEmail = await _settingsRepo.GetSendFinalContractEmailContentAndSubject(companyUserId!);
+
+            if (!string.IsNullOrEmpty(sendFinalContractEmail.Value.content) && !string.IsNullOrEmpty(sendFinalContractEmail.Value.subject))
+            {
+                var applicantEmail = contract.SubmittedFields.FirstOrDefault(x => x.Name == "Email")?.Value;
+
+                if (!string.IsNullOrEmpty(applicantEmail))
+                {
+                    byte[]? attachmentBytes = null;
+
+                    if (await _settingsRepo.IncludeAttachmentInFinalContractNotification(companyUserId!) == true)
+                    {
+                        using var memoryStream = new MemoryStream();
+                        file.OpenReadStream().CopyTo(memoryStream);
+                        attachmentBytes = memoryStream.ToArray();
+                    }
+
+                    EmailMessage message = new EmailMessage(applicantEmail, DateTime.UtcNow, EmailMessage.EmailMessageType.FinalContractNotification, sendFinalContractEmail.Value.content, sendFinalContractEmail.Value.subject, attachmentBytes);
+                    await _emailsService.SendEmailsAsync(new List<EmailMessage> { message }, companyUserId!);
+                }
+            }
+        }
 
         return Ok();
     }

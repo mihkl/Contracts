@@ -24,10 +24,6 @@ namespace API.Controllers
         {
             var message = generateMessage(startDate, endDate, templateId);
             var expectedSignature = GenerateHmac(message);
-
-            Console.WriteLine("EXpected is " + expectedSignature);
-            Console.WriteLine("Real is " + signature);
-
             return expectedSignature == signature;
         }
 
@@ -38,10 +34,6 @@ namespace API.Controllers
 
         private string generateMessage(DateTime startDate, DateTime endDate, string templateId)
         {
-            Console.WriteLine("validfrom is " + FormatDate(startDate));
-            Console.WriteLine("validuntil is " + FormatDate(endDate));
-            Console.WriteLine("id is " + templateId);
-
             return $"{FormatDate(startDate)}|{FormatDate(endDate)}|{templateId}";
         }
 

@@ -67,6 +67,15 @@ public class ContractRepo(DataContext context) : IContractRepo
         .FirstOrDefaultAsync(c => c.Id == id);
     }
 
+    public async Task<string?> GetUserByContractId(uint id)
+    {
+        var user = await _context.Users
+            .Include(x => x.Contracts)
+            .FirstOrDefaultAsync(x => x.Contracts.Any(c => c.Id == id));
+
+        return user?.Id;
+    }
+
     public async Task Delete(Contract contract)
     {
         _context.Remove(contract);

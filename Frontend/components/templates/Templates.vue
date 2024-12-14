@@ -1,9 +1,12 @@
 <template>
-  <div class="mt-10 px-4 w-full">
+  <div class="mt-10 w-full">
     <div class="space-y-4">
       <h1 class="text-3xl font-semibold my-6">My Templates</h1>
-      
-      <div v-if="!(filteredTemplates.length === 0 && filterQuery === '')" class="flex justify-between mb-4">
+
+      <div
+        v-if="!(filteredTemplates.length === 0 && filterQuery === '')"
+        class="flex justify-between mb-4"
+      >
         <input
           type="text"
           v-model="filterQuery"
@@ -11,12 +14,18 @@
           class="border px-3 py-2 rounded"
         />
 
-        <button @click="openSortOptionsModal" class="border px-3 py-2 rounded flex items-center">
+        <button
+          @click="openSortOptionsModal"
+          class="border px-3 py-2 rounded flex items-center"
+        >
           Sort Options
         </button>
       </div>
 
-      <div v-if="filteredTemplates.length === 0" class="text-center text-gray-500">
+      <div
+        v-if="filteredTemplates.length === 0"
+        class="text-center text-gray-500"
+      >
         No Templates Available
       </div>
       <div v-else>
@@ -77,7 +86,7 @@ function openDetailsModal(templateId: number) {
 
 function openSortOptionsModal() {
   modal.open(SortOptionsModal, {
-    'onApply-sort': applySortOptions,
+    "onApply-sort": applySortOptions,
     sortType: sortType.value,
     sortOrder: sortOrder.value,
   });
@@ -98,8 +107,10 @@ const filteredTemplates = computed(() => {
         : b.name.localeCompare(a.name);
     } else if (sortType.value === "creationTime") {
       return sortOrder.value === "asc"
-        ? new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
-        : new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime();
+        ? new Date(a.creationTime).getTime() -
+            new Date(b.creationTime).getTime()
+        : new Date(b.creationTime).getTime() -
+            new Date(a.creationTime).getTime();
     }
     return 0;
   });
