@@ -52,13 +52,19 @@
         :required="true"
       >
         <client-only>
-            <TiptapEditor v-model="state.notifyOnUploadContent" />
+          <!-- Conditionally render TiptapEditor -->
+          <TiptapEditor
+            v-if="notifyOnContractUploadSelected"
+            v-model="state.notifyOnUploadContent"
+            class="border"
+          />
         </client-only>
 
         <p v-if="errors.notifyOnUploadContent" class="text-red-500 text-sm">
           {{ errors.notifyOnUploadContent }}
         </p>
       </UFormGroup>
+
 
       <div class="flex items-center mt-2">
         <UCheckbox
@@ -241,17 +247,17 @@ const errors = reactive<Record<string, string>>({});
 
 const handleContractUploadToggle = () => {
   if (notifyOnContractUploadSelected.value) {
-    if (!state.notifyOnUploadContent) {
-      state.notifyOnUploadSubject = defaultUploadSubject;
-      state.notifyOnUploadContent = defaultUploadContent;
-    }
+    state.notifyOnUploadSubject ||= defaultUploadSubject; // Initialize if empty
+    state.notifyOnUploadContent ||= defaultUploadContent;
   } else {
     state.notifyOnUploadSubject = "";
-    state.notifyOnUploadContent = "";
+    state.notifyOnUploadContent = ""; // Clear content to unmount TiptapEditor
     state.documentIsAttached = false;
   }
-  clearErrors();
+  clearErrors(); // Clear validation errors
 };
+
+
 
 const handleSignatureToggle = () => {
   if (sendFinalContractSelected.value) {

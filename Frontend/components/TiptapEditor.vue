@@ -30,30 +30,114 @@ onBeforeUnmount(() => {
 
 <template>
   <div>
-    <div v-if="editor" class="buttons text-gray-700 flex items-center flex-wrap gap-x-2 border-t border-l border-r border-gray-400 p-2">
+    <div v-if="editor" class="buttons text-gray-700 flex items-center flex-wrap gap-2 border-r border-l border-t border-gray-400 p-2">
       <button
         @click="editor.chain().focus().toggleBold().run()"
         :disabled="!editor.can().chain().focus().toggleBold().run()"
-        :class="[
+        :class="[ 
           'px-2 py-1 rounded text-black font-semibold',
-          editor.isActive('bold') ? 'bg-indigo-500' : 'hover:bg-indigo-300',
+          editor.isActive('bold') ? 'bg-indigo-500 text-white' : 'hover:bg-indigo-300',
           !editor.can().chain().focus().toggleBold().run() ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
         ]"
       >
         Bold
       </button>
+
       <button
         @click="editor.chain().focus().toggleItalic().run()"
         :disabled="!editor.can().chain().focus().toggleItalic().run()"
-        :class="[
+        :class="[ 
           'px-2 py-1 rounded text-black font-semibold',
-          editor.isActive('italic') ? 'bg-indigo-500' : 'hover:bg-indigo-300',
+          editor.isActive('italic') ? 'bg-indigo-500 text-white' : 'hover:bg-indigo-300',
           !editor.can().chain().focus().toggleItalic().run() ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
         ]"
       >
         Italic
       </button>
+
+      <button
+        @click="editor.chain().focus().toggleCode().run()"
+        :disabled="!editor.can().chain().focus().toggleCode().run()"
+        :class="[ 
+          'px-2 py-1 rounded text-black font-semibold',
+          editor.isActive('code') ? 'bg-indigo-500 text-white' : 'hover:bg-indigo-300',
+          !editor.can().chain().focus().toggleCode().run() ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+        ]"
+      >
+        Code
+      </button>
+      <button
+        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+        :class="[ 
+          'px-2 py-1 rounded text-black font-semibold',
+          editor.isActive('heading', { level: 1 }) ? 'bg-indigo-500 text-white' : 'hover:bg-indigo-300 cursor-pointer'
+        ]"
+      >
+        H1
+      </button>
+
+      <button
+        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+        :class="[ 
+          'px-2 py-1 rounded text-black font-semibold',
+          editor.isActive('heading', { level: 2 }) ? 'bg-indigo-500 text-white' : 'hover:bg-indigo-300 cursor-pointer'
+        ]"
+      >
+        H2
+      </button>
+
+      <button
+        @click="editor.chain().focus().toggleBulletList().run()"
+        :class="[ 
+          'px-2 py-1 rounded text-black font-semibold',
+          editor.isActive('bulletList') ? 'bg-indigo-500 text-white' : 'hover:bg-indigo-300 cursor-pointer'
+        ]"
+      >
+        Bullet List
+      </button>
+
+      <button
+        @click="editor.chain().focus().toggleOrderedList().run()"
+        :class="[ 
+          'px-2 py-1 rounded text-black font-semibold',
+          editor.isActive('orderedList') ? 'bg-indigo-500 text-white' : 'hover:bg-indigo-300 cursor-pointer'
+        ]"
+      >
+        Ordered List
+      </button>
+
+      <button
+        @click="editor.chain().focus().toggleBlockquote().run()"
+        :class="[ 
+          'px-2 py-1 rounded text-black font-semibold',
+          editor.isActive('blockquote') ? 'bg-indigo-500 text-white' : 'hover:bg-indigo-300 cursor-pointer'
+        ]"
+      >
+        Blockquote
+      </button>
+
+      <button
+        @click="editor.chain().focus().undo().run()"
+        :disabled="!editor.can().chain().focus().undo().run()"
+        :class="[ 
+          'px-2 py-1 rounded text-black font-semibold hover:bg-indigo-300',
+          !editor.can().chain().focus().undo().run() ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+        ]"
+      >
+        Undo
+      </button>
+
+      <button
+        @click="editor.chain().focus().redo().run()"
+        :disabled="!editor.can().chain().focus().redo().run()"
+        :class="[ 
+          'px-2 py-1 rounded text-black font-semibold hover:bg-indigo-300',
+          !editor.can().chain().focus().redo().run() ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+        ]"
+      >
+        Redo
+      </button>
     </div>
-    <TiptapEditorContent :editor="editor" />
-  </div>
-</template>
+      <TiptapEditorContent :editor="editor" class="border border-gray-400 p-2"/>
+    </div>
+  </template>
