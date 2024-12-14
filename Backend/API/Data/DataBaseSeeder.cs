@@ -17,6 +17,6 @@ public static class DataBaseSeeder
             Headers = new HeaderDictionary(),
             ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         };
-        return FileManipulator.ParseDocxFile(file, out _, false).Template!;
+        return FileManipulator.ParseDocxFile(file, out _, true).Template!;
     }
 }
