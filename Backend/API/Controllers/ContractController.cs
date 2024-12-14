@@ -327,7 +327,7 @@ public class ContractController(ContractRepo crepo, TemplateRepo trepo, IHMACSer
         {
             var sendFinalContractEmail = await _settingsRepo.GetSendFinalContractEmailContentAndSubject(companyUserId!);
 
-            if (!string.IsNullOrEmpty(sendFinalContractEmail.Value.content) && !string.IsNullOrEmpty(sendFinalContractEmail.Value.subject))
+            if (!string.IsNullOrEmpty(sendFinalContractEmail?.content) && !string.IsNullOrEmpty(sendFinalContractEmail?.subject))
             {
                 var applicantEmail = contract.SubmittedFields.FirstOrDefault(x => x.Name == "Email")?.Value;
 
