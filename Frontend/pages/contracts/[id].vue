@@ -107,17 +107,20 @@ async function generatePdf() {
   });
 
   try {
-    const response = await api.fetchWithErrorHandling(`/contracts/${id}/generate-pdf`, {
-      method: "POST",
-      body: JSON.stringify({
-        replacements: hasFields.value
-          ? Object.keys(formState).map((key) => ({
-              name: key,
-              value: String(formState[key]),
-            }))
-          : [{ name: "string", value: "string" }],
-      }),
-    });
+    const response = await api.fetchWithErrorHandling(
+      `/contracts/${id}/generate-pdf`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          replacements: hasFields.value
+            ? Object.keys(formState).map((key) => ({
+                name: key,
+                value: String(formState[key]),
+              }))
+            : [{ name: "string", value: "string" }],
+        }),
+      }
+    );
     if (response?.error) {
       return;
     }

@@ -67,6 +67,13 @@ const submitFile = async () => {
     return;
   }
 
+  const toastId = "loading";
+  toast.add({
+    id: toastId,
+    title: "Loading...",
+    timeout: 0,
+  });
+
   const formData = new FormData();
   formData.append("file", selectedFile.value);
 
@@ -78,13 +85,14 @@ const submitFile = async () => {
     }
   );
 
-  if (response?.error) {
-    toast.add({
-      title: "There has been an error.",
-      description: response?.error,
-    });
-  } else {
+  toast.remove(toastId);
+  if (!response?.error) {
     modal.close();
+    toast.add({
+      title: "Success!",
+      description: "Successfully uploaded the final contract!",
+    });
+    navigateTo("/final-contracts");
   }
 };
 </script>

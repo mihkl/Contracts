@@ -38,6 +38,7 @@ const modal = useModal();
 const { serverResponse } = useTemplateStore();
 const template = serverResponse!.template;
 const infoMessage = serverResponse!.infoMessage;
+const toast = useToast();
 
 const schema = object({
   name: string().required("Required"),
@@ -50,11 +51,17 @@ const state = reactive({
 type Schema = InferType<typeof schema>;
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  await auth.fetchWithToken("/save", {
+  const response = await auth.fetchWithToken("/save", {
     method: "POST",
     body: JSON.stringify({ guid: serverResponse!.guid, name: state.name }),
   });
 
-  navigateTo("/templates");
+  if (!response.error) {
+    navigateTo("/templates");
+    toast.add({
+      title: "Success!",
+      description: "The contract has been uploaded.",
+    });
+  }
 }
 </script>

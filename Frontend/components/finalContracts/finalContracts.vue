@@ -11,7 +11,7 @@
           type="text"
           v-model="filterQuery"
           placeholder="Search by name/keywords"
-          class="border px-3 py-2 rounded"
+          class="border px-3 py-2 rounded min-w-60"
         />
         <button
           @click="openSortOptionsModal"
@@ -23,9 +23,9 @@
 
       <div
         v-if="filteredContracts.length === 0"
-        class="text-center text-gray-500"
+        class="text-left text-gray-600 text-xl"
       >
-        No Final Contracts Available
+        Whoops! Seems like there are no final contracts.
       </div>
       <finalContractItem
         v-for="(contract, index) in filteredContracts"
