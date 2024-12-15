@@ -33,13 +33,13 @@
         class="mb-4"
         :required="true"
       >
-        <UTextarea
+        <UInput
           id="notifyOnUploadSubject"
           v-model="state.notifyOnUploadSubject"
           class="w-full rounded-lg mb-4"
           :class="{ 'border-red-500': errors.notifyOnUploadSubject }"
           placeholder="Enter email subject for final contract"
-        ></UTextarea>
+        ></UInput>
         <p v-if="errors.notifyOnUploadSubject" class="text-red-500 text-sm">
           {{ errors.notifyOnUploadSubject }}
         </p>
@@ -51,17 +51,17 @@
         class="mb-4"
         :required="true"
       >
-        <UTextarea
+      <tiptap-editor
           id="notifyOnUploadContent"
           v-model="state.notifyOnUploadContent"
           class="w-full rounded-lg"
           :class="{ 'border-red-500': errors.notifyOnUploadContent }"
           placeholder="Write your email content here."
-        ></UTextarea>
+      />
         <p v-if="errors.notifyOnUploadContent" class="text-red-500 text-sm">
           {{ errors.notifyOnUploadContent }}
         </p>
-      </UFormGroup>
+      </UFormGroup> 
 
       <div class="flex items-center mt-2">
         <UCheckbox
@@ -112,13 +112,13 @@
         class="mb-4"
         :required="true"
       >
-        <UTextarea
+        <UInput
           id="notifyOnSignatureSubject"
           v-model="state.notifyOnSignatureSubject"
           class="w-full"
           :class="{ 'border-red-500': errors.notifyOnSignatureSubject }"
           placeholder="Enter email subject for signature notification"
-        ></UTextarea>
+        ></UInput>
         <p v-if="errors.notifyOnSignatureSubject" class="text-red-500 text-sm">
           {{ errors.notifyOnSignatureSubject }}
         </p>
@@ -129,13 +129,13 @@
         class="mb-4"
         :required="true"
       >
-        <UTextarea
-          id="notifyOnSignatureContent"
+      <tiptap-editor
+          id="notifyOnUploadContent"
           v-model="state.notifyOnSignatureContent"
-          :class="{ 'border-red-500': errors.notifyOnSignatureContent }"
           class="w-full rounded-lg"
-          placeholder="Write the email content for the signature notification."
-        ></UTextarea>
+          :class="{ 'border-red-500': errors.notifyOnSignatureContent }"
+          placeholder="Write your email content here."
+      />
         <p v-if="errors.notifyOnSignatureContent" class="text-red-500 text-sm">
           {{ errors.notifyOnSignatureContent }}
         </p>
@@ -206,23 +206,11 @@ const toast = useToast();
 const auth = useAuth();
 
 const defaultUploadSubject = "Your Document Has Been Countersigned";
-const defaultUploadContent = `We are pleased to inform you that your document has been successfully countersigned, and the signing process is now complete. 
-
-If you have any further questions or need assistance, please do not hesitate to contact us.
-
-Thank you for trusting us with your business.
-
-Best regards,  
-Y`;
+const defaultUploadContent = "<p>We are pleased to inform you that your document has been successfully countersigned, and the signing process is now complete. </p><p></p><p>If you have any further questions or need assistance, please do not hesitate to contact us. </p><p></p><p>Thank you for trusting us with your business. </p><p>Best regards, Y</p>";
 
 const defaultNotificationSubject =
   "Client Signed the Document - Your Action Required";
-const defaultNotificationContent = `This email is to notify you that the client has signed the document. The next step is for you to review and countersign the document to finalize the process.
-
-If you have any questions or need further details, please reach out to our team.
-
-Best regards,  
-Y`;
+const defaultNotificationContent = "<p>This email is to notify you that the client has signed the document. The next step is for you to review and countersign the document to finalize the process. </p><p></p><p>If you have any questions or need further details, please reach out to our team.</p><p> Best regards, Y</p>";
 
 const state = reactive({
   host: "",
@@ -292,7 +280,7 @@ const validate = (): boolean => {
     if (!state.notifyOnUploadSubject) {
       newErrors.notifyOnUploadSubject = "Email subject is required.";
     }
-    if (!state.notifyOnUploadContent) {
+    if (state.notifyOnUploadContent.replace(/\s+/g, "") === "<p></p>") {
       newErrors.notifyOnUploadContent = "Email content is required.";
     }
   }
@@ -306,7 +294,7 @@ const validate = (): boolean => {
     } else if (!state.signatureNotificationEmail.includes("@")) {
       newErrors.signatureNotificationEmail = "Email must contain '@' symbol.";
     }
-    if (!state.notifyOnSignatureContent) {
+    if (state.notifyOnSignatureContent.replace(/\s+/g, "") === "<p></p>") {
       newErrors.notifyOnSignatureContent = "Notification content is required.";
     }
   }

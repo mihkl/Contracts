@@ -41,7 +41,7 @@ namespace API.emails
                 emailMessage.Subject = email.Subject;
 
                 BodyBuilder builder = new BodyBuilder();
-                builder.TextBody = email.Content;
+                builder.HtmlBody = email.Content;
 
                 if (email.Attachment != null) builder.Attachments.Add("contract.asice", email.Attachment);
 
