@@ -1,6 +1,8 @@
 <script setup>
 import { useEditor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
+import HardBreak from '@tiptap/extension-hard-break'
+
 
 
 const props = defineProps({
@@ -15,7 +17,14 @@ const emits = defineEmits(['update:modelValue']);
 
 const editor = useEditor({
   content: props.modelValue,
-  extensions: [StarterKit],
+  extensions: [StarterKit, HardBreak.extend({
+    addKeyboardShortcuts() {
+      return {
+        Enter: () => this.editor.commands.setHardBreak(),
+      };
+    },
+  }),
+],
   onUpdate: ({ editor }) => {
     emits('update:modelValue', editor.getHTML());
   },
