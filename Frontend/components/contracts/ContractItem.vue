@@ -3,7 +3,7 @@
     <div class="flex flex-row items-center">
       <span class="mb-4">{{ contract?.name }}</span>
       <span v-if="contract.signingStatus === SigningStatus.SignedByAll" class="text-green-500 mb-4 ml-5 font-bold">Signed by both parties</span>
-      <span v-else-if="contract.signingStatus === SigningStatus.SignedByNone && new Date(contract.linkValidUntil) < new Date()" class="text-red-500 mb-4 ml-5 font-bold">Link expired!</span>
+      <span v-else-if="contract.signingStatus === SigningStatus.SignedByNone && new Date(contract.linkValidUntil) < new Date() && contract.linkValidUntil !== '0001-01-01T00:00:00'" class="text-red-500 mb-4 ml-5 font-bold">Link expired!</span>
     </div>
     <div class="flex flex-row justify-start items-center gap-3">
       <UTooltip
