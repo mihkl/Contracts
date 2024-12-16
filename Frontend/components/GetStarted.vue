@@ -117,7 +117,7 @@
             class="flex items-center justify-between w-full px-4 py-3 bg-indigo-100 rounded-lg text-indigo-600 font-semibold text-left"
             @click="toggleStep(5)"
           >
-            <span>Step 5: Send Final Contract to Customer</span>
+            <span>Bonus Step: Automatic Email notifications</span>
             <span>{{ openSteps.includes(5) ? "-" : "+" }}</span>
           </button>
           <div
@@ -125,7 +125,7 @@
             class="mt-3 p-4 rounded border border-gray-200 transition-all duration-300"
           >
             <p>
-              If both parties have singed the contract, you can send the final product to the customer via email from the <strong>Integrations</strong> page.
+              On the <strong>Integrations</strong> page you can set up email notification system. You can enable that a notification email will be sent to the customer after both parties have signed the contract and/or a company representitive will receive an email after the customer has first signed the contract.  
             </p>
 
           </div>
