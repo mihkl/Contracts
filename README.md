@@ -1,6 +1,6 @@
 # THIS PROJECT WAS ORIGINALLY DEVELOPED IN GITLAB SO ALL CI/CD PIPELINES WILL NOT WORK ON GITHUB
 
-# Intended for contract management and signing by simplifying and automating some of the steps like generating from templates and electronic siganture verification.
+# Intended for contract management and signing by simplifying and automating some of the steps like generating from templates and electronic signature verification.
 
 # ITB2203_2024_Lepingud
 
