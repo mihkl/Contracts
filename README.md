@@ -6,7 +6,7 @@
 
 ## Running the backend locally
 
-1. Make sure that Docker has been installed on the machine where the app should run locally (https://www.docker.com/products/docker-desktop/).
+1. Make sure that Docker has been installed on the machine where the app should run locally (https://www.docker.com/products/docker-desktop/)
 
 2. Open up a terminal. Change directory into the /Backend/API folder, where the Dockerfile is located. `cd Backend/API`.
 
